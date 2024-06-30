@@ -65,11 +65,11 @@ export default async function handler(req: Ireq, res: NextApiResponse<Data>) {
     let data
     await connectMongoDB()
     await validateSignin<Data>(req, res)
+    await validateAdmin(req, res)
     if (req.method === 'GET') {
       data = await GET()
     }
     if (req.method === 'POST') {
-      await validateAdmin(req, res)
       data = await POST(req, res)
     }
 

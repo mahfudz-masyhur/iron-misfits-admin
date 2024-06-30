@@ -7,6 +7,7 @@
  */
 
 import { CSSProperties } from 'react'
+import toast from 'react-hot-toast'
 
 // ** Checks if the passed date is today
 const isToday = (date: Date | string) => {
@@ -491,7 +492,8 @@ export const coutNumArray = (array: number[]) => {
   }, 0)
 }
 
-export function formatPhoneNumber(v: string) {
+export function formatPhoneNumber(v?: number|string) {
+  if(!v) return '-'
   // Jika v bukan string, konversi menjadi string
   const phoneNumber = typeof v === 'string' ? v : `${v}`
 
@@ -505,7 +507,7 @@ export function formatPhoneNumber(v: string) {
   if (numLenght < 4) return num
   if (numLenght < 6) return `${num.slice(0, 2)}-${num.slice(2)}`
   if (numLenght < 9) return `${num.slice(0, 2)}-${num.slice(2, 5)}-${num.slice(5)}`
-  return `${num.slice(0, 2)}-${num.slice(2, 5)}-${num.slice(5, 8)}-${num.slice(8, 19)}`
+  return `+62 ${num.slice(0, 2)}-${num.slice(2, 5)}-${num.slice(5, 8)}-${num.slice(8, 19)}`
 }
 
 export function convertToNumericPhoneNumber(phoneNumber: string): number {
@@ -584,5 +586,40 @@ export function convertTimeStringToDate(timeString: string) {
 }
 
 export function nomorUrutTable(index: number, page: number, limit: number) {
-	return (index + 1) + ((page - 1) * limit)
+  return index + 1 + (page - 1) * limit
+}
+
+export const toastError = (error: any) => {
+  const text = error?.response?.data?.message || error?.message || error?.request?.statusText || 'Something went wrong'
+  toast.error(text)
+}
+
+export const formatConvertCase = (
+  str: string,
+  caseType: 'kebab' | 'snake' | 'camel' | 'pascal' | 'title' | 'upper' | 'lower'
+): string => {
+  const words = str
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/[\s_]+/g, ' ')
+    .toLowerCase()
+    .split(' ')
+
+  switch (caseType) {
+    case 'kebab':
+      return words.join('-')
+    case 'snake':
+      return words.join('_')
+    case 'camel':
+      return words.map((word, index) => (index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1))).join('')
+    case 'pascal':
+      return words.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('')
+    case 'title':
+      return words.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+    case 'upper':
+      return str.toUpperCase()
+    case 'lower':
+      return str.toLowerCase()
+    default:
+      return str
+  }
 }

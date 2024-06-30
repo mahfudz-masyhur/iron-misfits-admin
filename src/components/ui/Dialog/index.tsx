@@ -42,11 +42,22 @@ const variants = cva(
 )
 
 const Dialog = forwardRef<HTMLDivElement, DialogProps>((props: DialogProps, ref) => {
+  const sm = useMediaQuery('sm')
   const backdropRef = useRef<HTMLDivElement | null>(null)
-  const { open, onClose, title, children, className, closeButtom, maxWidth, disabledClickAway, mobileClickAway, fullWidth } = props
+  const {
+    open,
+    onClose,
+    title,
+    children,
+    className,
+    closeButtom,
+    maxWidth,
+    disabledClickAway,
+    mobileClickAway,
+    fullWidth
+  } = props
   const { isVisible, opacity } = HiddenTransisiton(open)
   BackDrop(isVisible)
-  const sm = useMediaQuery('sm')
   const clickAway = disabledClickAway ? false : mobileClickAway ? true : sm
 
   if (!isVisible) return <></>

@@ -11,7 +11,7 @@ export type TableProps = TableHTMLAttributes<HTMLTableElement> & MoreProps
 const Table = forwardRef<HTMLTableElement, TableProps>(
   ({ overflowX = true, exceptMobile, className, ...rest }, ref) => {
     return overflowX ? (
-      <div className='px-4 overflow-x-auto'>
+      <div className='overflow-x-auto'>
         <table
           ref={ref}
           className={twMerge(

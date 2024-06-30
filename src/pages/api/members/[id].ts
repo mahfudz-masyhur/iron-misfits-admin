@@ -48,6 +48,7 @@ export default async function handler(req: Ireq, res: NextApiResponse<Data>) {
     await connectMongoDB()
     await validateSignin<Data>(req, res)
     if (req.method === 'GET') {
+      await validateAdmin(req, res)
       data = await GETID(param)
     }
     if (req.method === 'DELETE') {

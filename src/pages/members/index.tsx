@@ -1,5 +1,5 @@
 import { GetServerSideProps } from 'next'
-import { getUsers } from 'server/api'
+import { getMembers } from 'server/api'
 import AddUser from 'src/components/pages/users/AddUser'
 import DeleteUser from 'src/components/pages/users/DeleteUser'
 import UpdateUser from 'src/components/pages/users/UpdateUser'
@@ -18,7 +18,7 @@ function UsersPage({ data }: { data: IResponseUsers }) {
     <Paper className='p-4 m-4'>
       <div className='flex justify-between mb-2'>
         <Typography variant='h5' fontWeight='semibold'>
-          Table Users
+          Table Members
         </Typography>
         <AddUser />
       </div>
@@ -43,7 +43,7 @@ function UsersPage({ data }: { data: IResponseUsers }) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.data.map((v, i) => (
+          {/* {data.data.map((v, i) => (
             <TableRow hover key={`${i}`}>
               <TableCell>{i + 1}.</TableCell>
               <TableCell>{v.name}</TableCell>
@@ -54,7 +54,7 @@ function UsersPage({ data }: { data: IResponseUsers }) {
                 <DeleteUser user={v} />
               </TableCell>
             </TableRow>
-          ))}
+          ))} */}
         </TableBody>
       </Table>
     </Paper>
@@ -63,21 +63,21 @@ function UsersPage({ data }: { data: IResponseUsers }) {
 
 export default UsersPage
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-  try {
-    const data = await getUsers(req)
-    return {
-      props: { data }
-    }
-  } catch (error: any) {
-    let destination = '/500'
-    if (error?.response?.status === 401) destination = `/login?${getURLParams({ url: req.url })}`
-    return {
-      props: {},
-      redirect: {
-        permanent: false,
-        destination
-      }
-    }
-  }
-}
+// export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+//   try {
+//     const data = await getMembers(req)
+//     return {
+//       props: { data }
+//     }
+//   } catch (error: any) {
+//     let destination = '/500'
+//     if (error?.response?.status === 401) destination = `/login?${getURLParams({ url: req.url })}`
+//     return {
+//       props: {},
+//       redirect: {
+//         permanent: false,
+//         destination
+//       }
+//     }
+//   }
+// }

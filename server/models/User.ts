@@ -4,28 +4,25 @@ import { IUser } from "server/type/User";
 
 const userSchema = new mongoose.Schema(
   {
-    email: { type: String, required: "Email required" },
-    name: { type: String, required: "Name required" },
+    email: { type: String, required: 'Email required' },
+    name: { type: String, required: 'Name required' },
     avatar: { type: String },
-    handphone: { type: Number },
-    password: { type: String, required: "Password required" },
+    handphone: { type: Number},
+    password: { type: String, required: 'Password required' },
     role: [
       {
         type: Number,
-        default: 2,
-        enum: [1, 2, 3],
-        // 1 = master admin
-        // 2 = admin
-        // 3 = viewer
-      },
+        default: 1,
+        enum: [1, 2]
+        // 1 = admin
+        // 2 = viewer
+      }
     ],
-    lastEditedBy: { type: ObjectId, ref: "User" },
-    creator: { type: ObjectId, ref: "User" },
+    lastEditedBy: { type: ObjectId, ref: 'User' },
+    creator: { type: ObjectId, ref: 'User' }
   },
   { timestamps: true }
-);
-
-userSchema.index({ role: 1 });
+)
 
 userSchema
   .pre("findOne", function (next) {

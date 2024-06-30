@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import axios from "server/axios";
+import axios from 'axios'
 
 export default function AddProduct() {
   const [name, setName] = useState("");

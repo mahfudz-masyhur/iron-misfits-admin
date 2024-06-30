@@ -1,4 +1,4 @@
-export interface IUser {
+export interface IMember {
   _id: string
   email: string
   name: string
