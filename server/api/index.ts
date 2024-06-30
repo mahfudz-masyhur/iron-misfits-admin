@@ -1,8 +1,13 @@
 import Axios from 'axios'
 import { IncomingMessage } from 'http'
 import { IUser } from 'server/type/User'
-import { convertToNumericPhoneNumber, removeEmptyStringProperties } from 'src/components/utility/formats'
+import {
+  convertToNumber,
+  convertToNumericPhoneNumber,
+  removeEmptyStringProperties
+} from 'src/components/utility/formats'
 import { IResponseMember, IResponseMembers, MemberInput } from 'src/type/member'
+import { IResponsePackage, IResponsePackages, PackageInput } from 'src/type/package'
 import { IResponseUser, IResponseUsers, UserInput } from 'src/type/users'
 
 const axios = Axios.create({
@@ -34,6 +39,7 @@ export const getUsers = async (req?: IncomingMessage): Promise<IResponseUsers> =
 }
 
 export const addOrUpdateUser = async (values: UserInput): Promise<IResponseUser> => {
+  values.handphone = values.handphone ? convertToNumericPhoneNumber(values.handphone).toString() : ''
   const body = {
     ...values,
     role: [values.role]
@@ -72,6 +78,26 @@ export const addOrUpdateMember = async (values: MemberInput): Promise<IResponseM
 
 export const deleteMember = async (id: string): Promise<IResponseMember> => {
   const { data } = await axios.delete(`/api/members/${id}`)
+
+  return data
+}
+
+export const getPackages = async (req?: IncomingMessage): Promise<IResponsePackages> => {
+  if (req) return await fetchServer('/api/package', req)
+  const { data } = await axios.get('/api/package')
+
+  return data
+}
+
+export const addOrUpdatePackage = async (values: PackageInput): Promise<IResponsePackage> => {
+  values.price = values.price ? convertToNumber(values.price).toString() : ''
+  const { data } = await axios.post('/api/package', removeEmptyStringProperties(values))
+
+  return data
+}
+
+export const deletePackage = async (id: string): Promise<IResponsePackage> => {
+  const { data } = await axios.delete(`/api/package/${id}`)
 
   return data
 }

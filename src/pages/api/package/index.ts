@@ -1,36 +1,37 @@
 import type { NextApiResponse } from 'next'
 import { validateAdmin, validateSignin } from 'server/controllers/validate'
 import connectMongoDB from 'server/libs/mongodb'
-import Member from 'server/models/Member'
-import { IMember } from 'server/type/Member'
-import { MemberInput } from 'src/type/member'
 import { Ireq } from '../me/login'
+import Package from 'server/models/Package'
+import { IPackage } from 'server/type/Package'
+import { PackageInput } from 'src/type/package'
+import { ObjectId } from 'mongodb'
 
 type Data = {
   status: string
   message: string
-  data?: IMember | IMember[] | null
+  data?: IPackage | IPackage[] | null
   error?: any
 }
 
 async function GET(req: Ireq, res: NextApiResponse<Data>) {
-  const product = await Member.find({}, { password: 0 })
+  const data = await Package.find({}, { password: 0 })
 
-  return res.json({ status: 'ok', message: 'Get Success', data: product })
+  return res.json({ status: 'ok', message: 'Get Success', data })
 }
 
 async function POST(req: Ireq, res: NextApiResponse<Data>) {
   const { user } = req
-  const { _id, name, avatar, handphone, socialmedia, updatedAt } = req.body as MemberInput
+  const { _id, name, packageType, price, status, statusEdit, updatedAt } = req.body as PackageInput
 
   if (_id) {
-    const data = await Member.findOneAndUpdate(
+    const data = await Package.findOneAndUpdate(
       { _id, updatedAt },
       {
-        name,
-        avatar,
-        handphone,
-        socialmedia,
+        name: statusEdit ? name : undefined,
+        packageType: statusEdit ? packageType : undefined,
+        price: statusEdit ? price : undefined,
+        status,
         lastEditedBy: user
       }
     )
@@ -43,11 +44,11 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
     return res.json({ status: 'ok', message: 'Update Success', data })
   }
 
-  const data = await Member.create({
+  const data = await Package.create({
     name,
-    avatar,
-    handphone,
-    socialmedia,
+    packageType,
+    price,
+    status,
     creator: user
   })
 

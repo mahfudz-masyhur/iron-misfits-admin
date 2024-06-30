@@ -19,5 +19,5 @@ export interface UserInput {
   avatar: string
   password: string
   role: string
-  handphone?: number
+  handphone?: string
 }

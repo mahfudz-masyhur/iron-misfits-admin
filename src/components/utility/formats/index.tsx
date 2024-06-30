@@ -151,7 +151,7 @@ export const formatExpirationDate = (value: string) => {
 // };
 
 export const priceFormatter = (price: number) => {
-  const numToSting = price.toString().replace(/[^,\d]/g, '')
+  const numToSting = `${price}`.replace(/[^,\d]/g, '')
   const split = numToSting.split(',')
   const left = split[0].length % 3
   let prc = split[0].substr(0, left)

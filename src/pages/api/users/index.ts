@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt'
 import type { NextApiResponse } from 'next'
-import { validateAdmin, validateSignin } from 'server/controllers/validate'
+import { validateAdmin, validateMasterAdmin, validateSignin } from 'server/controllers/validate'
 import connectMongoDB from 'server/libs/mongodb'
 import User from 'server/models/User'
 import { IUser } from 'server/type/User'
@@ -36,7 +36,7 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
       avatar,
       handphone,
       role,
-      lastEditedBy:user
+      lastEditedBy: user
     })
 
     return { message: 'Update Success', data }
@@ -56,7 +56,7 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
     handphone,
     password,
     role,
-    creator:user
+    creator: user
   })
 
   return { message: 'Create Success', data }
@@ -71,7 +71,7 @@ export default async function handler(req: Ireq, res: NextApiResponse<Data>) {
       data = await GET()
     }
     if (req.method === 'POST') {
-      await validateAdmin(req, res)
+      await validateMasterAdmin(req, res)
       data = await POST(req, res)
     }
 

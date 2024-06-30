@@ -1,27 +1,27 @@
 import type { NextApiResponse } from 'next'
+import { validateAdmin, validateSignin } from 'server/controllers/validate'
 import connectMongoDB from 'server/libs/mongodb'
-import Member from 'server/models/Member'
+import Package from 'server/models/Package'
+import { IPackage } from 'server/type/Package'
 import { Ireq } from '../me/login'
-import { validateAdmin, validateMasterAdmin, validateSignin } from 'server/controllers/validate'
-import { IMember } from 'server/type/Member'
 
 type Data = {
   status: string
   message: string
-  data?: IMember | IMember[] | null
+  data?: IPackage | IPackage[] | null
   error?: any
 }
 
 async function GETID(req: Ireq, res: NextApiResponse<Data>) {
   const param = `${req.query.id}`
-  const data = await Member.findById(param)
+  const data = await Package.findById(param)
 
   return res.json({ status: 'ok', message: 'Get Success', data })
 }
 
 async function DELETE(req: Ireq, res: NextApiResponse<Data>) {
   let param = `${req.query.id}`
-  const data = await Member.findByIdAndDelete(param)
+  const data = await Package.findByIdAndDelete(param)
 
   if (!data) {
     res.status(501).json({ status: '501 Not Implemented', message: 'Delete Failed' })

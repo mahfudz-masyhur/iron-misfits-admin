@@ -1,10 +1,11 @@
 import mongoose, { Model } from 'mongoose'
 import { ObjectId } from 'mongodb'
+import { IPackage } from 'server/type/Package'
 
 const packageSchema = new mongoose.Schema(
   {
     name: { type: String, required: 'Name required' },
-    harga: { type: Number },
+    price: { type: Number },
     packageType: { type: String, enum: ['daily', 'weekly', 'monthly', 'quarterly', 'annual'] },
     status: { type: String, enum: ['active', 'inactive'] },
     statusEdit: { type: Boolean, default: true },
@@ -14,6 +15,6 @@ const packageSchema = new mongoose.Schema(
   { timestamps: true }
 )
 
-const Package = (mongoose.models.Package as Model<any>) || mongoose.model<any>('Package', packageSchema)
+const Package = (mongoose.models.Package as Model<IPackage>) || mongoose.model<IPackage>('Package', packageSchema)
 
 export default Package

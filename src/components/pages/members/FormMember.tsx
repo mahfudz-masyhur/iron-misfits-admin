@@ -1,4 +1,4 @@
-import { Field, FieldArray, FieldProps, Form, Formik, FormikErrors, FormikHelpers } from 'formik'
+import { Field, FieldArray, FieldProps, Form, Formik, FormikHelpers } from 'formik'
 import { useRouter } from 'next/router'
 import { ChangeEvent, Dispatch, SetStateAction } from 'react'
 import { addOrUpdateMember } from 'server/api'
@@ -9,8 +9,6 @@ import IconInfo from 'src/components/ui/Icon/IconInfo'
 import IconMinus from 'src/components/ui/Icon/IconMinus'
 import IconPlus from 'src/components/ui/Icon/IconPlus'
 import IconButton from 'src/components/ui/IconButton'
-import Select from 'src/components/ui/Select'
-import Option from 'src/components/ui/Select/Option'
 import TextField from 'src/components/ui/TextField'
 import Tooltip from 'src/components/ui/Tolltip'
 import Typography from 'src/components/ui/Typograph'
@@ -92,7 +90,8 @@ function FormMember(props: Props) {
     name: value?.name || '',
     avatar: value?.avatar || '',
     handphone: value?.handphone ? `${formatPhoneNumber(value?.handphone)}` : '',
-    socialmedia: value?.socialmedia || [{ key: 'ig', value: '' }]
+    socialmedia: value?.socialmedia || [{ key: 'ig', value: '' }],
+    updatedAt: value?.updatedAt
   }
 
   const validate = (values: MemberInput) => {
