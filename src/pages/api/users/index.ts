@@ -35,7 +35,8 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
       email,
       avatar,
       handphone,
-      role
+      role,
+      lastEditedBy:user
     })
 
     return { message: 'Update Success', data }
@@ -54,7 +55,8 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
     avatar,
     handphone,
     password,
-    role
+    role,
+    creator:user
   })
 
   return { message: 'Create Success', data }

@@ -1,60 +1,46 @@
-import bcrypt from 'bcrypt'
 import type { NextApiResponse } from 'next'
 import { validateAdmin, validateSignin } from 'server/controllers/validate'
 import connectMongoDB from 'server/libs/mongodb'
-import User from 'server/models/User'
-import { IUser } from 'server/type/User'
-import { formatConvertCase } from 'src/components/utility/formats'
-import { UserInput } from 'src/type/users'
+import Member from 'server/models/Member'
+import { IMember } from 'server/type/Member'
+import { MemberInput } from 'src/type/member'
 import { Ireq } from '../me/login'
 
 type Data = {
   status: string
   message: string
-  data?: IUser | IUser[] | null
+  data?: IMember | IMember[] | null
   error?: any
 }
 
 async function GET() {
-  const product = await User.find({}, { password: 0 })
+  const product = await Member.find({}, { password: 0 })
 
   return { message: 'Get Success', data: product }
 }
 
 async function POST(req: Ireq, res: NextApiResponse<Data>) {
   const { user } = req
-  const { _id, avatar, email, name, role, handphone } = req.body as UserInput
+  const { _id, name, avatar, handphone, socialmedia } = req.body as MemberInput
 
   if (_id) {
-    if (process.env.MASTER_ADMIN === email && user.email !== process.env.MASTER_ADMIN) {
-      return res.status(405).json({ status: '405 Method Not Allowed', message: 'Anda tidak bisa mengubah akun ini' })
-    }
-
-    const data = await User.findByIdAndUpdate(_id, {
+    const data = await Member.findByIdAndUpdate(_id, {
       name,
-      email,
       avatar,
       handphone,
-      role
+      socialmedia,
+      lastEditedBy: user
     })
 
     return { message: 'Update Success', data }
   }
 
-  const findEmail = await User.findOne({ email })
-  if (findEmail) {
-    return res.status(405).json({ status: '405 Method Not Allowed', message: 'Email sudah terdaftar' })
-  }
-
-  const salt = await bcrypt.genSalt(10)
-  const password = await bcrypt.hash(`admin-misfits`, salt)
-  const data = await User.create({
+  const data = await Member.create({
     name,
-    email,
     avatar,
     handphone,
-    password,
-    role
+    socialmedia,
+    creator: user
   })
 
   return { message: 'Create Success', data }

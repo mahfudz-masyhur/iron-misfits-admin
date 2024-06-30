@@ -26,7 +26,7 @@ function FormUser(props: Props) {
     avatar: value?.avatar || '',
     password: value?.password || '',
     role: value?.role[0] ? `${value?.role[0]}` : `${1}`,
-    handphone: value?.handphone || undefined
+    handphone: value?.handphone ? formatPhoneNumber(value?.handphone) : undefined
   }
 
   const validate = (values: UserInput) => {
@@ -46,7 +46,6 @@ function FormUser(props: Props) {
       if (value) formikHelpers.resetForm()
       await router.push(router.asPath)
       setStopClose(false)
-      console.log(data)
       handleClose()
     } catch (error: any) {
       toastError(error)

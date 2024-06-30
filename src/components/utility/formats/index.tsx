@@ -507,7 +507,7 @@ export function formatPhoneNumber(v?: number|string) {
   if (numLenght < 4) return num
   if (numLenght < 6) return `${num.slice(0, 2)}-${num.slice(2)}`
   if (numLenght < 9) return `${num.slice(0, 2)}-${num.slice(2, 5)}-${num.slice(5)}`
-  return `+62 ${num.slice(0, 2)}-${num.slice(2, 5)}-${num.slice(5, 8)}-${num.slice(8, 19)}`
+  return `${num.slice(0, 2)}-${num.slice(2, 5)}-${num.slice(5, 8)}-${num.slice(8, 19)}`
 }
 
 export function convertToNumericPhoneNumber(phoneNumber: string): number {

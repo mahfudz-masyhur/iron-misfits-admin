@@ -5,6 +5,7 @@ import NextNProgress from 'nextjs-progressbar'
 import { ThemeProvider } from 'next-themes'
 import { NextComponentType } from 'next'
 import AppContext from 'src/context/AppContext'
+import MainLayout from 'src/components/Layouts/main'
 
 interface CustomAppProps extends AppProps {
   Component: NextComponentType & {
@@ -25,7 +26,9 @@ export default function App({ Component, pageProps }: CustomAppProps) {
             <Component {...pageProps} />
           </div>
         ) : (
-          <Component {...pageProps} />
+          <MainLayout>
+            <Component {...pageProps} />
+          </MainLayout>
         )}
       </AppContext>
     </ThemeProvider>

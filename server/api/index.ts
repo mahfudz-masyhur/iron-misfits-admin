@@ -1,7 +1,8 @@
 import Axios from 'axios'
 import { IncomingMessage } from 'http'
 import { IUser } from 'server/type/User'
-import { removeEmptyStringProperties } from 'src/components/utility/formats'
+import { convertToNumericPhoneNumber, removeEmptyStringProperties } from 'src/components/utility/formats'
+import { IResponseMember, IResponseMembers, MemberInput } from 'src/type/member'
 import { IResponseUser, IResponseUsers, UserInput } from 'src/type/users'
 
 const axios = Axios.create({
@@ -55,9 +56,22 @@ export const loginApi = async ({ email, password }: { email: string; password: s
   return data
 }
 
-export const getMembers = async (req?: IncomingMessage): Promise<IResponseUsers> => {
+export const getMembers = async (req?: IncomingMessage): Promise<IResponseMembers> => {
   if (req) return await fetchServer('/api/members', req)
   const { data } = await axios.get('/api/members')
+
+  return data
+}
+
+export const addOrUpdateMember = async (values: MemberInput): Promise<IResponseMember> => {
+  values.handphone = values.handphone ? convertToNumericPhoneNumber(values.handphone).toString() : ''
+  const { data } = await axios.post('/api/members', removeEmptyStringProperties(values))
+
+  return data
+}
+
+export const deleteMember = async (id: string): Promise<IResponseMember> => {
+  const { data } = await axios.delete(`/api/members/${id}`)
 
   return data
 }

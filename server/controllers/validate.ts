@@ -39,7 +39,6 @@ export async function validateMasterAdmin<T>(req: Ireq, res: NextApiResponse<T |
 
 export async function validateAdmin<T>(req: Ireq, res: NextApiResponse<T | any>) {
   const { user } = req
-
   if (user?.isMasterAdmin || user?.isAdmin) return req
 
   res.status(403).json({ status: '403 Forbidden', message: 'Diperlukan Akses Admin' })

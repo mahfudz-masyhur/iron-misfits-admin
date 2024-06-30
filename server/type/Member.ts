@@ -1,11 +1,23 @@
+interface transaction {
+  _id: string
+  package: string
+  promo: string
+  referal: string
+}
+interface ISocialMedia {
+  key: string
+  value: string
+}
+
 export interface IMember {
   _id: string
-  email: string
   name: string
-  avatar: string
-  password: string
-  role: [1 | 2]
-  handphone: number
+  avatar?: string
+  socialmedia?: ISocialMedia[]
+  handphone?: number
+  transaction?: transaction[]
   creator: { _id: string; name: string }
   lastEditedBy?: { _id: string; name: string }
+  createdAt: Date
+  updatedAt: Date
 }

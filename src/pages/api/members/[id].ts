@@ -1,42 +1,26 @@
 import type { NextApiResponse } from 'next'
 import connectMongoDB from 'server/libs/mongodb'
-import User from 'server/models/User'
-import { IUser } from 'server/type/User'
+import Member from 'server/models/Member'
 import { Ireq } from '../me/login'
 import { validateAdmin, validateMasterAdmin, validateSignin } from 'server/controllers/validate'
+import { IMember } from 'server/type/Member'
 
 type Data = {
   status: string
   message: string
-  data?: IUser | IUser[] | null
+  data?: IMember | IMember[] | null
   error?: any
 }
 
 async function GETID(param: string) {
-  const product = await User.findById(param)
+  const product = await Member.findById(param)
 
   return { message: 'Get Success', data: product }
 }
 
 async function DELETE(req: Ireq, res: NextApiResponse<Data>) {
-  const { user } = req
-  const { email } = req.body as IUser
-  let param: string | null = `${req.query.id}`
-  if (process.env.MASTER_ADMIN === email && user.email !== process.env.MASTER_ADMIN) {
-    res.status(405).json({ status: '405 Method Not Allowed', message: 'Anda tidak bisa menghapus akun ini' })
-    param = null
-  }
-  if (user.email === email) {
-    res.status(405).json({ status: '405 Method Not Allowed', message: 'Anda tidak bisa menghapus akun anda sendiri' })
-    param = null
-  }
-  console.log('\n\n\n', 'DELETE', {
-    'process.env.MASTER_ADMIN === email && user.email !== process.env.MASTER_ADMIN':
-      process.env.MASTER_ADMIN === email && user.email !== process.env.MASTER_ADMIN,
-    'user.email === email': user.email === email,
-    param
-  })
-  const data = await User.findByIdAndDelete(param)
+  let param = `${req.query.id}`
+  const data = await Member.findByIdAndDelete(param)
 
   return { message: 'Delete Success', data }
 }

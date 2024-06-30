@@ -7,7 +7,7 @@ const referalSchema = new mongoose.Schema(
     code: { type: String },
     type: { type: String, enum: ['percentage', 'nominal'] },
     discounts: { type: Number },
-    member: { type: [ObjectId], ref: 'Member' },
+    member: [{ type: ObjectId, ref: 'Member' }],
     status: { type: String, enum: ['active', 'inactive'] },
     statusEdit: { type: Boolean, default: true },
     creator: { type: ObjectId, ref: 'User' },

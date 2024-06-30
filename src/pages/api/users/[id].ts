@@ -30,12 +30,6 @@ async function DELETE(req: Ireq, res: NextApiResponse<Data>) {
     res.status(405).json({ status: '405 Method Not Allowed', message: 'Anda tidak bisa menghapus akun anda sendiri' })
     param = null
   }
-  console.log('\n\n\n', 'DELETE', {
-    'process.env.MASTER_ADMIN === email && user.email !== process.env.MASTER_ADMIN':
-      process.env.MASTER_ADMIN === email && user.email !== process.env.MASTER_ADMIN,
-    'user.email === email': user.email === email,
-    param
-  })
   const data = await User.findByIdAndDelete(param)
 
   return { message: 'Delete Success', data }

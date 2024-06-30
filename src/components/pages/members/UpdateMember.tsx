@@ -1,11 +1,11 @@
-import React, { useState } from 'react'
-import { IUser } from 'server/type/User'
+import { useState } from 'react'
+import { IMember } from 'server/type/Member'
 import Dialog from 'src/components/ui/Dialog'
-import FormUser from './FormUser'
 import IconEditAnimated from 'src/components/ui/Icon/IconEditAnimated'
 import IconButton from 'src/components/ui/IconButton'
+import FormMember from './FormMember'
 
-function UpdateUser({ data }: { data: IUser }) {
+function UpdateMember({ data }: { data: IMember }) {
   const [open, setOpen] = useState(false)
   const [stopClose, setStopClose] = useState(false)
 
@@ -19,11 +19,11 @@ function UpdateUser({ data }: { data: IUser }) {
       </IconButton>
       <Dialog title='Edit User' open={open} onClose={handleClose} closeButtom fullWidth maxWidth='md'>
         <div className='px-4 pb-4'>
-          <FormUser value={data} setStopClose={setStopClose} handleClose={handleClose} />
+          <FormMember value={data} setStopClose={setStopClose} handleClose={handleClose} />
         </div>
       </Dialog>
     </>
   )
 }
 
-export default UpdateUser
+export default UpdateMember
