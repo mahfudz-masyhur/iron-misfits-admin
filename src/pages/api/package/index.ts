@@ -6,6 +6,7 @@ import Package from 'server/models/Package'
 import { IPackage } from 'server/type/Package'
 import { PackageInput } from 'src/type/package'
 import { ObjectId } from 'mongodb'
+import { FilterQuery } from 'mongoose'
 
 type Data = {
   status: string
@@ -15,7 +16,16 @@ type Data = {
 }
 
 async function GET(req: Ireq, res: NextApiResponse<Data>) {
-  const data = await Package.find({}, { password: 0 })
+  let { name, packageType, status } = req.query
+  const filter: FilterQuery<IPackage> = {}
+  if (name) {
+    const match = new RegExp(`${name}`, 'i')
+    filter.name = { $regex: match }
+  }
+  if (packageType) filter.packageType = packageType
+  if (status) filter.status = status
+
+  const data = await Package.find(filter)
 
   return res.json({ status: 'ok', message: 'Get Success', data })
 }

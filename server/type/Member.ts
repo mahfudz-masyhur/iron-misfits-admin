@@ -4,7 +4,7 @@ interface transaction {
   promo: string
   referral: string
 }
-interface ISocialMedia {
+export interface ISocialMedia {
   key: string
   value: string
 }
@@ -15,7 +15,7 @@ export interface IMember {
   avatar?: string
   socialmedia: ISocialMedia[]
   handphone: number
-  transaction?: transaction[]
+  registrationFee: number
   creator: { _id: string; name: string }
   lastEditedBy?: { _id: string; name: string }
   createdAt: Date

@@ -14,7 +14,7 @@ const memberSchema = new mongoose.Schema(
       }
     ],
     handphone: { type: Number },
-    transaction: [{ type: ObjectId, ref: 'Transaction' }],
+    registrationFee: { type: Number, required: true },
     creator: { type: ObjectId, ref: 'User' },
     lastEditedBy: { type: ObjectId, ref: 'User' }
   },
@@ -23,13 +23,11 @@ const memberSchema = new mongoose.Schema(
 
 memberSchema
   .pre('findOne', function (next) {
-    // this.populate('transaction', '_id package promo referal')
     this.populate('creator', '_id name')
     this.populate('lastEditedBy', '_id name')
     next()
   })
   .pre('find', function (next) {
-    // this.populate('transaction', '_id package promo referal')
     this.populate('creator', '_id name ')
     this.populate('lastEditedBy', '_id name')
     next()

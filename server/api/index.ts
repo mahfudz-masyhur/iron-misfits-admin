@@ -19,6 +19,8 @@ const axios = Axios.create({
   }
 })
 
+export const fetcherClient = async (url: string) => await axios.get(url).then(res => res.data)
+
 const fetchServer = async (url: string, req: IncomingMessage) => {
   const { data } = await axios.get(`http://localhost:${process.env.PORT}${url}`, {
     headers: { Cookie: req.headers.cookie || '' }
@@ -73,6 +75,7 @@ export const getMembers = async (req?: IncomingMessage, query?: any): Promise<IR
 
 export const addOrUpdateMember = async (values: MemberInput): Promise<IResponseMember> => {
   values.handphone = values.handphone ? convertToNumericPhoneNumber(values.handphone).toString() : ''
+  values.registrationFee = values.registrationFee ? convertToNumber(values.registrationFee).toString() : ''
   const { data } = await axios.post('/api/members', removeEmptyStringProperties(values))
 
   return data
@@ -131,19 +134,7 @@ export const getPromos = async (req?: IncomingMessage): Promise<IResponsePromos>
 }
 
 export const addOrUpdatePromo = async (values: PromoInput): Promise<IResponsePromo> => {
-  const body = {
-    _id: values._id,
-    name: values.name,
-    type: values.type,
-    startDate: values.date[0],
-    endDate: values.date[1],
-    discounts:
-      typeof values.discounts === 'number' ? `${values.discounts}` : convertToNumber(values.discounts).toString(),
-    status: values.status,
-    statusEdit: values.statusEdit,
-    updatedAt: values.updatedAt
-  }
-  const { data } = await axios.post('/api/promo', removeEmptyStringProperties(body))
+  const { data } = await axios.post('/api/promo', removeEmptyStringProperties(values))
 
   return data
 }

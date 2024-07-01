@@ -17,6 +17,7 @@ export interface MemberInput {
   name: string
   avatar?: string
   handphone?: string
+  registrationFee?: string
   socialmedia?: { key: string; value: string }[]
   updatedAt?: Date
 }

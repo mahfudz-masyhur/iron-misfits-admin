@@ -5,6 +5,7 @@ import { Ireq } from '../me/login'
 import { IReferral } from 'server/type/Referral'
 import { ReferralInput } from 'src/type/referral'
 import Referral from 'server/models/Referal'
+import { FilterQuery } from 'mongoose'
 
 type Data = {
   status: string
@@ -14,6 +15,16 @@ type Data = {
 }
 
 async function GET(req: Ireq, res: NextApiResponse<Data>) {
+  let { name, status, type } = req.query
+
+  const filter: FilterQuery<IReferral> = {}
+  if (name) {
+    const match = new RegExp(`${name}`, 'i')
+    filter.$or = [{ name: { $regex: match } }, { code: { $regex: match } }]
+  }
+  if (type) filter.type = type
+  if (status) filter.status = status
+
   const data = await Referral.find({}, { password: 0 })
 
   return res.json({ status: 'ok', message: 'Get Success', data })

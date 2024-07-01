@@ -16,9 +16,7 @@ type Data = {
 
 async function GET(req: Ireq, res: NextApiResponse<Data>) {
   let { name } = req.query
-
   const filter: FilterQuery<IMember> = {}
-
   if (name) {
     const isNumeric = /^\d+$/.test(name as string)
     if (isNumeric) {
@@ -28,6 +26,7 @@ async function GET(req: Ireq, res: NextApiResponse<Data>) {
       filter.$or = [{ name: { $regex: match } }, { email: { $regex: match } }]
     }
   }
+
   const product = await Member.find(filter)
 
   return res.json({ status: 'ok', message: 'Get Success', data: product })
@@ -35,7 +34,7 @@ async function GET(req: Ireq, res: NextApiResponse<Data>) {
 
 async function POST(req: Ireq, res: NextApiResponse<Data>) {
   const { user } = req
-  const { _id, name, avatar, handphone, socialmedia, updatedAt } = req.body as MemberInput
+  const { _id, name, avatar, handphone, socialmedia, registrationFee, updatedAt } = req.body as MemberInput
 
   if (_id) {
     const data = await Member.findOneAndUpdate(
@@ -45,6 +44,7 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
         avatar,
         handphone,
         socialmedia,
+        registrationFee,
         lastEditedBy: user
       }
     )
@@ -62,6 +62,7 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
     avatar,
     handphone,
     socialmedia,
+    registrationFee,
     creator: user
   })
 

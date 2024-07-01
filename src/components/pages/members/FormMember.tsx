@@ -12,7 +12,7 @@ import IconButton from 'src/components/ui/IconButton'
 import TextField from 'src/components/ui/TextField'
 import Tooltip from 'src/components/ui/Tolltip'
 import Typography from 'src/components/ui/Typograph'
-import { formatDate, formatPhoneNumber, toastError } from 'src/components/utility/formats'
+import { formatDate, formatNumber, formatPhoneNumber, toastError } from 'src/components/utility/formats'
 import { MemberInput } from 'src/type/member'
 
 interface Props {
@@ -90,6 +90,7 @@ function FormMember(props: Props) {
     name: value?.name || '',
     avatar: value?.avatar || '',
     handphone: value?.handphone ? `${formatPhoneNumber(value?.handphone)}` : '',
+    registrationFee: value?.registrationFee ? formatNumber(value?.registrationFee) : '',
     socialmedia: value?.socialmedia || [{ key: 'ig', value: '' }],
     updatedAt: value?.updatedAt
   }
@@ -193,6 +194,41 @@ function FormMember(props: Props) {
                     fullWidth
                   />
                 )}
+              </Field>
+            </div>
+            <div className='col-span-6'>
+              <Field name='registrationFee'>
+                {({ field, meta }: FieldProps) => {
+                  function handleNumber(
+                    e: ChangeEvent<HTMLInputElement>,
+                    onChange: {
+                      (e: ChangeEvent<any>): void
+                      <T = string | ChangeEvent<any>>(field: T): T extends ChangeEvent<any>
+                        ? void
+                        : (e: string | ChangeEvent<any>) => void
+                    }
+                  ) {
+                    e.target.value = formatNumber(e.target.value)
+
+                    return onChange(e)
+                  }
+
+                  return (
+                    <TextField
+                      margin='normal'
+                      label='Regisration Fee'
+                      placeholder='50.000'
+                      fullWidth
+                      startAdornment={<>Rp.</>}
+                      {...{
+                        ...field,
+                        onChange: (e: ChangeEvent<HTMLInputElement>) => handleNumber(e, field.onChange)
+                      }}
+                      error={Boolean(meta.error && meta.touched)}
+                      helperText={meta.error && meta.touched && String(meta.error)}
+                    />
+                  )
+                }}
               </Field>
             </div>
             <div className='col-span-6'>

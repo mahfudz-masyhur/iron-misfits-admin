@@ -17,7 +17,8 @@ export interface PromoInput {
   name: string
   type: 'percentage' | 'nominal'
   discounts: number | string
-  date: (Date | undefined)[]
+  startDate: Date
+  endDate: Date
   status: 'active' | 'inactive'
   statusEdit: boolean
   updatedAt?: Date

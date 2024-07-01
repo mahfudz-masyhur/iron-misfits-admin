@@ -5,6 +5,7 @@ import { Ireq } from '../me/login'
 import { IPromo } from 'server/type/Promo'
 import { PromoInput } from 'src/type/promo'
 import Promo from 'server/models/Promo'
+import { FilterQuery } from 'mongoose'
 
 type Data = {
   status: string
@@ -14,7 +15,16 @@ type Data = {
 }
 
 async function GET(req: Ireq, res: NextApiResponse<Data>) {
-  const data = await Promo.find({}, { password: 0 })
+  let { name, status, type } = req.query
+  const filter: FilterQuery<IPromo> = {}
+  if (name) {
+    const match = new RegExp(`${name}`, 'i')
+    filter.name = { $regex: match }
+  }
+  if (type) filter.type = type
+  if (status) filter.status = status
+
+  const data = await Promo.find(filter)
 
   return res.json({ status: 'ok', message: 'Get Success', data })
 }

@@ -1,6 +1,7 @@
 import { Field, FieldProps, Form, Formik, FormikHelpers } from 'formik'
 import { useRouter } from 'next/router'
 import { Dispatch, SetStateAction, useState } from 'react'
+import { fetcherClient } from 'server/api'
 import { IMember } from 'server/type/Member'
 import Button from 'src/components/ui/Button'
 import Dialog from 'src/components/ui/Dialog'
@@ -8,6 +9,14 @@ import IconTransaction from 'src/components/ui/Icon/IconTransaction'
 import IconButton from 'src/components/ui/IconButton'
 import TextField from 'src/components/ui/TextField'
 import { toastError } from 'src/components/utility/formats'
+import { IResponsePackages } from 'src/type/package'
+import useSWR from 'swr'
+
+const FieldPackage = ({ field, meta }: FieldProps) => {
+  const { data, error, isLoading } = useSWR<IResponsePackages>('/api/package?status=active', fetcherClient)
+  console.log(data)
+  return <></>
+}
 
 interface Props {
   setStopClose: Dispatch<SetStateAction<boolean>>
@@ -18,7 +27,9 @@ interface Props {
 const FormMember = (props: Props) => {
   const { setStopClose, member, handleClose } = props
   const router = useRouter()
-  const initialValues: any = {}
+  const initialValues: any = {
+    package: ''
+  }
 
   const validate = (values: any) => {
     const errors: any = {}
@@ -46,19 +57,7 @@ const FormMember = (props: Props) => {
         <Form>
           <div className='grid flex-grow grid-cols-6 px-4 pb-4 gap-x-4'>
             <div className='col-span-6'>
-              <Field name='name'>
-                {({ field, meta }: FieldProps) => (
-                  <TextField
-                    margin='normal'
-                    label='Name'
-                    placeholder='John Doe'
-                    error={Boolean(meta.error && meta.touched)}
-                    helperText={meta.error && meta.touched && String(meta.error)}
-                    {...field}
-                    fullWidth
-                  />
-                )}
-              </Field>
+              <Field name='package'>{(props: FieldProps) => <FieldPackage {...props} />}</Field>
             </div>
             <div className='col-span-6 text-right mt-2'>
               <Button type='button' variant='outlined' color='error' disabled={isSubmitting} onClick={handleClose}>

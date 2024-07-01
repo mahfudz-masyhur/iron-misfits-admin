@@ -9,8 +9,19 @@ import Select from 'src/components/ui/Select'
 import Option from 'src/components/ui/Select/Option'
 import TextField from 'src/components/ui/TextField'
 import useMediaQuery from 'src/components/utility/UI/useMediaQuery'
-import { formatNumber, toastError } from 'src/components/utility/formats'
+import { convertToNumber, formatNumber, toastError } from 'src/components/utility/formats'
 import { PromoInput } from 'src/type/promo'
+
+interface InitialValues {
+  _id: string
+  name: string
+  type: 'percentage' | 'nominal'
+  discounts: number | string
+  date: (Date | undefined)[]
+  status: 'active' | 'inactive'
+  statusEdit: boolean
+  updatedAt?: Date
+}
 
 const FieldScheduledUntil = (props: FieldProps) => {
   const { field, form, meta } = props
@@ -55,7 +66,7 @@ const statuses = ['active', 'inactive']
 function FormPromo(props: Props) {
   const { setStopClose, value, handleClose } = props
   const router = useRouter()
-  const initialValues: PromoInput = {
+  const initialValues: InitialValues = {
     _id: value?._id || '',
     name: value?.name || '',
     date: [value?.startDate || undefined, value?.endDate || undefined],
@@ -66,8 +77,8 @@ function FormPromo(props: Props) {
     updatedAt: value?.updatedAt
   }
 
-  const validate = (values: PromoInput) => {
-    const errors: FormikErrors<PromoInput> = {}
+  const validate = (values: InitialValues) => {
+    const errors: FormikErrors<InitialValues> = {}
 
     if (!values.name) errors.name = 'Required'
     if (!values.date[0] || !values.date[1]) errors.date = 'Required'
@@ -78,10 +89,22 @@ function FormPromo(props: Props) {
     return errors
   }
 
-  const onSubmit = async (values: PromoInput, formikHelpers: FormikHelpers<PromoInput>) => {
+  const onSubmit = async (values: InitialValues, formikHelpers: FormikHelpers<InitialValues>) => {
     try {
       setStopClose(true)
-      await addOrUpdatePromo(values)
+      const body: PromoInput = {
+        _id: values._id,
+        name: values.name,
+        type: values.type,
+        startDate: values.date[0] as Date,
+        endDate: values.date[1] as Date,
+        discounts:
+          typeof values.discounts === 'number' ? `${values.discounts}` : convertToNumber(values.discounts).toString(),
+        status: values.status,
+        statusEdit: values.statusEdit,
+        updatedAt: values.updatedAt
+      }
+      await addOrUpdatePromo(body)
       if (value) formikHelpers.resetForm()
       await router.push(router.asPath)
       setStopClose(false)
