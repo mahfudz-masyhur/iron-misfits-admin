@@ -15,6 +15,18 @@ const packageSchema = new mongoose.Schema(
   { timestamps: true }
 )
 
+packageSchema
+  .pre('findOne', function (next) {
+    this.populate('creator', '_id name')
+    this.populate('lastEditedBy', '_id name')
+    next()
+  })
+  .pre('find', function (next) {
+    this.populate('creator', '_id name ')
+    this.populate('lastEditedBy', '_id name')
+    next()
+  })
+
 const Package = (mongoose.models.Package as Model<IPackage>) || mongoose.model<IPackage>('Package', packageSchema)
 
 export default Package

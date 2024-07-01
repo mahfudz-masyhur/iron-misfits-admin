@@ -21,6 +21,7 @@ async function GETID(param: string) {
 async function DELETE(req: Ireq, res: NextApiResponse<Data>) {
   const { user } = req
   const { email } = req.body as IUser
+
   let param: string | null = `${req.query.id}`
   if (process.env.MASTER_ADMIN === email && user.email !== process.env.MASTER_ADMIN) {
     res.status(405).json({ status: '405 Method Not Allowed', message: 'Anda tidak bisa menghapus akun ini' })

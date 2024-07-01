@@ -1,5 +1,5 @@
 'use client'
-import { HTMLProps, HtmlHTMLAttributes, MutableRefObject, forwardRef, useEffect, useLayoutEffect, useRef } from 'react'
+import { HTMLProps, HtmlHTMLAttributes, MutableRefObject, forwardRef, useEffect, useRef } from 'react'
 import ReactDOM from 'react-dom'
 import BackDrop from 'src/components/utility/UI/BackDrop'
 import HiddenTransisiton from 'src/components/utility/UI/HiddenTransisiton'
@@ -179,7 +179,7 @@ const Menu = forwardRef<HTMLDivElement, MenuProps>((props, _ref) => {
   const { isVisible, opacity } = HiddenTransisiton(open)
   if (disableBackDrop === undefined || disableBackDrop === null) BackDrop(isVisible)
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (anchorEl && isVisible && menuRef.current) {
       AnchorStyles({ anchorPosition: anchor, anchorEl, isVisible, menuRef })
     }

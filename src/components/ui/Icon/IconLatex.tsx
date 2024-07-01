@@ -16,7 +16,6 @@ const IconLatex = forwardRef<SVGSVGElement, IconProps>((props: IconProps, ref) =
       height={`${fontSize}`}
       fill='#000000'
       version='1.1'
-      id='Icons'
       viewBox='0 0 18 18'
     >
       <path

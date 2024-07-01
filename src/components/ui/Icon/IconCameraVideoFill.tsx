@@ -15,7 +15,6 @@ const IconCameraVideoFill = forwardRef<SVGSVGElement, IconProps>((props: IconPro
       width={`${fontSize}`}
       height={`${fontSize}`}
       version='1.1'
-      id='Icons'
       viewBox='0 0 16 16'
       fill='#000000'
     >

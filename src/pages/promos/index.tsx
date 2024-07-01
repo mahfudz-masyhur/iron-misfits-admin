@@ -1,9 +1,8 @@
 import { GetServerSideProps } from 'next'
-import { getMembers } from 'server/api'
-import AddMember from 'src/components/pages/members/AddMember'
-import DeleteMember from 'src/components/pages/members/DeleteMember'
-import TransactionMember from 'src/components/pages/members/TransactionMember'
-import UpdateMember from 'src/components/pages/members/UpdateMember'
+import { getPromos } from 'server/api'
+import AddPromo from 'src/components/pages/promos/AddPromo'
+import DeletePromo from 'src/components/pages/promos/DeletePromo'
+import UpdatePromo from 'src/components/pages/promos/UpdatePromo'
 import Paper from 'src/components/ui/Paper'
 import Table from 'src/components/ui/Table'
 import TableBody from 'src/components/ui/Table/TableBody'
@@ -11,17 +10,17 @@ import TableCell from 'src/components/ui/Table/TableCell'
 import TableHead from 'src/components/ui/Table/TableHead'
 import TableRow from 'src/components/ui/Table/TableRow'
 import Typography from 'src/components/ui/Typograph'
-import { formatPhoneNumber, getURLParams } from 'src/components/utility/formats'
-import { IResponseMembers } from 'src/type/member'
+import { getURLParams } from 'src/components/utility/formats'
+import { IResponsePromos } from 'src/type/promo'
 
-function UsersPage({ data }: { data: IResponseMembers }) {
+function UsersPage({ data }: { data: IResponsePromos }) {
   return (
     <Paper className='p-4 m-4'>
       <div className='flex justify-between mb-2'>
         <Typography variant='h5' fontWeight='semibold'>
-          Table Members
+          Table Promo
         </Typography>
-        <AddMember />
+        <AddPromo />
       </div>
       <Table>
         <TableHead>
@@ -32,11 +31,14 @@ function UsersPage({ data }: { data: IResponseMembers }) {
             <TableCell head component='th' className='py-2 text-left'>
               Name
             </TableCell>
-            <TableCell head component='th' className='py-2 text-left'>
-              Email
+            <TableCell head component='th' className='py-2'>
+              Discounts
             </TableCell>
             <TableCell head component='th' className='py-2'>
-              Handphone
+              Member
+            </TableCell>
+            <TableCell head component='th' className='py-2'>
+              Status
             </TableCell>
             <TableCell head component='th' className='py-2 text-right'>
               Action
@@ -48,12 +50,11 @@ function UsersPage({ data }: { data: IResponseMembers }) {
             <TableRow hover key={`${i}`}>
               <TableCell>{i + 1}.</TableCell>
               <TableCell>{v.name}</TableCell>
-              <TableCell>{v.avatar}</TableCell>
-              <TableCell className='text-center whitespace-nowrap'>{formatPhoneNumber(v.handphone)}</TableCell>
+              <TableCell>{v.type === 'percentage' ? `${v.discounts}%` : v.discounts}</TableCell>
+              <TableCell>{v.status}</TableCell>
               <TableCell className='text-right whitespace-nowrap'>
-                <TransactionMember data={v} />
-                <UpdateMember data={v} />
-                <DeleteMember data={v} />
+                <UpdatePromo data={v} />
+                <DeletePromo data={v} />
               </TableCell>
             </TableRow>
           ))}
@@ -67,7 +68,7 @@ export default UsersPage
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   try {
-    const data = await getMembers(req)
+    const data = await getPromos(req)
     return {
       props: { data }
     }

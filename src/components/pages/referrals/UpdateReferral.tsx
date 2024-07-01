@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { IMember } from 'server/type/Member'
+import { IReferral } from 'server/type/Referral'
 import Dialog from 'src/components/ui/Dialog'
 import IconEditAnimated from 'src/components/ui/Icon/IconEditAnimated'
 import IconButton from 'src/components/ui/IconButton'
-import FormMember from './FormMember'
+import FormReferral from './FormReferral'
 
-function UpdateMember({ data }: { data: IMember }) {
+function UpdateReferral({ data }: { data: IReferral }) {
   const [open, setOpen] = useState(false)
   const [stopClose, setStopClose] = useState(false)
 
@@ -19,11 +19,11 @@ function UpdateMember({ data }: { data: IMember }) {
       </IconButton>
       <Dialog title='Edit Member' open={open} onClose={handleClose} closeButtom fullWidth maxWidth='md'>
         <div className='px-4 pb-4'>
-          <FormMember value={data} setStopClose={setStopClose} handleClose={handleClose} />
+          <FormReferral value={data} setStopClose={setStopClose} handleClose={handleClose} />
         </div>
       </Dialog>
     </>
   )
 }
 
-export default UpdateMember
+export default UpdateReferral

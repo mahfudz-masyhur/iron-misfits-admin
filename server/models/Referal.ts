@@ -1,7 +1,8 @@
 import mongoose, { Model } from 'mongoose'
 import { ObjectId } from 'mongodb'
+import { IReferral } from 'server/type/Referral'
 
-const referalSchema = new mongoose.Schema(
+const referralSchema = new mongoose.Schema(
   {
     name: { type: String, required: 'Name required' },
     code: { type: String },
@@ -16,7 +17,20 @@ const referalSchema = new mongoose.Schema(
   { timestamps: true }
 )
 
-const Referalreferal =
-  (mongoose.models.Referalreferal as Model<any>) || mongoose.model<any>('Referalreferal', referalSchema)
+referralSchema
+  .pre('findOne', function (next) {
+    this.populate('member', '_id name avatar socialmedia handphone')
+    this.populate('creator', '_id name')
+    this.populate('lastEditedBy', '_id name')
+    next()
+  })
+  .pre('find', function (next) {
+    this.populate('member', '_id name avatar socialmedia handphone')
+    this.populate('creator', '_id name ')
+    this.populate('lastEditedBy', '_id name')
+    next()
+  })
 
-export default Referalreferal
+const Referral = (mongoose.models.Referral as Model<IReferral>) || mongoose.model<IReferral>('Referral', referralSchema)
+
+export default Referral

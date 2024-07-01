@@ -8,6 +8,8 @@ import {
 } from 'src/components/utility/formats'
 import { IResponseMember, IResponseMembers, MemberInput } from 'src/type/member'
 import { IResponsePackage, IResponsePackages, PackageInput } from 'src/type/package'
+import { IResponsePromo, IResponsePromos, PromoInput } from 'src/type/promo'
+import { IResponseReferral, IResponseReferrals, ReferralInput } from 'src/type/referral'
 import { IResponseUser, IResponseUsers, UserInput } from 'src/type/users'
 
 const axios = Axios.create({
@@ -62,9 +64,9 @@ export const loginApi = async ({ email, password }: { email: string; password: s
   return data
 }
 
-export const getMembers = async (req?: IncomingMessage): Promise<IResponseMembers> => {
-  if (req) return await fetchServer('/api/members', req)
-  const { data } = await axios.get('/api/members')
+export const getMembers = async (req?: IncomingMessage, query?: any): Promise<IResponseMembers> => {
+  if (req) return await fetchServer(`/api/members?${query}`, req)
+  const { data } = await axios.get(`/api/members?${query}`)
 
   return data
 }
@@ -96,8 +98,58 @@ export const addOrUpdatePackage = async (values: PackageInput): Promise<IRespons
   return data
 }
 
-export const deletePackage = async (id: string): Promise<IResponsePackage> => {
-  const { data } = await axios.delete(`/api/package/${id}`)
+export const deletePackage = async (id: string, body: IResponsePackage['data']): Promise<IResponsePackage> => {
+  const { data } = await axios.delete(`/api/package/${id}`, { data: body })
+
+  return data
+}
+
+export const getReferral = async (req?: IncomingMessage): Promise<IResponseReferrals> => {
+  if (req) return await fetchServer('/api/referral', req)
+  const { data } = await axios.get('/api/referral')
+
+  return data
+}
+
+export const addOrUpdateReferral = async (values: ReferralInput): Promise<IResponseReferral> => {
+  const { data } = await axios.post('/api/referral', removeEmptyStringProperties(values))
+
+  return data
+}
+
+export const deleteReferral = async (id: string, body: IResponseReferral['data']): Promise<IResponseReferral> => {
+  const { data } = await axios.delete(`/api/referral/${id}`, { data: body })
+
+  return data
+}
+
+export const getPromos = async (req?: IncomingMessage): Promise<IResponsePromos> => {
+  if (req) return await fetchServer('/api/promo', req)
+  const { data } = await axios.get('/api/promo')
+
+  return data
+}
+
+export const addOrUpdatePromo = async (values: PromoInput): Promise<IResponsePromo> => {
+  const body = {
+    _id: values._id,
+    name: values.name,
+    type: values.type,
+    startDate: values.date[0],
+    endDate: values.date[1],
+    discounts:
+      typeof values.discounts === 'number' ? `${values.discounts}` : convertToNumber(values.discounts).toString(),
+    status: values.status,
+    statusEdit: values.statusEdit,
+    updatedAt: values.updatedAt
+  }
+  const { data } = await axios.post('/api/promo', removeEmptyStringProperties(body))
+
+  return data
+}
+
+export const deletePromo = async (id: string, body: IResponsePromo['data']): Promise<IResponsePromo> => {
+  const { data } = await axios.delete(`/api/promo/${id}`, { data: body })
 
   return data
 }

@@ -1,50 +1,38 @@
 import type { NextApiResponse } from 'next'
 import { validateAdmin, validateSignin } from 'server/controllers/validate'
 import connectMongoDB from 'server/libs/mongodb'
-import Member from 'server/models/Member'
-import { IMember } from 'server/type/Member'
-import { MemberInput } from 'src/type/member'
 import { Ireq } from '../me/login'
-import { FilterQuery } from 'mongoose'
+import { IReferral } from 'server/type/Referral'
+import { ReferralInput } from 'src/type/referral'
+import Referral from 'server/models/Referal'
 
 type Data = {
   status: string
   message: string
-  data?: IMember | IMember[] | null
+  data?: IReferral | IReferral[] | null
   error?: any
 }
 
 async function GET(req: Ireq, res: NextApiResponse<Data>) {
-  let { name } = req.query
+  const data = await Referral.find({}, { password: 0 })
 
-  const filter: FilterQuery<IMember> = {}
-
-  if (name) {
-    const isNumeric = /^\d+$/.test(name as string)
-    if (isNumeric) {
-      filter.handphone = Number(name)
-    } else {
-      const match = new RegExp(`${name}`, 'i')
-      filter.$or = [{ name: { $regex: match } }, { email: { $regex: match } }]
-    }
-  }
-  const product = await Member.find(filter)
-
-  return res.json({ status: 'ok', message: 'Get Success', data: product })
+  return res.json({ status: 'ok', message: 'Get Success', data })
 }
 
 async function POST(req: Ireq, res: NextApiResponse<Data>) {
   const { user } = req
-  const { _id, name, avatar, handphone, socialmedia, updatedAt } = req.body as MemberInput
+  const { _id, name, code, discounts, member, type, status, statusEdit, updatedAt } = req.body as ReferralInput
 
   if (_id) {
-    const data = await Member.findOneAndUpdate(
+    const data = await Referral.findOneAndUpdate(
       { _id, updatedAt },
       {
-        name,
-        avatar,
-        handphone,
-        socialmedia,
+        name: statusEdit ? name : undefined,
+        code: statusEdit ? code : undefined,
+        type: statusEdit ? type : undefined,
+        discounts: statusEdit ? discounts : undefined,
+        member,
+        status,
         lastEditedBy: user
       }
     )
@@ -57,11 +45,13 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
     return res.json({ status: 'ok', message: 'Update Success', data })
   }
 
-  const data = await Member.create({
+  const data = await Referral.create({
     name,
-    avatar,
-    handphone,
-    socialmedia,
+    code,
+    type,
+    discounts,
+    member,
+    status,
     creator: user
   })
 

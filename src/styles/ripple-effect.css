@@ -1,0 +1,51 @@
+
+@keyframes ripple {
+    to {
+      transform: scale(3);
+      opacity: 0;
+    }
+  }
+  
+  @keyframes scaleAnimation {
+    0% {
+      transform: scale(0);
+    }
+    100% {
+      transform: scale(3);
+    }
+  }
+  
+  .scale-animation {
+    animation: scaleAnimation 1s ease-in-out forwards;
+    transform-origin: center;
+  }
+  
+  .ripple-center {
+    background-position: center;
+    transition: background 0.3s;
+  }
+  
+  .ripple-center:hover {
+    background-image: radial-gradient(circle, transparent 1%, #ce1d1d10 1%);
+    background-position: center;
+    background-size: 15000%;
+  }
+  
+  .ripple-center:active {
+    transition: background 0s;
+    background-size: 100%;
+  }
+  
+  @keyframes ripple-center {
+    0% {
+      width: 0;
+      height: 0;
+      opacity: 0.4;
+    }
+    100% {
+      width: 500px;
+      height: 500px;
+      opacity: 0;
+    }
+  }
+    

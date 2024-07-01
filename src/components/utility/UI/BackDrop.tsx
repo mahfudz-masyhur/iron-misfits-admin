@@ -1,5 +1,5 @@
 'use client'
-import { useLayoutEffect } from 'react'
+import { useEffect } from 'react'
 
 interface moreOptions {
   disableisThereScrollbar?: true
@@ -39,7 +39,7 @@ const isThereScrollbar = () => {
 }
 
 const BackDrop = (open: boolean, moreOptions?: moreOptions) => {
-  useLayoutEffect(() => {
+  useEffect(() => {
     const presentationDiv = document.getElementById('presentation')
     const scrollbarWidth = getScrollBarWidth()
     const { hasVerticalScrollbar } = isThereScrollbar()

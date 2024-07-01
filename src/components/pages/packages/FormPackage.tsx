@@ -79,7 +79,7 @@ function FormPackage(props: Props) {
             <div className='col-span-6'>
               <Field name='price'>
                 {({ field, meta }: FieldProps) => {
-                  function handlePhoneNumber(
+                  function handleNumber(
                     e: ChangeEvent<HTMLInputElement>,
                     onChange: {
                       (e: ChangeEvent<any>): void
@@ -102,7 +102,7 @@ function FormPackage(props: Props) {
                       startAdornment={<>Rp.</>}
                       {...{
                         ...field,
-                        onChange: (e: ChangeEvent<HTMLInputElement>) => handlePhoneNumber(e, field.onChange)
+                        onChange: (e: ChangeEvent<HTMLInputElement>) => handleNumber(e, field.onChange)
                       }}
                       error={Boolean(meta.error && meta.touched)}
                       helperText={meta.error && meta.touched && String(meta.error)}

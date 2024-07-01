@@ -15,7 +15,6 @@ const IconSuperscript = forwardRef<SVGSVGElement, IconProps>((props: IconProps, 
       width={`${fontSize}`}
       height={`${fontSize}`}
       version='1.1'
-      id='Icons'
       viewBox='0 0 24 24'
       fill='none'
     >

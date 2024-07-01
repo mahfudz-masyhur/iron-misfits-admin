@@ -16,7 +16,6 @@ const IconFormatColorFill = forwardRef<SVGSVGElement, IconProps>((props: IconPro
       height={`${fontSize}`}
       fill='#000000'
       version='1.1'
-      id='Icons'
       viewBox='0 0 32 32'
     >
       <g>

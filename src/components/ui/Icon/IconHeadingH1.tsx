@@ -15,7 +15,6 @@ const IconHeadingH1 = forwardRef<SVGSVGElement, IconProps>((props: IconProps, re
       width={`${fontSize}`}
       height={`${fontSize}`}
       version='1.1'
-      id='Icons'
       viewBox='0 0 24 24'
       fill='none'
     >

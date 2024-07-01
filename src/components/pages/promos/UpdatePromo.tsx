@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { IMember } from 'server/type/Member'
+import { IPromo } from 'server/type/Promo'
 import Dialog from 'src/components/ui/Dialog'
 import IconEditAnimated from 'src/components/ui/Icon/IconEditAnimated'
 import IconButton from 'src/components/ui/IconButton'
-import FormMember from './FormMember'
+import FormPromo from './FormPromo'
 
-function UpdateMember({ data }: { data: IMember }) {
+function UpdatePromo({ data }: { data: IPromo }) {
   const [open, setOpen] = useState(false)
   const [stopClose, setStopClose] = useState(false)
 
@@ -17,13 +17,13 @@ function UpdateMember({ data }: { data: IMember }) {
       <IconButton sizes='small' variant='text' onClick={handleOpen}>
         <IconEditAnimated fontSize={20} />
       </IconButton>
-      <Dialog title='Edit Member' open={open} onClose={handleClose} closeButtom fullWidth maxWidth='md'>
+      <Dialog title='Edit Promo' open={open} onClose={handleClose} closeButtom fullWidth maxWidth='md'>
         <div className='px-4 pb-4'>
-          <FormMember value={data} setStopClose={setStopClose} handleClose={handleClose} />
+          <FormPromo value={data} setStopClose={setStopClose} handleClose={handleClose} />
         </div>
       </Dialog>
     </>
   )
 }
 
-export default UpdateMember
+export default UpdatePromo
