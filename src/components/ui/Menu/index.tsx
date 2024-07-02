@@ -1,4 +1,3 @@
-'use client'
 import { HTMLProps, HtmlHTMLAttributes, MutableRefObject, forwardRef, useEffect, useRef } from 'react'
 import ReactDOM from 'react-dom'
 import BackDrop from 'src/components/utility/UI/BackDrop'
@@ -21,7 +20,7 @@ type anchor =
 
 interface MoreMenuProps {
   open: boolean
-  onClose?: () => void
+  onClose: () => void
   anchor?: anchor
   anchorEl?: HTMLElement | null
   classNames?: {
@@ -33,26 +32,6 @@ interface MoreMenuProps {
 }
 
 export type MenuProps = HtmlHTMLAttributes<HTMLDivElement> & MoreMenuProps
-
-interface ClickAwayProps {
-  menuRef: MutableRefObject<HTMLDivElement | null>
-  onClose: (() => void) | undefined
-  open: boolean
-}
-const ClickAway = ({ menuRef, onClose, open }: ClickAwayProps) => {
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) onClose?.()
-    }
-
-    if (open) document.addEventListener('mouseup', handleClickOutside)
-    else document.removeEventListener('mouseup', handleClickOutside)
-
-    return () => {
-      document.removeEventListener('mouseup', handleClickOutside)
-    }
-  }, [open, onClose, menuRef])
-}
 
 interface AnchorStylesProps {
   anchorPosition: anchor
@@ -175,7 +154,6 @@ const Menu = forwardRef<HTMLDivElement, MenuProps>((props, _ref) => {
   } = props
   const menuRef = useRef<HTMLDivElement | null>(null)
 
-  ClickAway({ menuRef, onClose, open })
   const { isVisible, opacity } = HiddenTransisiton(open)
   if (disableBackDrop === undefined || disableBackDrop === null) BackDrop(isVisible)
 
@@ -183,7 +161,23 @@ const Menu = forwardRef<HTMLDivElement, MenuProps>((props, _ref) => {
     if (anchorEl && isVisible && menuRef.current) {
       AnchorStyles({ anchorPosition: anchor, anchorEl, isVisible, menuRef })
     }
-  }, [anchor, anchorEl, isVisible])
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(event.target as Node) &&
+        anchorEl &&
+        !anchorEl.contains(event.target as Node)
+      ) {
+        onClose()
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [anchor, anchorEl, isVisible, onClose])
 
   if (!isVisible) return <></>
 
