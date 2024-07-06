@@ -25,7 +25,7 @@ async function GET(req: Ireq, res: NextApiResponse<Data>) {
   if (type) filter.type = type
   if (status) filter.status = status
 
-  const data = await Referral.find({}, { password: 0 })
+  const data = await Referral.find(filter)
 
   return res.json({ status: 'ok', message: 'Get Success', data })
 }

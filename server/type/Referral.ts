@@ -12,7 +12,8 @@ export interface IReferral {
   code: string
   type: 'percentage' | 'nominal'
   discounts: number | string
-  member: member[]
+  useCount: number
+  member: member
   status: 'active' | 'inactive'
   statusEdit: boolean
   creator?: { _id: string; name: string }

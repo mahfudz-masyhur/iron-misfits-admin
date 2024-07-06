@@ -127,7 +127,7 @@ const Select = forwardRef<HTMLSelectElement, TextFieldProps>((props: TextFieldPr
       if (multiple) {
         if ((intialValue as string[])?.includes(element.props?.value)) value = element.props?.children
       } else {
-        if (element.props?.value === intialValue) value = element.props?.children
+        if (element?.props?.value === intialValue) value = element?.props?.children
       }
       return value
     })

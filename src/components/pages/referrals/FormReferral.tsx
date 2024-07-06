@@ -1,17 +1,14 @@
-import { Field, FieldArray, FieldProps, Form, Formik, FormikErrors, FormikHelpers } from 'formik'
+import { Field, FieldProps, Form, Formik, FormikErrors, FormikHelpers } from 'formik'
 import { useRouter } from 'next/router'
 import { ChangeEvent, Dispatch, SetStateAction } from 'react'
 import { addOrUpdateReferral, getMembers } from 'server/api'
 import { IMember } from 'server/type/Member'
 import { IReferral } from 'server/type/Referral'
 import Autocomplete from 'src/components/ui/Autocomplete'
-import Avatar from 'src/components/ui/Avatar'
 import Button from 'src/components/ui/Button'
-import IconClose from 'src/components/ui/Icon/IconClose'
 import Select from 'src/components/ui/Select'
 import Option from 'src/components/ui/Select/Option'
 import TextField from 'src/components/ui/TextField'
-import Typography from 'src/components/ui/Typograph'
 import { convertToNumber, formatNumber, getURLParams, toastError } from 'src/components/utility/formats'
 import { ReferralInput } from 'src/type/referral'
 
@@ -24,7 +21,6 @@ const StudentField = ({ field, form, meta }: FieldProps) => {
       }
       const query: typeQuery = { name: value, limit: 50 }
       const res = await getMembers(undefined, getURLParams(query))
-      console.log(res)
 
       return res.data
     } catch (error) {
@@ -32,48 +28,27 @@ const StudentField = ({ field, form, meta }: FieldProps) => {
     }
   }
   return (
-    <FieldArray name={field.name}>
-      {({ remove }) => (
-        <Autocomplete
-          fullWidth
-          margin='normal'
-          label='Member'
-          multiple
-          field={field.value || []}
-          getOption={(option: IMember) => ({
-            _id: option?._id,
-            name: option?.name,
-            handphone: option?.handphone,
-            avatar: option?.avatar
-          })}
-          setFieldValue={(v: IMember) => form.setFieldValue(field.name, v)}
-          fetch={fetchSuggestions}
-          error={Boolean(meta.error && meta.touched)}
-          helperText={meta.error && meta.touched && String(meta.error)}
-          renderFieldArray={(item: IMember, props) => (
-            <li className='flex items-center gap-2 p-1 my-1 border border-dotted rounded-md' key={props.key}>
-              <Avatar src={`${process.env.IMAGE_PREVIEW}/${item?.avatar}`} alt={item?.name} width={35} height={35} />
-              <div className='flex-grow'>
-                <Typography variant='subtitle2' component='h6'>
-                  {item?.name}
-                </Typography>
-                <Typography variant='caption' component='span'>
-                  {item?.handphone}
-                </Typography>
-              </div>
-              <button type='button' onClick={() => remove(props.key)}>
-                <IconClose fontSize={15} />
-              </button>
-            </li>
-          )}
-          renderOption={(option: IMember, props) => (
-            <li {...props}>
-              <span>{option?.name}</span>
-            </li>
-          )}
-        />
+    <Autocomplete
+      fullWidth
+      margin='normal'
+      label='Member'
+      field={field.value || []}
+      getOption={(option: IMember) => ({
+        _id: option?._id,
+        name: option?.name,
+        handphone: option?.handphone,
+        avatar: option?.avatar
+      })}
+      setFieldValue={(v: IMember) => form.setFieldValue(field.name, v)}
+      fetch={fetchSuggestions}
+      error={Boolean(meta.error && meta.touched)}
+      helperText={meta.error && meta.touched && String(meta.error)}
+      renderOption={(option: IMember, props) => (
+        <li {...props}>
+          <span>{option?.name}</span>
+        </li>
       )}
-    </FieldArray>
+    />
   )
 }
 
@@ -93,11 +68,12 @@ function FormReferral(props: Props) {
     code: value?.code || '',
     type: value?.type || 'percentage',
     discounts: value?.discounts ? formatNumber(value?.discounts) : '',
-    member: value?.member || [],
+    member: value?.member || { _id: '', name: '', handphone: 0 },
     status: value?.status || 'active',
     statusEdit: value?.statusEdit ? true : false,
     updatedAt: value?.updatedAt
   }
+  console.log({ initialValues })
 
   const validate = (values: IReferral) => {
     const errors: FormikErrors<IReferral> = {}
@@ -106,7 +82,6 @@ function FormReferral(props: Props) {
     if (!values.code) errors.code = 'Required'
     if (!values.type) errors.type = 'Required'
     if (!values.discounts) errors.discounts = 'Required'
-    if (values.member.length === 0) errors.member = 'Required'
     if (!values.status) errors.status = 'Required'
 
     return errors
@@ -125,7 +100,7 @@ function FormReferral(props: Props) {
         status: values.status,
         statusEdit: values.statusEdit,
         updatedAt: values.updatedAt,
-        member: values.member.map(v => v._id)
+        member: values.member._id
       }
       await addOrUpdateReferral(body)
       if (value) formikHelpers.resetForm()

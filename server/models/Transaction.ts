@@ -29,13 +29,15 @@ pendingRecortSchema
 
 let transactionSchema = new mongoose.Schema(
   {
-    member: { type: ObjectId, ref: 'Member', required: 'Email required' },
-    package: { type: ObjectId, ref: 'Package', required: 'Email required' },
+    price: { type: Number, required: true },
+    priceAfterdiscount: { type: Number },
+    member: { type: ObjectId, ref: 'Member', required: true },
+    package: { type: ObjectId, ref: 'Package', required: true },
     promo: { type: ObjectId, ref: 'Promo' },
     referral: { type: ObjectId, ref: 'Referral' },
     expired: { type: Date, required: true },
+    status: { type: String, enum: ['PENDING', 'ACTIVE', 'INACTIVE'] },
     pending: [{ type: pendingRecortSchema }],
-    active: { type: Boolean, required: true },
     creator: { type: ObjectId, ref: 'User' },
     lastEditedBy: { type: ObjectId, ref: 'User' }
   },

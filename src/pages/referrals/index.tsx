@@ -55,7 +55,7 @@ function UsersPage({ data }: { data: IResponseReferrals }) {
               <TableCell>{v.name}</TableCell>
               <TableCell>{v.code}</TableCell>
               <TableCell>{v.type === 'percentage' ? `${v.discounts}%` : v.discounts}</TableCell>
-              <TableCell>{FormatListArray(v.member.map(v => v.name))}</TableCell>
+              <TableCell>{v.member.name}</TableCell>
               <TableCell>{v.status}</TableCell>
               <TableCell className='text-right whitespace-nowrap'>
                 <UpdateReferral data={v} />

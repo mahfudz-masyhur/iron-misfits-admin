@@ -1,9 +1,11 @@
 import { GetServerSideProps } from 'next'
+import Link from 'next/link'
 import { getMembers } from 'server/api'
 import AddMember from 'src/components/pages/members/AddMember'
 import DeleteMember from 'src/components/pages/members/DeleteMember'
-import TransactionMember from 'src/components/pages/members/TransactionMember'
 import UpdateMember from 'src/components/pages/members/UpdateMember'
+import IconTransaction from 'src/components/ui/Icon/IconTransaction'
+import IconButton from 'src/components/ui/IconButton'
 import Paper from 'src/components/ui/Paper'
 import Table from 'src/components/ui/Table'
 import TableBody from 'src/components/ui/Table/TableBody'
@@ -51,7 +53,15 @@ function UsersPage({ data }: { data: IResponseMembers }) {
               <TableCell>{v.avatar}</TableCell>
               <TableCell className='text-center whitespace-nowrap'>{formatPhoneNumber(v.handphone)}</TableCell>
               <TableCell className='text-right whitespace-nowrap'>
-                <TransactionMember data={v} />
+                <IconButton
+                  sizes='small'
+                  variant='text'
+                  color='success'
+                  LinkComponent={Link}
+                  href={`/members/${v._id}`}
+                >
+                  <IconTransaction fontSize={20} />
+                </IconButton>
                 <UpdateMember data={v} />
                 <DeleteMember data={v} />
               </TableCell>

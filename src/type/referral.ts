@@ -18,7 +18,7 @@ export interface ReferralInput {
   code: string
   type: 'percentage' | 'nominal'
   discounts: string
-  member: string[]
+  member: string
   status: 'active' | 'inactive'
   statusEdit: boolean
   updatedAt?: Date

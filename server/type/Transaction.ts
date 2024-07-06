@@ -5,6 +5,7 @@ interface IPendingRecord {
   howMuchDays: Date
   expiredBefore: Date
   expiredThen: Date
+  statusEdit: boolean
   creator?: { _id: string; name: string }
   lastEditedBy?: { _id: string; name: string }
   createdAt?: Date
@@ -12,6 +13,9 @@ interface IPendingRecord {
 }
 
 export interface ITransaction {
+  _id: string
+  price: number
+  priceAfterdiscount: number
   member: {
     _id: string
     name: string
@@ -34,14 +38,15 @@ export interface ITransaction {
     endDate: Date
   }
   referral?: {
+    _id: string
     name: string
     code: string
     type: 'percentage' | 'nominal'
     discounts: number | string
   }
   expired: Date
+  status: 'PENDING' | 'ACTIVE' | 'INACTIVE'
   pending: IPendingRecord[]
-  active: boolean
   creator?: { _id: string; name: string }
   lastEditedBy?: { _id: string; name: string }
   createdAt?: Date
