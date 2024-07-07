@@ -95,7 +95,7 @@ const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement | HTMLSelect
       noFocusAnimation,
       ...rest
     } = props
-    const [value, setValue] = useState(intialValue ? true : false)
+    const [value, setValue] = useState(intialValue === 0 ? true : intialValue ? true : false)
     const [isFocused, setIsFocused] = useState(false)
 
     const inputClasses = twMerge(fullWidth && 'w-full', 'bg-inherit', 'focus:outline-none', 'focus:ring-0')
@@ -113,7 +113,8 @@ const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement | HTMLSelect
     }
 
     useEffect(() => {
-      if (!intialValue) setValue(false)
+      const check = intialValue === 0 ? true : intialValue ? true : false
+      if (!check) setValue(false)
       else setValue(true)
     }, [intialValue])
 

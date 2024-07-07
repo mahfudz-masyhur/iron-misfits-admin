@@ -38,7 +38,6 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
     _id,
     expired,
     member,
-    pending,
     package: pckge,
     priceAfterdiscount,
     promo,
@@ -158,7 +157,6 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
         price,
         expired,
         member,
-        pending,
         package: pckge,
         priceAfterdiscount,
         promo,
@@ -198,12 +196,10 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
     }
   }
 
-  console.log('\n\n\n', { discountBA })
   const data = await Transaction.create({
     price,
     expired,
     member,
-    pending,
     package: pckge,
     priceAfterdiscount,
     promo,

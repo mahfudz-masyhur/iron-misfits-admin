@@ -31,7 +31,6 @@ export default function FormLogin() {
       if (!email || !password) return
       setIsLoading(true)
       const data = await loginApi({ email, password })
-      console.log(data)
 
       setUser(data.data.user)
       setToken(data.data.token)

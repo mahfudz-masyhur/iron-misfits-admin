@@ -85,7 +85,7 @@ const FieldPackage = ({ field, meta, form, setCountPack }: countPack) => {
       helperText={meta.error && meta.touched && String(meta.error)}
     />
   ) : (
-    <Skeleton height={40} width='100%' variant='rounded' />
+    <Skeleton height={40} width='100%' variant='rounded' className='my-4' />
   )
 }
 
@@ -120,7 +120,7 @@ const FieldPromo = ({ field, meta, form, setCountPack }: countPack) => {
       helperText={meta.error && meta.touched && String(meta.error)}
     />
   ) : (
-    <Skeleton height={40} width='100%' variant='rounded' />
+    <Skeleton height={40} width='100%' variant='rounded' className='my-4' />
   )
 }
 
@@ -206,15 +206,15 @@ const FieldPrice = ({ setFieldValue, countPack, isEditAble, referralBA }: IField
     return result
   }
 
-  function diskonPersentase(hargaAsli: number, persentaseDiskon:number) {
-    const diskon = hargaAsli * (persentaseDiskon / 100);
-    const hargaSetelahDiskon = hargaAsli - diskon;
-    return hargaSetelahDiskon;
+  function diskonPersentase(hargaAsli: number, persentaseDiskon: number) {
+    const diskon = hargaAsli * (persentaseDiskon / 100)
+    const hargaSetelahDiskon = hargaAsli - diskon
+    return hargaSetelahDiskon
   }
 
-  function diskonPotongan(hargaAsli: number, potonganHarga:number) {
-    const hargaSetelahDiskon = hargaAsli - potonganHarga;
-    return hargaSetelahDiskon;
+  function diskonPotongan(hargaAsli: number, potonganHarga: number) {
+    const hargaSetelahDiskon = hargaAsli - potonganHarga
+    return hargaSetelahDiskon
   }
 
   useEffect(() => {
@@ -239,8 +239,8 @@ const FieldPrice = ({ setFieldValue, countPack, isEditAble, referralBA }: IField
     if (referralBA) {
       const promoDiscount =
         referralBA.type === 'percentage'
-          ? diskonPersentase(price, (Number(referralBA.discounts) * Number(referralBA.useCount)))
-          : diskonPotongan(price, (Number(referralBA.discounts) * Number(referralBA.useCount)))
+          ? diskonPersentase(price, Number(referralBA.discounts) * Number(referralBA.useCount))
+          : diskonPotongan(price, Number(referralBA.discounts) * Number(referralBA.useCount))
       price = promoDiscount
     }
 
@@ -465,7 +465,6 @@ const FormTransactionMember = (props: Props) => {
         member: values.member,
         expired: values.expired,
         status: values.status,
-        pending: values.pending || [],
         createdAt: values.createdAt,
         package: values.package?._id || '',
         promo: values.promo?._id || null,

@@ -30,7 +30,7 @@ export default function AddProduct() {
 
       router.push("/products");
     } catch (error) {
-      console.log(error);
+      console.error(error)
     }
   };
 

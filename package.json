@@ -10,8 +10,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@radix-ui/react-accordion": "^1.2.0",
-    "@radix-ui/react-popover": "^1.1.1",
     "@types/mongoose": "^5.11.97",
     "axios": "^1.7.2",
     "bcrypt": "^5.1.1",

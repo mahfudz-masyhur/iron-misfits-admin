@@ -1,4 +1,4 @@
-import { ITransaction } from 'server/type/Transaction'
+import { IPendingRecord, ITransaction } from 'server/type/Transaction'
 
 export interface IResponseTransactions {
   status: 'ok' | 'error'
@@ -13,11 +13,9 @@ export interface IResponseTransaction {
 }
 
 export interface PendingRecordInput {
-  type: 'PENDING' | 'CANCLE-PENDING'
-  howMuchDays: number
-  expiredBefore: Date
-  expiredThen: Date
-  statusEdit: boolean
+  status: 'PENDING' | 'ACTIVE' | 'INACTIVE'
+  expired: Date
+  pending: IPendingRecord
   updatedAt?: Date
 }
 
@@ -32,7 +30,6 @@ export interface TransactionInput {
   member: string
   expired: Date
   status: 'PENDING' | 'ACTIVE' | 'INACTIVE'
-  pending: PendingRecordInput[]
   createdAt?: Date
   updatedAt?: Date
   discountBA?: string

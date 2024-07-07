@@ -12,7 +12,7 @@ const getProducts = async () => {
     }
     return res.json();
   } catch (error) {
-    console.log("Error loading products: ", error);
+    console.error('Error loading products: ', error)
   }
 };
 export default async function ProductssList() {

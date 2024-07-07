@@ -4,13 +4,14 @@ import { IUser } from 'server/type/User'
 import {
   convertToNumber,
   convertToNumericPhoneNumber,
+  getURLParams,
   removeEmptyStringProperties
 } from 'src/components/utility/formats'
 import { IResponseMember, IResponseMembers, MemberInput } from 'src/type/member'
 import { IResponsePackage, IResponsePackages, PackageInput } from 'src/type/package'
 import { IResponsePromo, IResponsePromos, PromoInput } from 'src/type/promo'
 import { IResponseReferral, IResponseReferrals, ReferralInput } from 'src/type/referral'
-import { IResponseTransaction, IResponseTransactions, TransactionInput } from 'src/type/transaction'
+import { IResponseTransaction, IResponseTransactions, PendingRecordInput, TransactionInput } from 'src/type/transaction'
 import { IResponseUser, IResponseUsers, UserInput } from 'src/type/users'
 
 const axios = Axios.create({
@@ -175,9 +176,21 @@ export const addOrUpdateTransaction = async (values: TransactionInput): Promise<
 
 export const deleteTransaction = async (
   id: string,
-  body: IResponseTransaction['data']
+  body: IResponseTransaction['data'],
+  query?: { pendingId: string; nextPendingId?: string }
 ): Promise<IResponseTransaction> => {
-  const { data } = await axios.delete(`/api/transaction/${id}`, { data: body })
+  const { data } = await axios.delete(`/api/transaction/${id}?${getURLParams(query)}`, { data: body })
+
+  return data
+}
+
+export const addOrUpdateExtraTimeTransaction = async (
+  id: string,
+  values: PendingRecordInput,
+  query?: { pendingId: string }
+): Promise<IResponseTransaction> => {
+  const url = `/api/transaction/${id}?${getURLParams(query)}`
+  const { data } = await axios.post(url, values)
 
   return data
 }

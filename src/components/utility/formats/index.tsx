@@ -162,7 +162,7 @@ export const priceFormatter = (price: number) => {
   return `Rp ${(price / 1e6 / 1).toPrecision(2).toLocaleString()} jt`
 }
 
-export const getURLParams = (obj: {}): string => {
+export const getURLParams = (obj = {}): string => {
   const params = new URLSearchParams(obj)
   for (const [key, value] of Object.entries(obj)) {
     if (Array.isArray(value)) {

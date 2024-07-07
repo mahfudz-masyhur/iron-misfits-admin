@@ -44,7 +44,7 @@ export default function EditProductForm({
       router.refresh();
       router.push("/products");
     } catch (error) {
-      console.log(error);
+      console.error(error)
     }
   };
 

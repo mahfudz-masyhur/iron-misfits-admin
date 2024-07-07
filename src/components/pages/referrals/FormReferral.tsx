@@ -73,7 +73,6 @@ function FormReferral(props: Props) {
     statusEdit: value?.statusEdit ? true : false,
     updatedAt: value?.updatedAt
   }
-  console.log({ initialValues })
 
   const validate = (values: IReferral) => {
     const errors: FormikErrors<IReferral> = {}

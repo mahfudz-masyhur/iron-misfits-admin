@@ -10,7 +10,7 @@ import TableCell from 'src/components/ui/Table/TableCell'
 import TableHead from 'src/components/ui/Table/TableHead'
 import TableRow from 'src/components/ui/Table/TableRow'
 import Typography from 'src/components/ui/Typograph'
-import { FormatListArray, formatPhoneNumber, getURLParams } from 'src/components/utility/formats'
+import { getURLParams } from 'src/components/utility/formats'
 import { IResponseReferrals } from 'src/type/referral'
 
 function UsersPage({ data }: { data: IResponseReferrals }) {
