@@ -75,7 +75,6 @@ export const getMembers = async (req?: IncomingMessage, query?: any): Promise<IR
 }
 
 export const getMemberId = async (id: string, req?: IncomingMessage, query?: any): Promise<IResponseMember> => {
-  console.log(`/api/members/${id}?${query}`)
   if (req) return await fetchServer(`/api/members/${id}?${query}`, req)
   const { data } = await axios.get(`/api/members/${id}?${query}`)
 
@@ -123,6 +122,13 @@ export const getReferral = async (req?: IncomingMessage, query?: any): Promise<I
   return data
 }
 
+export const getOneReferral = async (req?: IncomingMessage, query?: any): Promise<IResponseReferrals> => {
+  if (req) return await fetchServer(`/api/referral/find-one?${query}`, req)
+  const { data } = await axios.get(`/api/referral?/find-one${query}`)
+
+  return data
+}
+
 export const addOrUpdateReferral = async (values: ReferralInput): Promise<IResponseReferral> => {
   const { data } = await axios.post('/api/referral', removeEmptyStringProperties(values))
 
@@ -162,16 +168,9 @@ export const getTransactions = async (req?: IncomingMessage, query?: any): Promi
 }
 
 export const addOrUpdateTransaction = async (values: TransactionInput): Promise<IResponseTransaction> => {
-  const body = {
-    ...values,
-    package: values.package?._id,
-    promo: values.promo?._id,
-    referral: values.referral?._id
-  }
-  // const { data } = await axios.post('/api/transaction', body)
-  console.log('/api/transaction', body)
+  const { data } = await axios.post('/api/transaction', values)
 
-  // return data
+  return data
 }
 
 export const deleteTransaction = async (

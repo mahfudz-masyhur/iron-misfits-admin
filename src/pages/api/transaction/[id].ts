@@ -4,6 +4,7 @@ import connectMongoDB from 'server/libs/mongodb'
 import Transaction from 'server/models/Transaction'
 import { ITransaction } from 'server/type/Transaction'
 import { Ireq } from '../me/login'
+import Referral from 'server/models/Referal'
 
 type Data = {
   status: string
@@ -20,8 +21,9 @@ async function GETID(req: Ireq, res: NextApiResponse<Data>) {
 }
 
 async function DELETE(req: Ireq, res: NextApiResponse<Data>) {
+  const { user } = req
   let param = `${req.query.id}`
-  const { updatedAt, createdAt } = req.body as ITransaction
+  const { updatedAt, createdAt, referral } = req.body as ITransaction
 
   if (!createdAt) {
     res.status(400).json({ status: '405 Method Not Allowed', message: 'createdAt is required' })
@@ -41,6 +43,25 @@ async function DELETE(req: Ireq, res: NextApiResponse<Data>) {
       .status(400)
       .json({ status: '405 Method Not Allowed', message: 'The transaction date cannot be more than one day old' })
     throw new Error('')
+  }
+
+  if (referral?._id) {
+    const findTransaction = await Transaction.findOne({ _id: param, updatedAt })
+
+    if (!findTransaction) {
+      res.status(404).json({ status: '404 Not Found', message: 'Transaction not founded' })
+      throw new Error('')
+    }
+    const referralInvitation = await Referral.findOneAndUpdate(
+      { _id: findTransaction?.referral?._id, status: 'active' },
+      { $inc: { useCount: -1 }, $set: { statusEdit: false } },
+      { new: true, timestamps: false }
+    )
+
+    if (!referralInvitation) {
+      res.status(501).json({ status: '501 Not Implemented', message: 'Referral remove useCount update Failed' })
+      throw new Error('')
+    }
   }
   const data = await Transaction.findOneAndDelete({ _id: param, updatedAt })
 

@@ -1,11 +1,13 @@
 import { ISocialMedia } from './Member'
 
-interface IPendingRecord {
+export interface IPendingRecord {
+  _id: string
   type: 'PENDING' | 'CANCLE-PENDING'
-  howMuchDays: Date
+  howMuchDays: number
   expiredBefore: Date
   expiredThen: Date
   statusEdit: boolean
+  description?: string
   creator?: { _id: string; name: string }
   lastEditedBy?: { _id: string; name: string }
   createdAt?: Date
@@ -51,4 +53,6 @@ export interface ITransaction {
   lastEditedBy?: { _id: string; name: string }
   createdAt?: Date
   updatedAt?: Date
+  discountBA?: string
+  description?: string
 }

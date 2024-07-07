@@ -1,13 +1,21 @@
 import { useState } from 'react'
 import { IMember } from 'server/type/Member'
-import Dialog from 'src/components/ui/Dialog'
-import IconEdit from 'src/components/ui/Icon/IconEdit'
-import IconButton from 'src/components/ui/IconButton'
-import FormTransactionMember from './FormTransactionMember'
-import { ITransaction } from 'server/type/Transaction'
 import { IReferral } from 'server/type/Referral'
+import { ITransaction } from 'server/type/Transaction'
+import Dialog from 'src/components/ui/Dialog'
+import IconMoreTime from 'src/components/ui/Icon/IconMoreTime'
+import IconButton from 'src/components/ui/IconButton'
+import AddExtraTimeForTransactionMemberForm from './Form'
 
-function EditTransactionMember({ data, value, referral }: { data: IMember; value: ITransaction; referral: IReferral }) {
+function AddExtraTimeForTransactionMember({
+  data,
+  transaction,
+  referral
+}: {
+  data: IMember
+  transaction: ITransaction
+  referral: IReferral
+}) {
   const [open, setOpen] = useState(false)
   const [stopClose, setStopClose] = useState(false)
 
@@ -16,14 +24,14 @@ function EditTransactionMember({ data, value, referral }: { data: IMember; value
 
   return (
     <>
-      <IconButton sizes='small' variant='text' onClick={handleOpen}>
-        <IconEdit fontSize={20} />
+      <IconButton sizes='small' color='success' variant='text' onClick={handleOpen}>
+        <IconMoreTime fontSize={20} />
       </IconButton>
       <Dialog title='Transaction Member' open={open} onClose={handleClose} closeButtom fullWidth maxWidth='md'>
         <div className='px-4 pb-4'>
-          <FormTransactionMember
+          <AddExtraTimeForTransactionMemberForm
             member={data}
-            value={value}
+            transaction={transaction}
             referralBA={referral}
             setStopClose={setStopClose}
             handleClose={handleClose}
@@ -34,4 +42,4 @@ function EditTransactionMember({ data, value, referral }: { data: IMember; value
   )
 }
 
-export default EditTransactionMember
+export default AddExtraTimeForTransactionMember

@@ -4,24 +4,38 @@ import Button from 'src/components/ui/Button'
 import Dialog from 'src/components/ui/Dialog'
 import IconPlus from 'src/components/ui/Icon/IconPlus'
 import FormTransactionMember from './FormTransactionMember'
+import IconButton from 'src/components/ui/IconButton'
+import IconRefresh from 'src/components/ui/Icon/IconRefresh'
+import { useRouter } from 'next/router'
+import { IReferral } from 'server/type/Referral'
 
-function TransactionMember({ data }: { data: IMember }) {
+function TransactionMember({ data, referral }: { data: IMember; referral: IReferral }) {
   const [open, setOpen] = useState(false)
   const [stopClose, setStopClose] = useState(false)
 
   const handleOpen = () => setOpen(true)
   const handleClose = () => (stopClose ? null : setOpen(false))
 
+  const router = useRouter()
+
   return (
     <>
       <Button onClick={handleOpen} startIcon={<IconPlus fontSize={20} />}>
         Transaction
-      </Button>
+      </Button>{' '}
       <Dialog title='Transaction Member' open={open} onClose={handleClose} closeButtom fullWidth maxWidth='md'>
         <div className='px-4 pb-4'>
-          <FormTransactionMember member={data} setStopClose={setStopClose} handleClose={handleClose} />
+          <FormTransactionMember
+            member={data}
+            referralBA={referral}
+            setStopClose={setStopClose}
+            handleClose={handleClose}
+          />
         </div>
       </Dialog>
+      <IconButton onClick={() => router.push(router.asPath)} onDoubleClick={() => router.reload()}>
+        <IconRefresh fontSize={20} />
+      </IconButton>
     </>
   )
 }

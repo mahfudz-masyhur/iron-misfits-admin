@@ -150,7 +150,7 @@ function Autocomplete(props: Props) {
   const optionss = options?.map(getOption)
   const selectRef = useRef<HTMLDivElement | null>(null)
   const isFetching = !notFetching
-  const keyNames = Object.keys(isFetching ? getOption() : (optionss && optionss[1]) || {})
+  const keyNames = Object.keys(isFetching ? getOption() : (optionss && optionss[0]) || {})
   const [state, setState] = useState<any>(!isFetching ? optionss : undefined)
   const [load, setLoad] = useState<boolean>(false)
   const [value, setValue] = useState<string>(field?.[keyNames[1]])
@@ -301,14 +301,16 @@ function Autocomplete(props: Props) {
       <CircularProgress color='primary' />
     ) : (
       <div className='flex items-center gap-2'>
-        <button
-          type='button'
-          disabled={rest.disabled}
-          onClick={handleIsClearable}
-          className={!rest.disabled ? `hover:text-gray-900 text-gray-500` : undefined}
-        >
-          <IconClose fontSize={15} />
-        </button>
+        {(multiple ? Boolean(field?.length > 0 && isClearable) : Boolean(value && isClearable)) && (
+          <button
+            type='button'
+            disabled={rest.disabled}
+            onClick={handleIsClearable}
+            className={!rest.disabled ? `hover:text-gray-900 text-gray-500` : undefined}
+          >
+            <IconClose fontSize={15} />
+          </button>
+        )}
         <IconDownLineFill className={open ? 'text-gray-500' : 'text-gray-300'} fontSize={20} />
       </div>
     ),

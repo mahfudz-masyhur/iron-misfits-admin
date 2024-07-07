@@ -5,9 +5,10 @@ import { ITransaction } from 'server/type/Transaction'
 let pendingRecortSchema = new mongoose.Schema(
   {
     type: { type: String, enum: ['PENDING', 'CANCLE-PENDING'], required: true },
-    howMuchDays: { type: Date, required: true },
+    howMuchDays: { type: Number, required: true },
     expiredBefore: { type: Date, required: true },
     expiredThen: { type: Date, required: true },
+    statusEdit: { type: Boolean, required: true },
     description: { type: String },
     creator: { type: ObjectId, ref: 'User', required: true },
     lastEditedBy: { type: ObjectId, ref: 'User' }
@@ -36,9 +37,11 @@ let transactionSchema = new mongoose.Schema(
     promo: { type: ObjectId, ref: 'Promo' },
     referral: { type: ObjectId, ref: 'Referral' },
     expired: { type: Date, required: true },
-    status: { type: String, enum: ['PENDING', 'ACTIVE', 'INACTIVE'] },
+    discountBA: { type: String },
+    status: { type: String, enum: ['PENDING', 'ACTIVE', 'INACTIVE'], required: true },
+    description: { type: String },
     pending: [{ type: pendingRecortSchema }],
-    creator: { type: ObjectId, ref: 'User' },
+    creator: { type: ObjectId, ref: 'User', required: true },
     lastEditedBy: { type: ObjectId, ref: 'User' }
   },
   { timestamps: true }

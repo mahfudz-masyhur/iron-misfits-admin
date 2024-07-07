@@ -14,7 +14,7 @@ export interface IResponseTransaction {
 
 export interface PendingRecordInput {
   type: 'PENDING' | 'CANCLE-PENDING'
-  howMuchDays: Date
+  howMuchDays: number
   expiredBefore: Date
   expiredThen: Date
   statusEdit: boolean
@@ -23,15 +23,17 @@ export interface PendingRecordInput {
 
 export interface TransactionInput {
   _id: string
-  referral?: ITransaction['referral']
-  promo?: ITransaction['promo']
-  package?: ITransaction['package']
-  priceAfterdiscount?: number
-  price?: number
+  referral: string | null
+  promo: string | null
+  package: string
+  priceAfterdiscount: number | ''
+  price: number | ''
+  description: string
   member: string
   expired: Date
   status: 'PENDING' | 'ACTIVE' | 'INACTIVE'
   pending: PendingRecordInput[]
   createdAt?: Date
   updatedAt?: Date
+  discountBA?: string
 }

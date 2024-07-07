@@ -99,6 +99,7 @@ function FormMember(props: Props) {
     const errors: any = {}
 
     if (!values.name) errors.name = 'Required'
+    if (!values.registrationFee) errors.registrationFee = 'Required'
     if (!values.handphone) errors.handphone = 'Required'
 
     if (values.socialmedia) {

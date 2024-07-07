@@ -15,7 +15,7 @@ type Data = {
 }
 
 async function GET(req: Ireq, res: NextApiResponse<Data>) {
-  let { name, status, type } = req.query
+  let { name, status, type, member } = req.query
 
   const filter: FilterQuery<IReferral> = {}
   if (name) {
@@ -24,6 +24,7 @@ async function GET(req: Ireq, res: NextApiResponse<Data>) {
   }
   if (type) filter.type = type
   if (status) filter.status = status
+  if (member) filter.member = member
 
   const data = await Referral.find(filter)
 
@@ -54,6 +55,18 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
     }
 
     return res.json({ status: 'ok', message: 'Update Success', data })
+  }
+
+  const findReferrealCode = await Referral.find({ code })
+  if (findReferrealCode.length > 0) {
+    res.status(501).json({ status: '501 Not Implemented', message: 'Code already been used' })
+    throw new Error('')
+  }
+
+  const findReferreal = await Referral.find({ member, status: 'active' })
+  if (findReferreal.length > 0) {
+    res.status(501).json({ status: '501 Not Implemented', message: 'Only one member can get code referral active' })
+    throw new Error('')
   }
 
   const data = await Referral.create({

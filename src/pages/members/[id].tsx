@@ -1,7 +1,10 @@
 import { GetServerSideProps } from 'next'
 import Image from 'next/image'
-import React from 'react'
-import { getMemberId, getTransactions } from 'server/api'
+import { getMemberId, getOneReferral, getTransactions } from 'server/api'
+import AddExtraTimeForTransactionMember from 'src/components/pages/members/id/AddExtraTimeForTransactionMember'
+import TransactionMember from 'src/components/pages/members/id/AddTransactionMember'
+import DeleteTransaction from 'src/components/pages/members/id/DeleteTransactionMember'
+import EditTransactionMember from 'src/components/pages/members/id/EditTransactionMember'
 import Avatar from 'src/components/ui/Avatar'
 import Paper from 'src/components/ui/Paper'
 import Table from 'src/components/ui/Table'
@@ -11,13 +14,18 @@ import TableHead from 'src/components/ui/Table/TableHead'
 import TableRow from 'src/components/ui/Table/TableRow'
 import { formatDate, getURLParams } from 'src/components/utility/formats'
 import { IResponseMember } from 'src/type/member'
-import TransactionMember from 'src/components/pages/members/id/AddTransactionMember'
+import { IResponseReferral } from 'src/type/referral'
 import { IResponseTransactions } from 'src/type/transaction'
-import EditTransactionMember from 'src/components/pages/members/id/EditTransactionMember'
 
-function MemberIdPage({ member: m, transaction: t }: { member: IResponseMember; transaction: IResponseTransactions }) {
+interface Props {
+  member: IResponseMember
+  referral: IResponseReferral
+  transaction: IResponseTransactions
+}
+function MemberIdPage({ member: m, referral: r, transaction: t }: Props) {
   const member = m.data
   const transaction = t.data
+  const referral = r.data
 
   return (
     <>
@@ -61,7 +69,7 @@ function MemberIdPage({ member: m, transaction: t }: { member: IResponseMember; 
         </div>
       </Paper>
       <div className='mt-2 text-right mx-4'>
-        <TransactionMember data={member} />
+        <TransactionMember data={member} referral={referral} />
       </div>
       <Paper className='p-4 m-4'>
         <Table>
@@ -89,8 +97,10 @@ function MemberIdPage({ member: m, transaction: t }: { member: IResponseMember; 
                 <TableCell>{v.package.name}</TableCell>
                 <TableCell>{v.promo?.name}</TableCell>
                 <TableCell>{v.referral?.name}</TableCell>
-                <TableCell>
-                  <EditTransactionMember data={member} value={v} key={v._id} />
+                <TableCell className='whitespace-nowrap'>
+                  <AddExtraTimeForTransactionMember data={member} referral={referral} transaction={v} key={v._id} />
+                  <EditTransactionMember data={member} referral={referral} value={v} key={v._id} />
+                  <DeleteTransaction data={v} key={v._id} />
                 </TableCell>
               </TableRow>
             ))}
@@ -106,9 +116,10 @@ export default MemberIdPage
 export const getServerSideProps: GetServerSideProps = async ({ req, params }) => {
   try {
     const member = await getMemberId(`${params?.id}`, req)
+    const referral = await getOneReferral(req, getURLParams({ member: `${params?.id}`, status: 'active' }))
     const transaction = await getTransactions(req, getURLParams({ member: params?.id }))
     return {
-      props: { member, transaction }
+      props: { member, referral, transaction }
     }
   } catch (error: any) {
     let destination = '/500'
