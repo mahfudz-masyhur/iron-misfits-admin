@@ -23,9 +23,9 @@ const IconHeadingH1 = forwardRef<SVGSVGElement, IconProps>((props: IconProps, re
           id='Vector'
           d='M16 10L19 9L19 19M3 5V12M3 12V19M3 12H11M11 5V12M11 12V19'
           stroke='#000000'
-          stroke-width='2'
-          stroke-linecap='round'
-          stroke-linejoin='round'
+          strokeWidth='2'
+          strokeLinecap='round'
+          strokeLinejoin='round'
         />
       </g>
     </svg>

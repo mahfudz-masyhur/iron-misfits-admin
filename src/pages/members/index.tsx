@@ -50,7 +50,7 @@ function UsersPage({ data }: { data: IResponseMembers }) {
             <TableRow hover key={`${i}`}>
               <TableCell>{i + 1}.</TableCell>
               <TableCell>{v.name}</TableCell>
-              <TableCell>{v.avatar}</TableCell>
+              <TableCell></TableCell>
               <TableCell className='text-center whitespace-nowrap'>{formatPhoneNumber(v.handphone)}</TableCell>
               <TableCell className='text-right whitespace-nowrap'>
                 <IconButton

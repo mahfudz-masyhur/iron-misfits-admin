@@ -1,5 +1,6 @@
 import Image from 'next/image'
-import { CSSProperties, ChangeEvent, Dispatch, MouseEvent, SetStateAction, useCallback, useState, useRef } from 'react'
+import Pica from 'pica'
+import { CSSProperties, ChangeEvent, Dispatch, MouseEvent, SetStateAction, useCallback, useRef, useState } from 'react'
 import AvatarEditor from 'react-avatar-editor'
 import { useDropzone } from 'react-dropzone'
 import toast from 'react-hot-toast'
@@ -19,7 +20,7 @@ interface AvatarEditorFieldProps {
   height: CSSProperties['height']
   image: string
   onClose: () => void
-  onChange: (canvas: string, data: FormData | null) => void
+  onChange: (base64: string, formData: FormData | null, base64Compres?: string) => void
 }
 
 const AvatarEditorField = ({ width, height, image, onClose, onChange }: AvatarEditorFieldProps) => {
@@ -41,13 +42,28 @@ const AvatarEditorField = ({ width, height, image, onClose, onChange }: AvatarEd
       event.preventDefault()
       if (editor.current !== null) {
         setLoad(true)
-        const canvas = editor.current.getImageScaledToCanvas().toDataURL('image/jpeg')
-        const fetchImg = await fetch(canvas)
+        const canvas = editor.current.getImageScaledToCanvas()
+        const originalBase64 = canvas.toDataURL('image/jpeg')
+
+        // Kompresi gambar dengan Pica
+        const pica = new Pica()
+        const compressedCanvas = document.createElement('canvas')
+        compressedCanvas.width = canvas.width
+        compressedCanvas.height = canvas.height
+
+        await pica.resize(canvas, compressedCanvas)
+        const compressedBase64 = compressedCanvas.toDataURL('image/jpeg', 0.8) // Adjust quality as needed (0.8 is 80%)
+
+        // Mengonversi compressedBase64 ke Blob
+        const fetchImg = await fetch(compressedBase64)
         const convBlob = await fetchImg.blob()
 
         const data = new FormData()
         data.append(`image`, convBlob, `${user?._id}-avatar.jpeg`)
-        onChange(canvas, data)
+
+        // Panggil onChange dengan compressedBase64
+        onChange(originalBase64, data, compressedBase64)
+
         onClose()
         setLoad(false)
       }
@@ -96,7 +112,7 @@ interface InputImageProps {
   height: CSSProperties['height']
   maxWidth?: boolean
   disabled?: boolean
-  onChange: (canvas: string, data: FormData | null) => void
+  onChange: (base64: string, formData: FormData | null, base64Compres?: string) => void
   variant?: 'circle' | 'square'
   confirmDeleteImage?: boolean
   message?: string
@@ -137,8 +153,8 @@ const DisableComponent = ({
       >
         {Boolean(localImage || imgFile) ? (
           <Image
-            src={localImage ? localImage : `${process.env.IMAGE_PREVIEW}/${imgFile}`}
-            alt={localImage ? 'upload' : `${process.env.IMAGE_PREVIEW}/${imgFile}`}
+            src={localImage ? localImage : `${imgFile}`}
+            alt={localImage ? 'upload' : `${imgFile}`}
             width={convertToPixelSize(width as string)}
             height={convertToPixelSize(height as string)}
             className='object-cover w-full h-full'
@@ -265,8 +281,8 @@ const ContentFieldInputImage = (
       >
         {Boolean(localImage || imgFile) ? (
           <Image
-            src={localImage ? localImage : `${process.env.IMAGE_PREVIEW}/${imgFile}`}
-            alt={localImage ? 'upload' : `${process.env.IMAGE_PREVIEW}/${imgFile}`}
+            src={localImage ? localImage : `${imgFile}`}
+            alt={localImage ? 'upload' : `${imgFile}`}
             width={convertToPixelSize(width as string)}
             height={convertToPixelSize(height as string)}
             className='object-cover w-full h-full'
@@ -355,9 +371,9 @@ const ContentFieldInputImage = (
           width={width}
           height={height}
           image={localImage}
-          onChange={(img, data) => {
+          onChange={(img, data, compress) => {
             setLocalImage(img)
-            onChange(img, data)
+            onChange(img, data, compress)
           }}
           onClose={() => setOpenDialog(false)}
         />

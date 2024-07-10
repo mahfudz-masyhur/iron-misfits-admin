@@ -143,8 +143,8 @@ function FormMember(props: Props) {
               {({ field, form }: FieldProps) => (
                 <FieldInputImage
                   imgFile={field.value}
-                  onChange={(_, data) => {
-                    form.setFieldValue(field.name, data)
+                  onChange={base64 => {
+                    form.setFieldValue(field.name, base64 || null)
                   }}
                   width={151}
                   height={226}

@@ -20,9 +20,9 @@ const IconTransaction = forwardRef<SVGSVGElement, IconProps>((props: IconProps, 
       <g
         fill='none'
         stroke='currentColor'
-        stroke-linecap='round'
-        stroke-linejoin='round'
-        stroke-width='1.5'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeWidth='1.5'
         color='currentColor'
       >
         <path d='M4.58 8.607L2 8.454C3.849 3.704 9.158 1 14.333 2.344c5.513 1.433 8.788 6.918 7.314 12.25c-1.219 4.411-5.304 7.337-9.8 7.406' />

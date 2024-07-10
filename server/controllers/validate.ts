@@ -9,7 +9,7 @@ export async function validateSignin<T>(req: Ireq, res: NextApiResponse<T | any>
   const cookieToken = getCookie(WINDOW_USER_SCRIPT_VARIABLE, `${req.headers.cookie}`)
   const token = req?.headers?.authorization?.split(' ')[1] || cookieToken || ''
 
-  const { email, _id } = getToken(token) as UserAccount
+  const { email, _id } = (await getToken(token, res)) as UserAccount
   const userFind = await User.findOne({ email, _id }, { password: 0 })
 
   if (!userFind?._id) {

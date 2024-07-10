@@ -16,6 +16,7 @@ export interface PendingRecordInput {
   status: 'PENDING' | 'ACTIVE' | 'INACTIVE'
   expired: Date
   pending: IPendingRecord
+  createdAt?: Date
   updatedAt?: Date
 }
 

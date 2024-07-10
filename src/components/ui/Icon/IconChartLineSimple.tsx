@@ -19,9 +19,9 @@ const IconChartLineSimple = forwardRef<SVGSVGElement, IconProps>((props: IconPro
       <path
         fill='none'
         stroke='currentColor'
-        stroke-linecap='round'
-        stroke-linejoin='round'
-        stroke-width='2'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeWidth='2'
         d='M4 19h16M4 15l4-6l4 2l4-5l4 4'
       />
     </svg>

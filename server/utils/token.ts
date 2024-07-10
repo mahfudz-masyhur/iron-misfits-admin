@@ -1,3 +1,4 @@
+import { NextApiResponse } from 'next'
 import { IUser } from 'server/type/User'
 
 const fs = require('fs')
@@ -22,9 +23,14 @@ export const createToken = (user: IUser) => {
   return token as string
 }
 
-export const getToken = (token: string) => {
-  const publickey = process.env.WPA_Key
-  const verify = jwt.verify(token, publickey)
+export const getToken = async (token: string, res?: NextApiResponse) => {
+  try {
+    const publickey = process.env.WPA_Key
+    const verify = await jwt.verify(token, publickey)
 
-  return verify
+    return verify
+  } catch (error) {
+    res?.status(401).json({ status: '401 Unauthorized', message: 'Not login' })
+    throw new Error('')
+  }
 }

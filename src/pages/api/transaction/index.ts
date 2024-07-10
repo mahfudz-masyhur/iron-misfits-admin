@@ -50,34 +50,6 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
     updatedAt
   } = req.body
 
-  // Cek dan update Package
-  const packageToUpdate = await Package.findOne({ _id: pckge, statusEdit: true })
-  if (packageToUpdate) {
-    const packageUpdated = await Package.findOneAndUpdate(
-      { _id: pckge },
-      { $set: { statusEdit: false } },
-      { new: true, timestamps: false }
-    )
-    if (!packageUpdated) {
-      res.status(501).json({ status: '501 Not Implemented', message: 'Package statusEdit update Failed' })
-      throw new Error('')
-    }
-  }
-
-  // Cek dan update Promo
-  const promoToUpdate = await Promo.findOne({ _id: promo, statusEdit: true })
-  if (promoToUpdate) {
-    const promoUpdated = await Promo.findOneAndUpdate(
-      { _id: promo },
-      { $set: { statusEdit: false } },
-      { new: true, timestamps: false }
-    )
-    if (!promoUpdated) {
-      res.status(501).json({ status: '501 Not Implemented', message: 'Promo statusEdit update Failed' })
-      throw new Error('')
-    }
-  }
-
   if (_id) {
     if (!createdAt) {
       res.status(400).json({ status: '405 Method Not Allowed', message: 'createdAt is required' })
@@ -86,17 +58,44 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
 
     const createdDate = new Date(createdAt)
     const now = new Date()
-
-    // Menghitung perbedaan waktu dalam milidetik
     const differenceInTime = now.getTime() - createdDate.getTime()
-    // Mengkonversi perbedaan waktu ke dalam hari
     const differenceInDays = differenceInTime / (1000 * 3600 * 24)
-
     if (differenceInDays >= 1) {
-      res
-        .status(400)
-        .json({ status: '405 Method Not Allowed', message: 'The transaction date cannot be more than one day old' })
+      res.status(400).json({
+        status: '405 Method Not Allowed',
+        message: 'Transactions cannot be edit if they are more than one day old'
+      })
       throw new Error('')
+    }
+
+    // Cek dan update Package
+    const packageToUpdate = await Package.findOne({ _id: pckge, statusEdit: true })
+    if (packageToUpdate) {
+      const packageUpdated = await Package.findOneAndUpdate(
+        { _id: pckge },
+        { $set: { statusEdit: false } },
+        { new: true, timestamps: false }
+      )
+      if (!packageUpdated) {
+        res.status(501).json({ status: '501 Not Implemented', message: 'Package statusEdit update Failed' })
+        throw new Error('')
+      }
+    }
+
+    // Cek dan update Promo
+    if (promo){
+      const promoToUpdate = await Promo.findOne({ _id: promo, statusEdit: true })
+      if (promoToUpdate) {
+        const promoUpdated = await Promo.findOneAndUpdate(
+          { _id: promo },
+          { $set: { statusEdit: false } },
+          { new: true, timestamps: false }
+        )
+        if (!promoUpdated) {
+          res.status(501).json({ status: '501 Not Implemented', message: 'Promo statusEdit update Failed' })
+          throw new Error('')
+        }
+      }
     }
 
     // Jika referral tidak ada, kurangi referralInvitation pada Member
@@ -175,13 +174,43 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
     return res.json({ status: 'ok', message: 'Update Success', data })
   }
 
-  const findActiveTransaction = await Transaction.find({ member, status: 'ACTIVE' })
+  const findActiveTransaction = await Transaction.find({ member, status: { $in: ['ACTIVE', 'PENDING'] } })
   if (findActiveTransaction.length > 0) {
     res.status(405).json({
       status: '405 Method Not Allowed',
-      message: 'Cant not create new transaction if there is an active transaction'
+      message: 'Cant not create new transaction if there is an active or pending transaction'
     })
     throw new Error('')
+  }
+
+  // Cek dan update Package
+  const packageToUpdate = await Package.findOne({ _id: pckge, statusEdit: true })
+  if (packageToUpdate) {
+    const packageUpdated = await Package.findOneAndUpdate(
+      { _id: pckge },
+      { $set: { statusEdit: false } },
+      { new: true, timestamps: false }
+    )
+    if (!packageUpdated) {
+      res.status(501).json({ status: '501 Not Implemented', message: 'Package statusEdit update Failed' })
+      throw new Error('')
+    }
+  }
+
+  // Cek dan update Promo
+  if (promo){
+    const promoToUpdate = await Promo.findOne({ _id: promo, statusEdit: true })
+    if (promoToUpdate) {
+      const promoUpdated = await Promo.findOneAndUpdate(
+        { _id: promo },
+        { $set: { statusEdit: false } },
+        { new: true, timestamps: false }
+      )
+      if (!promoUpdated) {
+        res.status(501).json({ status: '501 Not Implemented', message: 'Promo statusEdit update Failed' })
+        throw new Error('')
+      }
+    }
   }
 
   if (referral) {

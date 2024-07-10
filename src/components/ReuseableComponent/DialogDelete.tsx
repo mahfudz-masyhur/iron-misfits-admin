@@ -36,9 +36,6 @@ const DialogDelete = ({ body, open, close, runFunction, secondRunFunction, refet
           setUserInput(value)
           setSecondDialogOpen(true)
         }
-      } else {
-        setUserInput('cancel')
-        setSecondDialogOpen(true)
       }
       setLaod(false)
       close()

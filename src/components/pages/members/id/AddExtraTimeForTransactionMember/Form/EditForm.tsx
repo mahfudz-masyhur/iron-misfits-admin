@@ -36,10 +36,11 @@ function EditForm(props: EditFormProps) {
     type: value?.type || 'PENDING',
     howMuchDays: value?.howMuchDays || 0,
     expiredBefore: new Date(value?.expiredBefore || transaction.expired),
-    expiredThen: new Date(value?.expiredThen || ''),
+    expiredThen: new Date(value?.expiredThen || value?.expiredBefore || transaction.expired),
     statusEdit: value?.statusEdit || true,
     description: value?.description || '',
-    updatedAt: value?.updatedAt
+    createdAt: value?.createdAt,
+    updatedAt: value?.updatedAt,
   }
 
   const validate = (values: IPendingRecord) => {
@@ -105,7 +106,6 @@ function EditForm(props: EditFormProps) {
 
                     if (!isNaN(date.getTime())) {
                       const expiredThen = date.toISOString()
-                      form.setFieldValue('expired', new Date(expiredThen))
                       form.setFieldValue('expiredThen', new Date(expiredThen))
                     }
                     field.onChange(e)
@@ -117,7 +117,6 @@ function EditForm(props: EditFormProps) {
                       type='number'
                       fullWidth
                       margin='dense'
-                      disabled={!canEdit}
                       {...field}
                       onChange={onChange}
                       error={Boolean(meta.error && meta.touched)}

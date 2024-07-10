@@ -23,7 +23,7 @@ function AddForm(props: AddExtraTimeForTransactionMemberFormProps) {
       type: 'PENDING',
       howMuchDays: 0,
       expiredBefore: new Date(transaction.expired),
-      expiredThen: new Date(),
+      expiredThen: new Date(transaction.expired),
       statusEdit: true,
       description: ''
     },
@@ -52,8 +52,8 @@ function AddForm(props: AddExtraTimeForTransactionMemberFormProps) {
 
   return (
     <Formik initialValues={initialValues} validate={validate} onSubmit={onSubmit}>
-      {({ dirty, isSubmitting }) => {
-        const lastPending = transaction.pending[0]
+      {({ dirty, isSubmitting, values }) => {
+        const lastPending = transaction.pending[0] || values.pending
         return (
           <>
             <Form id='form-extra-time-transaction'>
@@ -130,14 +130,30 @@ function AddForm(props: AddExtraTimeForTransactionMemberFormProps) {
                 </Field>
                 <Field name={`pending.howMuchDays`}>
                   {({ field, form, meta }: FieldProps) => {
+                    const onChange = (e: any) => {
+                      const numberDays = Number(e.target.value)
+                      const expiredBefore = new Date(values.pending.expiredBefore)
+                      const date = new Date(expiredBefore.getTime())
+
+                      if (values.pending.type === 'PENDING') date.setDate(date.getDate() + numberDays)
+                      else date.setDate(date.getDate() - numberDays)
+
+                      if (!isNaN(date.getTime())) {
+                        const expiredThen = date.toISOString()
+                        form.setFieldValue('expired', new Date(expiredThen))
+                        form.setFieldValue('pending.expiredThen', new Date(expiredThen))
+                      }
+                      field.onChange(e)
+                    }
+
                     return (
                       <TextField
                         label='howMuchDays'
                         type='number'
                         fullWidth
                         margin='dense'
-                        readOnly
                         {...field}
+                        onChange={onChange}
                         error={Boolean(meta.error && meta.touched)}
                         helperText={meta.error && meta.touched && String(meta.error)}
                       />

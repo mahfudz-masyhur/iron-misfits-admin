@@ -44,9 +44,6 @@ async function DELETE(req: Ireq, res: NextApiResponse<Data>) {
     transaction.status =
       nextPendingIndex < 0 ? 'ACTIVE' : transaction.pending[nextPendingIndex].type === 'PENDING' ? 'PENDING' : 'ACTIVE'
     transaction.expired = transaction.pending[pandingIndex].expiredBefore
-    if (nextPendingIndex === 0) {
-      transaction.pending[nextPendingIndex].statusEdit = true
-    }
 
     transaction.pending.splice(pandingIndex, 1)
 
@@ -71,7 +68,10 @@ async function DELETE(req: Ireq, res: NextApiResponse<Data>) {
   if (differenceInDays >= 1) {
     res
       .status(400)
-      .json({ status: '405 Method Not Allowed', message: 'The transaction date cannot be more than one day old' })
+      .json({
+        status: '405 Method Not Allowed',
+        message: 'Transactions cannot be edited if they are more than one day old'
+      })
     throw new Error('')
   }
 
@@ -84,7 +84,7 @@ async function DELETE(req: Ireq, res: NextApiResponse<Data>) {
     }
     const referralInvitation = await Referral.findOneAndUpdate(
       { _id: findTransaction?.referral?._id, status: 'active' },
-      { $inc: { useCount: -1 }, $set: { statusEdit: false } },
+      { $inc: { useCount: -1 } },
       { new: true, timestamps: false }
     )
 
@@ -103,6 +103,16 @@ async function DELETE(req: Ireq, res: NextApiResponse<Data>) {
   return res.json({ status: 'ok', message: 'Delete Success', data })
 }
 
+function isWithinOneDay(dateString: string): boolean {
+  const givenDate = new Date(dateString)
+  const currentDate = new Date()
+  if (isNaN(givenDate.getTime())) return false
+  const timeDifference = currentDate.getTime() - givenDate.getTime()
+  const dayDifference = timeDifference / (1000 * 3600 * 24)
+
+  return dayDifference <= 1
+}
+
 async function POST(req: Ireq, res: NextApiResponse<Data>) {
   const { user, body, query } = req
   const { pendingId, id } = query
@@ -111,14 +121,27 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
   if (pendingId) {
     const transaction = await Transaction.findOne({ _id: id, updatedAt })
     if (!transaction) {
-      res.status(501).json({ status: '501 Not Implemented', message: 'Update failed' })
-      throw new Error('Update failed')
+      res.status(404).json({ status: '404 Not Found', message: 'Transaction not found' })
+      throw new Error('Transaction not found')
     }
 
     const pandingIndex = transaction.pending.findIndex(f => `${f._id}` === `${pendingId}`)
-    if (pandingIndex < 0) throw new Error('transaction.pending not found')
+    const pandingFind = transaction.pending.find(f => `${f._id}` === `${pendingId}`)
+    if (pandingIndex < 0) {
+      res.status(404).json({ status: '404 Not Found', message: 'transaction.pending not found' })
+      throw new Error('transaction.pending not found')
+    }
+    const canEdit = isWithinOneDay(`${pandingFind?.createdAt}`) && pandingIndex === 0
+    if (!canEdit) {
+      res.status(501).json({
+        status: '501 Not Implemented',
+        message: 'Transactions cannot be edited if they are more than one day old'
+      })
+      throw new Error('Transactions cannot be edited if they are more than one day old')
+    }
 
     // Memperbarui subdocument
+    transaction.status = status
     transaction.expired = pending.expiredThen
     transaction.pending[pandingIndex].howMuchDays = pending.howMuchDays
     transaction.pending[pandingIndex].expiredThen = pending.expiredThen
@@ -130,26 +153,12 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
     return res.json({ status: 'ok', message: 'Update Success', data })
   }
 
-  // Langkah 1: Update statusEdit pada pending index 0
-  const transaction = await Transaction.findOne({ _id: id, updatedAt, 'pending.0': { $exists: true } })
-  if (transaction) {
-    transaction.pending[0].statusEdit = false
-    const updateResult = await transaction.save()
-
-    if (!updateResult) {
-      res.status(501).json({ status: '501 Not Implemented', message: 'Update statusEdit Failed' })
-      throw new Error('Update statusEdit Failed')
-    }
-  }
-
-  // Langkah 2: Tambahkan extratime ke pending index 0
   const extratime = {
     _id: new ObjectId(),
     type: pending.type,
     howMuchDays: pending.howMuchDays,
     expiredBefore: pending.expiredBefore,
     expiredThen: pending.expiredThen,
-    statusEdit: pending.statusEdit,
     description: pending.description,
     creator: user
   }
@@ -157,7 +166,7 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
   const data = await Transaction.findByIdAndUpdate(
     id,
     {
-      $set: { status, expired, 'pending.[0].statusEdit': false },
+      $set: { status, expired },
       $push: {
         pending: {
           $each: [extratime],

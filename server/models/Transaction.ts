@@ -8,7 +8,6 @@ let pendingRecortSchema = new mongoose.Schema(
     howMuchDays: { type: Number, required: true },
     expiredBefore: { type: Date, required: true },
     expiredThen: { type: Date, required: true },
-    statusEdit: { type: Boolean, required: true },
     description: { type: String },
     creator: { type: ObjectId, ref: 'User', required: true },
     lastEditedBy: { type: ObjectId, ref: 'User' }

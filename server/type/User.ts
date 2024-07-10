@@ -8,4 +8,6 @@ export interface IUser {
   handphone: number
   creator: { _id: string; name: string }
   lastEditedBy?: { _id: string; name: string }
+  createdAt?: Date
+  updatedAt?: Date
 }

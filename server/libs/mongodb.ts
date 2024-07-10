@@ -12,4 +12,14 @@ const connectMongoDB = async () => {
   }
 };
 
+
+export const getDatabaseStats = async () => {
+  if (mongoose.connection.readyState === 1) {
+    const stats = await mongoose.connection.db.stats()
+    return stats // This returns the total size of the data in bytes
+  } else {
+    throw new Error('MongoDB connection is not ready')
+  }
+}
+
 export default connectMongoDB;
