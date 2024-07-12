@@ -4,6 +4,7 @@ import { getMemberId, getOneReferral, getTransactions } from 'server/api'
 import AddExtraTimeForTransactionMember from 'src/components/pages/members/id/AddExtraTimeForTransactionMember'
 import TransactionMember from 'src/components/pages/members/id/AddTransactionMember'
 import DeleteTransaction from 'src/components/pages/members/id/DeleteTransactionMember'
+import EditStatusTransactionMember from 'src/components/pages/members/id/EditStatusTransactionMember'
 import EditTransactionMember from 'src/components/pages/members/id/EditTransactionMember'
 import Avatar from 'src/components/ui/Avatar'
 import Paper from 'src/components/ui/Paper'
@@ -12,7 +13,7 @@ import TableBody from 'src/components/ui/Table/TableBody'
 import TableCell from 'src/components/ui/Table/TableCell'
 import TableHead from 'src/components/ui/Table/TableHead'
 import TableRow from 'src/components/ui/Table/TableRow'
-import { formatDate, getURLParams } from 'src/components/utility/formats'
+import { formatDate, getURLParams, isWithinOneDay } from 'src/components/utility/formats'
 import { IResponseMember } from 'src/type/member'
 import { IResponseReferral } from 'src/type/referral'
 import { IResponseTransactions } from 'src/type/transaction'
@@ -87,23 +88,32 @@ function MemberIdPage({ member: m, referral: r, transaction: t }: Props) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {transaction.map((v, i) => (
-              <TableRow hover evenOdd key={v._id}>
-                <TableCell>{i + 1}.</TableCell>
-                <TableCell>{v.price}</TableCell>
-                <TableCell>{v.priceAfterdiscount}</TableCell>
-                <TableCell>{formatDate(v.expired)}</TableCell>
-                <TableCell>{v.status}</TableCell>
-                <TableCell>{v.package.name}</TableCell>
-                <TableCell>{v.promo?.name}</TableCell>
-                <TableCell>{v.referral?.name}</TableCell>
-                <TableCell className='whitespace-nowrap'>
-                  <AddExtraTimeForTransactionMember data={member} referral={referral} transaction={v} key={v._id} />
-                  <EditTransactionMember data={member} referral={referral} value={v} key={v._id} />
-                  <DeleteTransaction data={v} key={v._id} />
-                </TableCell>
-              </TableRow>
-            ))}
+            {transaction.map((v, i) => {
+              const cantEdit = isWithinOneDay(`${v.createdAt}`)
+              return (
+                <TableRow hover evenOdd key={v._id}>
+                  <TableCell>{i + 1}.</TableCell>
+                  <TableCell>{v.price}</TableCell>
+                  <TableCell>{v.priceAfterdiscount}</TableCell>
+                  <TableCell>{formatDate(v.expired)}</TableCell>
+                  <TableCell>{v.status}</TableCell>
+                  <TableCell>{v.package.name}</TableCell>
+                  <TableCell>{v.promo?.name}</TableCell>
+                  <TableCell>{v.referral?.name}</TableCell>
+                  <TableCell className='whitespace-nowrap'>
+                    <AddExtraTimeForTransactionMember data={member} referral={referral} transaction={v} key={v._id} />
+                    {cantEdit ? (
+                      <>
+                        <EditTransactionMember data={member} referral={referral} value={v} key={v._id} />
+                        <DeleteTransaction data={v} key={v._id} />
+                      </>
+                    ) : (
+                      <EditStatusTransactionMember value={v} key={v._id} />
+                    )}
+                  </TableCell>
+                </TableRow>
+              )
+            })}
           </TableBody>
         </Table>
       </Paper>

@@ -487,9 +487,9 @@ const FormTransactionMember = (props: Props) => {
 
   return (
     <Formik initialValues={initialValues} validate={validate} onSubmit={onSubmit}>
-      {({ dirty, isSubmitting, values, setFieldValue }) => (
-        <Form>
-          <div className='grid flex-grow grid-cols-6 px-4 pb-4 gap-x-4'>
+      {({ dirty, isSubmitting, values, setFieldValue }) => {
+        return (
+          <Form className='grid flex-grow grid-cols-6 px-4 pb-4 gap-x-4'>
             <FieldPrice
               setFieldValue={setFieldValue}
               countPack={countPack}
@@ -537,9 +537,9 @@ const FormTransactionMember = (props: Props) => {
                 Submit
               </Button>
             </div>
-          </div>
-        </Form>
-      )}
+          </Form>
+        )
+      }}
     </Formik>
   )
 }

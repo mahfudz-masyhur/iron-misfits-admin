@@ -623,3 +623,13 @@ export const formatConvertCase = (
       return str
   }
 }
+
+export function isWithinOneDay(dateString: string): boolean {
+  const givenDate = new Date(dateString)
+  const currentDate = new Date()
+  if (isNaN(givenDate.getTime())) return false
+  const timeDifference = currentDate.getTime() - givenDate.getTime()
+  const dayDifference = timeDifference / (1000 * 3600 * 24)
+
+  return dayDifference <= 1
+}

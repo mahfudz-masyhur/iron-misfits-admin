@@ -6,6 +6,7 @@ import MenuClickHook from '../ui/Menu/MenuClickHook'
 import MenuItem from '../ui/Menu/MenuItem'
 import Paper from '../ui/Paper'
 import Typography from '../ui/Typograph'
+import Notification from './Notification'
 
 const ProfilMenu = () => {
   const { auth } = useAppContext()
@@ -42,7 +43,10 @@ function MainLayout({ children }: { children: ReactNode }) {
     <div>
       <Paper className='flex justify-between m-4 p-2 bg-primary-main/10'>
         <div>MisFits</div>
-        <ProfilMenu />
+        <div className='inline-flex gap-1'>
+          <Notification />
+          <ProfilMenu />
+        </div>
       </Paper>
       {children}
     </div>

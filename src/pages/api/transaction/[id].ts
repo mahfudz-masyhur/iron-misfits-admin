@@ -82,15 +82,17 @@ async function DELETE(req: Ireq, res: NextApiResponse<Data>) {
       res.status(404).json({ status: '404 Not Found', message: 'Transaction not founded' })
       throw new Error('')
     }
-    const referralInvitation = await Referral.findOneAndUpdate(
-      { _id: findTransaction?.referral?._id, status: 'active' },
-      { $inc: { useCount: -1 } },
-      { new: true, timestamps: false }
-    )
+    if (findTransaction.referral) {
+      const referralInvitation = await Referral.findOneAndUpdate(
+        { _id: findTransaction.referral._id, status: 'active' },
+        { $inc: { useCount: -1 } },
+        { new: true, timestamps: false }
+      )
 
-    if (!referralInvitation) {
-      res.status(501).json({ status: '501 Not Implemented', message: 'Referral remove useCount update Failed' })
-      throw new Error('')
+      if (!referralInvitation) {
+        res.status(501).json({ status: '501 Not Implemented', message: 'Referral remove useCount update Failed' })
+        throw new Error('')
+      }
     }
   }
   const data = await Transaction.findOneAndDelete({ _id: param, updatedAt })

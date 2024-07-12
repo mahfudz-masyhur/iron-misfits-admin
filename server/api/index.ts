@@ -1,6 +1,7 @@
 import Axios from 'axios'
 import { IncomingMessage } from 'http'
 import { IUser } from 'server/type/User'
+import { updateStatusTransactionValue } from 'src/components/pages/members/id/EditStatusTransactionMember'
 import {
   convertToNumber,
   convertToNumericPhoneNumber,
@@ -170,6 +171,12 @@ export const getTransactions = async (req?: IncomingMessage, query?: any): Promi
 
 export const addOrUpdateTransaction = async (values: TransactionInput): Promise<IResponseTransaction> => {
   const { data } = await axios.post('/api/transaction', values)
+
+  return data
+}
+
+export const updateStatusTransaction = async (values: updateStatusTransactionValue): Promise<IResponseTransaction> => {
+  const { data } = await axios.post(`/api/transaction/status`, values)
 
   return data
 }

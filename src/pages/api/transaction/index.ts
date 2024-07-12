@@ -17,7 +17,7 @@ type Data = {
 }
 
 async function GET(req: Ireq, res: NextApiResponse<Data>) {
-  let { name, packageType, status, member } = req.query
+  let { name, packageType, status, member, expired } = req.query
   const filter: FilterQuery<ITransaction> = {}
   if (name) {
     const match = new RegExp(`${name}`, 'i')
@@ -26,6 +26,7 @@ async function GET(req: Ireq, res: NextApiResponse<Data>) {
   if (packageType) filter.packageType = packageType
   if (status) filter.status = status
   if (member) filter.member = member
+  if (expired) filter.expired = { $lt: expired }
 
   const data = await Transaction.find(filter)
 
@@ -138,15 +139,18 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
         res.status(404).json({ status: '404 Not Found', message: 'Transaction not founded' })
         throw new Error('')
       }
-      const referralInvitation = await Referral.findOneAndUpdate(
-        { _id: findTransaction?.referral?._id, status: 'active' },
-        { $inc: { useCount: -1 }, $set: { statusEdit: false } },
-        { new: true, timestamps: false }
-      )
 
-      if (!referralInvitation) {
-        res.status(501).json({ status: '501 Not Implemented', message: 'Referral remove useCount update Failed' })
-        throw new Error('')
+      if (findTransaction.referral) {
+        const referralInvitation = await Referral.findOneAndUpdate(
+          { _id: findTransaction.referral._id, status: 'active' },
+          { $inc: { useCount: -1 }, $set: { statusEdit: false } },
+          { new: true, timestamps: false }
+        )
+
+        if (!referralInvitation) {
+          res.status(501).json({ status: '501 Not Implemented', message: 'Referral remove useCount update Failed' })
+          throw new Error('')
+        }
       }
     }
 

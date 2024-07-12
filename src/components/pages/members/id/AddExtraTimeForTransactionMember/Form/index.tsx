@@ -11,6 +11,7 @@ import { TYPE } from 'src/constant'
 import { PendingRecordInput } from 'src/type/transaction'
 import AddForm from './AddForm'
 import EditForm from './EditForm'
+import { isWithinOneDay } from 'src/components/utility/formats'
 
 export interface AddExtraTimeForTransactionMemberFormProps {
   setStopClose: Dispatch<SetStateAction<boolean>>
@@ -34,16 +35,6 @@ function AddExtraTimeForTransactionMemberForm(props: AddExtraTimeForTransactionM
             <AddForm {...props} />
           </AccordionItem>
           {transaction.pending.map((v, i) => {
-            function isWithinOneDay(dateString: string): boolean {
-              const givenDate = new Date(dateString)
-              const currentDate = new Date()
-              if (isNaN(givenDate.getTime())) return false
-              const timeDifference = currentDate.getTime() - givenDate.getTime()
-              const dayDifference = timeDifference / (1000 * 3600 * 24)
-
-              return dayDifference <= 1
-            }
-
             if (isWithinOneDay(`${v.createdAt}`) && i === 0)
               return (
                 <AccordionItem
