@@ -11,7 +11,8 @@ import { TYPE } from 'src/constant'
 import { PendingRecordInput } from 'src/type/transaction'
 import AddForm from './AddForm'
 import EditForm from './EditForm'
-import { isWithinOneDay } from 'src/components/utility/formats'
+import { formatDate, isWithinOneDay } from 'src/components/utility/formats'
+import Typography from 'src/components/ui/Typograph'
 
 export interface AddExtraTimeForTransactionMemberFormProps {
   setStopClose: Dispatch<SetStateAction<boolean>>
@@ -40,7 +41,12 @@ function AddExtraTimeForTransactionMemberForm(props: AddExtraTimeForTransactionM
                 <AccordionItem
                   title={
                     <span className='font-semibold'>
-                      {v.type} <span className='text-success-main font-normal'>can edit</span>
+                      {v.type} <span className='text-success-main font-normal'>can edit</span> <br />
+                      {v.updatedAt && (
+                        <Typography variant='caption' fontWeight='normal' color='text-secondary'>
+                          Dibuat pada: {formatDate(v.updatedAt)}
+                        </Typography>
+                      )}
                     </span>
                   }
                   classNames={{ root: 'col-span-6 border rounded-md px-4 py-1' }}
@@ -53,7 +59,12 @@ function AddExtraTimeForTransactionMemberForm(props: AddExtraTimeForTransactionM
               <AccordionItem
                 title={
                   <span className='font-semibold'>
-                    {v.type} <span className='text-error-main font-normal'>cant edit</span>
+                    {v.type} <span className='text-error-main font-normal'>cant edit</span> <br />
+                    {v.updatedAt && (
+                      <Typography variant='caption' fontWeight='normal' color='text-secondary'>
+                        Dibuat pada: {formatDate(v.updatedAt)}
+                      </Typography>
+                    )}
                   </span>
                 }
                 key={v._id}
