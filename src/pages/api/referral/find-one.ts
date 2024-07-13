@@ -14,10 +14,12 @@ type Data = {
 }
 
 async function GETID(req: Ireq, res: NextApiResponse<Data>) {
-  let { status, type, member } = req.query
+  let { _id, status, type, member, code } = req.query
 
   const filter: FilterQuery<IReferral> = {}
+  if (_id) filter._id = _id
   if (type) filter.type = type
+  if (code) filter.code = code
   if (status) filter.status = status
   if (member) filter.member = member
   const data = await Referral.findOne(filter)

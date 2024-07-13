@@ -2,6 +2,7 @@ import { GetServerSideProps } from 'next'
 import { getReferral } from 'server/api'
 import AddReferral from 'src/components/pages/referrals/AddReferral'
 import DeleteReferral from 'src/components/pages/referrals/DeleteReferral'
+import ReferralEditOnly from 'src/components/pages/referrals/ReferralEditOnly'
 import UpdateReferral from 'src/components/pages/referrals/UpdateReferral'
 import Paper from 'src/components/ui/Paper'
 import Table from 'src/components/ui/Table'
@@ -58,8 +59,14 @@ function UsersPage({ data }: { data: IResponseReferrals }) {
               <TableCell>{v.member.name}</TableCell>
               <TableCell>{v.status}</TableCell>
               <TableCell className='text-right whitespace-nowrap'>
-                <UpdateReferral data={v} />
-                <DeleteReferral data={v} />
+                {v.statusEdit ? (
+                  <>
+                    <UpdateReferral data={v} />
+                    <DeleteReferral data={v} />
+                  </>
+                ) : (
+                  <ReferralEditOnly data={v} />
+                )}
               </TableCell>
             </TableRow>
           ))}

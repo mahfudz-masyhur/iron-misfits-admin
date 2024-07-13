@@ -1,7 +1,5 @@
-// pages/api/product.ts
 import type { NextApiRequest, NextApiResponse } from 'next'
 import connectMongoDB, { getDatabaseStats } from 'server/libs/mongodb'
-import Product from 'server/models/Product'
 
 type Data = {
   status: string

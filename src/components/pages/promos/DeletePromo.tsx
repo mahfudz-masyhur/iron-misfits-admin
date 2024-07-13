@@ -33,6 +33,7 @@ function DeletePromo({ data }: { data: IPromo }) {
           await deletePromo(data._id, data)
         }}
         refetch={mutate}
+        key={`delete-promo-${data._id}`}
       />
     </>
   )

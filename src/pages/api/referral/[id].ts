@@ -4,6 +4,7 @@ import connectMongoDB from 'server/libs/mongodb'
 import Referral from 'server/models/Referal'
 import { Ireq } from '../me/login'
 import { IReferral } from 'server/type/Referral'
+import { ReferralInput } from 'src/type/referral'
 
 type Data = {
   status: string
@@ -17,6 +18,27 @@ async function GETID(req: Ireq, res: NextApiResponse<Data>) {
   const data = await Referral.findById(param)
 
   return res.json({ status: 'ok', message: 'Get Success', data })
+}
+
+async function POST(req: Ireq, res: NextApiResponse<Data>) {
+  const { user } = req
+  const { _id, member, status, updatedAt } = req.body as ReferralInput
+
+    const data = await Referral.findOneAndUpdate(
+      { _id, updatedAt },
+      {
+        member,
+        status,
+        lastEditedBy: user
+      }
+    )
+
+    if (!data) {
+      res.status(501).json({ status: '501 Not Implemented', message: 'Update Failed' })
+      throw new Error('')
+    }
+
+    return res.json({ status: 'ok', message: 'Update Success', data })
 }
 
 async function DELETE(req: Ireq, res: NextApiResponse<Data>) {
@@ -43,6 +65,10 @@ export default async function handler(req: Ireq, res: NextApiResponse<Data>) {
     await validateSignin<Data>(req, res)
     if (req.method === 'GET') {
       return await GETID(req, res)
+    }
+    if (req.method === 'POST') {
+      await validateAdmin(req, res)
+      return await POST(req, res)
     }
     if (req.method === 'DELETE') {
       await validateAdmin(req, res)

@@ -9,9 +9,14 @@ import {
   removeEmptyStringProperties
 } from 'src/components/utility/formats'
 import { IResponseMember, IResponseMembers, MemberInput } from 'src/type/member'
-import { IResponsePackage, IResponsePackages, PackageInput } from 'src/type/package'
-import { IResponsePromo, IResponsePromos, PromoInput } from 'src/type/promo'
-import { IResponseReferral, IResponseReferrals, ReferralInput } from 'src/type/referral'
+import { IResponsePackage, IResponsePackages, IUpdatePackageIfStatusEditFalse, PackageInput } from 'src/type/package'
+import { IResponsePromo, IResponsePromos, IupdatePromoIfStatusEditFalse, PromoInput } from 'src/type/promo'
+import {
+  IResponseReferral,
+  IResponseReferrals,
+  IUpdateReferralIfStatusEditFalse,
+  ReferralInput
+} from 'src/type/referral'
 import { IResponseTransaction, IResponseTransactions, PendingRecordInput, TransactionInput } from 'src/type/transaction'
 import { IResponseUser, IResponseUsers, UserInput } from 'src/type/users'
 
@@ -111,6 +116,15 @@ export const addOrUpdatePackage = async (values: PackageInput): Promise<IRespons
   return data
 }
 
+export const updatePackageIfStatusEditFalse = async (
+  id: string,
+  body: IUpdatePackageIfStatusEditFalse
+): Promise<IResponsePackage> => {
+  const { data } = await axios.post(`/api/package/${id}`, body)
+
+  return data
+}
+
 export const deletePackage = async (id: string, body: IResponsePackage['data']): Promise<IResponsePackage> => {
   const { data } = await axios.delete(`/api/package/${id}`, { data: body })
 
@@ -137,6 +151,14 @@ export const addOrUpdateReferral = async (values: ReferralInput): Promise<IRespo
   return data
 }
 
+export const updateReferralIfStatusEditFalse = async (
+  id: string,
+  body: IUpdateReferralIfStatusEditFalse
+): Promise<IResponseReferral> => {
+  const { data } = await axios.post(`/api/referral/${id}`, removeEmptyStringProperties(body))
+  return data
+}
+
 export const deleteReferral = async (id: string, body: IResponseReferral['data']): Promise<IResponseReferral> => {
   const { data } = await axios.delete(`/api/referral/${id}`, { data: body })
 
@@ -152,6 +174,15 @@ export const getPromos = async (req?: IncomingMessage): Promise<IResponsePromos>
 
 export const addOrUpdatePromo = async (values: PromoInput): Promise<IResponsePromo> => {
   const { data } = await axios.post('/api/promo', removeEmptyStringProperties(values))
+
+  return data
+}
+
+export const updatePromoIfStatusEditFalse = async (
+  id: string,
+  body: IupdatePromoIfStatusEditFalse
+): Promise<IResponsePromo> => {
+  const { data } = await axios.post(`/api/promo/${id}`, body)
 
   return data
 }

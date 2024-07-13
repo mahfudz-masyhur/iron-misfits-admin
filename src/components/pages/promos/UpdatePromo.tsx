@@ -19,7 +19,12 @@ function UpdatePromo({ data }: { data: IPromo }) {
       </IconButton>
       <Dialog title='Edit Promo' open={open} onClose={handleClose} closeButtom fullWidth maxWidth='md'>
         <div className='px-4 pb-4'>
-          <FormPromo value={data} setStopClose={setStopClose} handleClose={handleClose} />
+          <FormPromo
+            value={data}
+            setStopClose={setStopClose}
+            handleClose={handleClose}
+            key={`update-promo-${data._id}`}
+          />
         </div>
       </Dialog>
     </>

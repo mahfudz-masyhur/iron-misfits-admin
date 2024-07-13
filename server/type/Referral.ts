@@ -1,4 +1,4 @@
-interface member {
+export interface IReferralMember {
   _id: string
   name: string
   avatar?: string
@@ -13,7 +13,7 @@ export interface IReferral {
   type: 'percentage' | 'nominal'
   discounts: number | string
   useCount: number
-  member: member
+  member: IReferralMember
   status: 'active' | 'inactive'
   statusEdit: boolean
   creator?: { _id: string; name: string }

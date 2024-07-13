@@ -29,6 +29,8 @@ promoSchema
     next()
   })
 
+promoSchema.index({ _id: 1, statusEdit: 1 })
+
 const Promo = (mongoose.models.Promo as Model<IPromo>) || mongoose.model<IPromo>('Promo', promoSchema)
 
 export default Promo

@@ -27,6 +27,8 @@ packageSchema
     next()
   })
 
+packageSchema.index({_id: 1, statusEdit: 1})
+
 const Package = (mongoose.models.Package as Model<IPackage>) || mongoose.model<IPackage>('Package', packageSchema)
 
 export default Package

@@ -36,6 +36,9 @@ userSchema
     next();
   });
 
+userSchema.index({ email: 1 })
+userSchema.index({ email: 1, _id: 1 })
+
 const User = mongoose.models.User as Model<IUser> || mongoose.model<IUser>("User", userSchema);
 
 export default User;

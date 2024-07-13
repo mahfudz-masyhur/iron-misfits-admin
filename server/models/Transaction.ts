@@ -66,6 +66,9 @@ transactionSchema
     next()
   })
 
+transactionSchema.index({ member: 1, status: 1 })
+transactionSchema.index({ status: 1, expired: 1 })
+
 const Transaction =
   (mongoose.models.Transaction as Model<ITransaction>) || mongoose.model<ITransaction>('Transaction', transactionSchema)
 

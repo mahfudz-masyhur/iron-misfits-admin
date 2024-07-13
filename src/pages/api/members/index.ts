@@ -27,9 +27,9 @@ async function GET(req: Ireq, res: NextApiResponse<Data>) {
     }
   }
 
-  const product = await Member.find(filter)
+  const data = await Member.find(filter)
 
-  return res.json({ status: 'ok', message: 'Get Success', data: product })
+  return res.json({ status: 'ok', message: 'Get Success', data })
 }
 
 async function POST(req: Ireq, res: NextApiResponse<Data>) {

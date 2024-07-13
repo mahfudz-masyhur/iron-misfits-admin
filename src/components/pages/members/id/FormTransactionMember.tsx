@@ -130,8 +130,9 @@ const FieldReferral = ({ field, meta, form, setCountPack, disabled }: countPack 
       type typeQuery = {
         name: string
         limit: number
+        status: 'active'
       }
-      const query: typeQuery = { name: value, limit: 50 }
+      const query: typeQuery = { name: value, limit: 50, status: 'active' }
       const res = await getReferral(undefined, getURLParams(query))
 
       return res.data

@@ -16,9 +16,9 @@ type Data = {
 }
 
 async function GET() {
-  const product = await User.find({}, { password: 0 })
+  const data = await User.find({}, { password: 0 })
 
-  return { message: 'Get Success', data: product }
+  return { message: 'Get Success', data }
 }
 
 async function POST(req: Ireq, res: NextApiResponse<Data>) {

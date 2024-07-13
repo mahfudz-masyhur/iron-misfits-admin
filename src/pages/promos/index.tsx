@@ -2,6 +2,7 @@ import { GetServerSideProps } from 'next'
 import { getPromos } from 'server/api'
 import AddPromo from 'src/components/pages/promos/AddPromo'
 import DeletePromo from 'src/components/pages/promos/DeletePromo'
+import PromoEditOnly from 'src/components/pages/promos/PromoEditOnly'
 import UpdatePromo from 'src/components/pages/promos/UpdatePromo'
 import Paper from 'src/components/ui/Paper'
 import Table from 'src/components/ui/Table'
@@ -35,9 +36,6 @@ function UsersPage({ data }: { data: IResponsePromos }) {
               Discounts
             </TableCell>
             <TableCell head component='th' className='py-2'>
-              Member
-            </TableCell>
-            <TableCell head component='th' className='py-2'>
               Status
             </TableCell>
             <TableCell head component='th' className='py-2 text-right'>
@@ -47,14 +45,20 @@ function UsersPage({ data }: { data: IResponsePromos }) {
         </TableHead>
         <TableBody>
           {data.data.map((v, i) => (
-            <TableRow hover key={`${i}`}>
+            <TableRow hover key={v._id}>
               <TableCell>{i + 1}.</TableCell>
               <TableCell>{v.name}</TableCell>
               <TableCell>{v.type === 'percentage' ? `${v.discounts}%` : v.discounts}</TableCell>
               <TableCell>{v.status}</TableCell>
               <TableCell className='text-right whitespace-nowrap'>
-                <UpdatePromo data={v} />
-                <DeletePromo data={v} />
+                {v.statusEdit ? (
+                  <>
+                    <UpdatePromo data={v} key={v._id} />
+                    <DeletePromo data={v} key={v._id} />
+                  </>
+                ) : (
+                  <PromoEditOnly data={v} key={v._id} />
+                )}
               </TableCell>
             </TableRow>
           ))}

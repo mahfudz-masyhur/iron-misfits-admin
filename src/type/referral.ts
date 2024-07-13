@@ -1,4 +1,4 @@
-import { IReferral } from 'server/type/Referral'
+import { IReferral, IReferralMember } from 'server/type/Referral'
 
 export interface IResponseReferrals {
   status: 'ok' | 'error'
@@ -22,4 +22,11 @@ export interface ReferralInput {
   status: 'active' | 'inactive'
   statusEdit: boolean
   updatedAt?: Date
+}
+
+export interface IUpdateReferralIfStatusEditFalse {
+  _id: string
+  member: IReferralMember
+  status: 'active' | 'inactive'
+  updatedAt: Date | undefined
 }

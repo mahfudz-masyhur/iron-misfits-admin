@@ -21,3 +21,9 @@ export interface PackageInput {
   statusEdit: boolean
   updatedAt?: Date
 }
+
+export interface IUpdatePackageIfStatusEditFalse {
+  _id: string
+  status: 'active' | 'inactive'
+  updatedAt?: Date
+}

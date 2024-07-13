@@ -18,7 +18,7 @@ function AddPromo() {
       </Button>
       <Dialog title='Add Promo' open={open} onClose={handleClose} closeButtom fullWidth maxWidth='md'>
         <div className='px-4 pb-4'>
-          <FormPromo setStopClose={setStopClose} handleClose={handleClose} />
+          <FormPromo setStopClose={setStopClose} handleClose={handleClose} key='create-promo' />
         </div>
       </Dialog>
     </>

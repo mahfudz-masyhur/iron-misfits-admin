@@ -23,3 +23,9 @@ export interface PromoInput {
   statusEdit: boolean
   updatedAt?: Date
 }
+
+export interface IupdatePromoIfStatusEditFalse {
+  _id: string
+  status: 'active' | 'inactive'
+  updatedAt?: Date
+}

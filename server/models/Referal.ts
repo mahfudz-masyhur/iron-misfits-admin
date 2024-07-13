@@ -31,6 +31,10 @@ referralSchema
     this.populate('lastEditedBy', '_id name')
     next()
   })
+  
+referralSchema.index({ code: 1 })
+referralSchema.index({ member: 1, status: 1 })
+referralSchema.index({ _id: 1, status: 1 })
 
 const Referral = (mongoose.models.Referral as Model<IReferral>) || mongoose.model<IReferral>('Referral', referralSchema)
 

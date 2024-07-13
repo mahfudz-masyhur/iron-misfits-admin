@@ -2,6 +2,7 @@ import { GetServerSideProps } from 'next'
 import { getPackages } from 'server/api'
 import AddPackage from 'src/components/pages/packages/AddPackage'
 import DeletePackage from 'src/components/pages/packages/DeletePackage'
+import PackageEditOnly from 'src/components/pages/packages/PackageEditOnly'
 import UpdatePackage from 'src/components/pages/packages/UpdatePackage'
 import Paper from 'src/components/ui/Paper'
 import Table from 'src/components/ui/Table'
@@ -37,6 +38,9 @@ function PackagePage({ data }: { data: IResponsePackages }) {
             <TableCell head component='th' className='py-2'>
               Price
             </TableCell>
+            <TableCell head component='th' className='py-2 text-left'>
+              Status
+            </TableCell>
             <TableCell head component='th' className='py-2 text-right'>
               Action
             </TableCell>
@@ -49,9 +53,16 @@ function PackagePage({ data }: { data: IResponsePackages }) {
               <TableCell>{v.name}</TableCell>
               <TableCell>{v.packageType}</TableCell>
               <TableCell className='text-center whitespace-nowrap'>{priceFormatter(v.price)}</TableCell>
+              <TableCell>{v.status}</TableCell>
               <TableCell className='text-right whitespace-nowrap'>
-                <UpdatePackage data={v} />
-                <DeletePackage data={v} />
+                {v.statusEdit ? (
+                  <>
+                    <UpdatePackage data={v} key={v._id} />
+                    <DeletePackage data={v} key={v._id} />
+                  </>
+                ) : (
+                  <PackageEditOnly data={v} key={v._id} />
+                )}
               </TableCell>
             </TableRow>
           ))}

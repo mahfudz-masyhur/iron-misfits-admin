@@ -13,9 +13,9 @@ type Data = {
 }
 
 async function GETID(param: string) {
-  const product = await User.findById(param)
+  const data = await User.findById(param)
 
-  return { message: 'Get Success', data: product }
+  return { message: 'Get Success', data }
 }
 
 async function DELETE(req: Ireq, res: NextApiResponse<Data>) {
