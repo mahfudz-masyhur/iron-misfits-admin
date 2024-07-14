@@ -24,4 +24,6 @@ function LoginPage() {
   )
 }
 
+LoginPage.isGuest = true
+
 export default LoginPage

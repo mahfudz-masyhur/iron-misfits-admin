@@ -6,6 +6,7 @@ export interface IUser {
   password: string
   role: [1 | 2]
   handphone: number
+  isDeleted?: boolean
   creator: { _id: string; name: string }
   lastEditedBy?: { _id: string; name: string }
   createdAt?: Date

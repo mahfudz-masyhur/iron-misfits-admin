@@ -1,11 +1,12 @@
 import type { NextApiResponse } from 'next'
 import { validateAdmin, validateSignin } from 'server/controllers/validate'
-import connectMongoDB from 'server/libs/mongodb'
+ 
 import { Ireq } from '../me/login'
 import { IPromo } from 'server/type/Promo'
 import { PromoInput } from 'src/type/promo'
 import Promo from 'server/models/Promo'
 import { FilterQuery } from 'mongoose'
+import connectMongoDB from 'server/libs/mongodb'
 
 type Data = {
   status: string
@@ -48,8 +49,7 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
     )
 
     if (!data) {
-      res.status(501).json({ status: '501 Not Implemented', message: 'Update Failed' })
-      throw new Error('')
+      return res.status(501).json({ status: '501 Not Implemented', message: 'Update Failed' })
     }
 
     return res.json({ status: 'ok', message: 'Update Success', data })

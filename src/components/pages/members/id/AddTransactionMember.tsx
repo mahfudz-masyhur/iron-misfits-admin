@@ -8,6 +8,7 @@ import IconButton from 'src/components/ui/IconButton'
 import IconRefresh from 'src/components/ui/Icon/IconRefresh'
 import { useRouter } from 'next/router'
 import { IReferral } from 'server/type/Referral'
+import RefreshButton from 'src/components/ReuseableComponent/RefreshButton'
 
 function TransactionMember({ data, referral }: { data: IMember; referral: IReferral }) {
   const [open, setOpen] = useState(false)
@@ -15,8 +16,6 @@ function TransactionMember({ data, referral }: { data: IMember; referral: IRefer
 
   const handleOpen = () => setOpen(true)
   const handleClose = () => (stopClose ? null : setOpen(false))
-
-  const router = useRouter()
 
   return (
     <>
@@ -33,9 +32,7 @@ function TransactionMember({ data, referral }: { data: IMember; referral: IRefer
           />
         </div>
       </Dialog>
-      <IconButton onClick={() => router.push(router.asPath)} onDoubleClick={() => router.reload()}>
-        <IconRefresh fontSize={20} />
-      </IconButton>
+      <RefreshButton />
     </>
   )
 }

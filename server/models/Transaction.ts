@@ -66,6 +66,7 @@ transactionSchema
     next()
   })
 
+transactionSchema.index({ member: 1 })
 transactionSchema.index({ member: 1, status: 1 })
 transactionSchema.index({ status: 1, expired: 1 })
 

@@ -15,6 +15,7 @@ export interface IMember {
   avatar?: string
   socialmedia: ISocialMedia[]
   handphone: number
+  isDeleted?: boolean
   registrationFee: number
   creator: { _id: string; name: string }
   lastEditedBy?: { _id: string; name: string }

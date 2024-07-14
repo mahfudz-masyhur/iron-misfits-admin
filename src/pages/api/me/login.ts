@@ -52,8 +52,8 @@ const userLogin = async (req: Ireq, res: NextApiResponse<Data>) => {
 
 export default async function handler(req: Ireq, res: NextApiResponse<Data>) {
   try {
-    let data
     await connectMongoDB()
+    let data
     if (req.method === 'POST') data = await userLogin(req, res)
 
     if (!data) throw new Error('No data found')

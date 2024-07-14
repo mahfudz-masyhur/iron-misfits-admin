@@ -96,8 +96,8 @@ export const addOrUpdateMember = async (values: MemberInput): Promise<IResponseM
   return data
 }
 
-export const deleteMember = async (id: string): Promise<IResponseMember> => {
-  const { data } = await axios.delete(`/api/members/${id}`)
+export const deleteMember = async (id: string, body: IResponseMember['data']): Promise<IResponseMember> => {
+  const { data } = await axios.delete(`/api/members/${id}`, { data: body })
 
   return data
 }

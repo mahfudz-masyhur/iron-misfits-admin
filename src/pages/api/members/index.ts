@@ -1,11 +1,11 @@
+import { FilterQuery } from 'mongoose'
 import type { NextApiResponse } from 'next'
 import { validateAdmin, validateSignin } from 'server/controllers/validate'
-import connectMongoDB from 'server/libs/mongodb'
 import Member from 'server/models/Member'
 import { IMember } from 'server/type/Member'
 import { MemberInput } from 'src/type/member'
 import { Ireq } from '../me/login'
-import { FilterQuery } from 'mongoose'
+import connectMongoDB from 'server/libs/mongodb'
 
 type Data = {
   status: string
@@ -15,7 +15,7 @@ type Data = {
 }
 
 async function GET(req: Ireq, res: NextApiResponse<Data>) {
-  let { name } = req.query
+  let { name, isDeleted } = req.query
   const filter: FilterQuery<IMember> = {}
   if (name) {
     const isNumeric = /^\d+$/.test(name as string)
@@ -26,8 +26,10 @@ async function GET(req: Ireq, res: NextApiResponse<Data>) {
       filter.$or = [{ name: { $regex: match } }, { email: { $regex: match } }]
     }
   }
+  if (isDeleted) filter.isDeleted = isDeleted
+  else filter.isDeleted = { $in: [null, undefined, false] }
 
-  const data = await Member.find(filter)
+  const data = await Member.find(filter).sort({ updatedAt: 1 })
 
   return res.json({ status: 'ok', message: 'Get Success', data })
 }
@@ -50,8 +52,7 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
     )
 
     if (!data) {
-      res.status(501).json({ status: '501 Not Implemented', message: 'Update Failed' })
-      throw new Error('')
+      return res.status(501).json({ status: '501 Not Implemented', message: 'Update Failed' })
     }
 
     return res.json({ status: 'ok', message: 'Update Success', data })
@@ -65,6 +66,10 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
     registrationFee,
     creator: user
   })
+
+  if (!data) {
+    return res.status(501).json({ status: '501 Not Implemented', message: 'Create Failed' })
+  }
 
   return res.json({ status: 'ok', message: 'Create Success', data })
 }

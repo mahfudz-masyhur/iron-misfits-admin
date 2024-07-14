@@ -17,9 +17,10 @@ interface Props {
   runFunction?: () => Promise<void>
   secondRunFunction?: () => void
   refetch?: any
+  refetchWhenError?: () => Promise<boolean>
 }
 
-const DialogDelete = ({ body, open, close, runFunction, secondRunFunction, refetch }: Props) => {
+const DialogDelete = ({ body, open, close, runFunction, secondRunFunction, refetchWhenError, refetch }: Props) => {
   const [secondDialogOpen, setSecondDialogOpen] = useState<boolean>(false)
   const [userInput, setUserInput] = useState<'yes' | 'cancel'>('yes')
   const [laod, setLaod] = useState(false)
@@ -40,6 +41,7 @@ const DialogDelete = ({ body, open, close, runFunction, secondRunFunction, refet
       setLaod(false)
       close()
     } catch (error: any) {
+      if (refetchWhenError) refetchWhenError()
       const text =
         error?.response?.data?.message || error?.message || error?.request?.statusText || 'Something went wrong'
       toast.error(text)

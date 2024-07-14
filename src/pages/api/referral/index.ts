@@ -1,11 +1,12 @@
 import type { NextApiResponse } from 'next'
 import { validateAdmin, validateSignin } from 'server/controllers/validate'
-import connectMongoDB from 'server/libs/mongodb'
+ 
 import { Ireq } from '../me/login'
 import { IReferral } from 'server/type/Referral'
 import { ReferralInput } from 'src/type/referral'
 import Referral from 'server/models/Referal'
 import { FilterQuery } from 'mongoose'
+import connectMongoDB from 'server/libs/mongodb'
 
 type Data = {
   status: string
@@ -50,8 +51,7 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
     )
 
     if (!data) {
-      res.status(501).json({ status: '501 Not Implemented', message: 'Update Failed' })
-      throw new Error('')
+      return res.status(501).json({ status: '501 Not Implemented', message: 'Update Failed' })
     }
 
     return res.json({ status: 'ok', message: 'Update Success', data })
@@ -59,14 +59,14 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
 
   const findReferrealCode = await Referral.find({ code })
   if (findReferrealCode.length > 0) {
-    res.status(501).json({ status: '501 Not Implemented', message: 'Code already been used' })
-    throw new Error('')
+    return res.status(501).json({ status: '501 Not Implemented', message: 'Code already been used' })
   }
 
   const findReferreal = await Referral.find({ member, status: 'active' })
   if (findReferreal.length > 0) {
-    res.status(501).json({ status: '501 Not Implemented', message: 'Only one member can get code referral active' })
-    throw new Error('')
+    return res
+      .status(501)
+      .json({ status: '501 Not Implemented', message: 'Only one member can get code referral active' })
   }
 
   const data = await Referral.create({

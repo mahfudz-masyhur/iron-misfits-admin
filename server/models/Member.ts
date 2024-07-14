@@ -14,6 +14,7 @@ const memberSchema = new mongoose.Schema(
       }
     ],
     handphone: { type: Number },
+    isDeleted: { type: Boolean },
     registrationFee: { type: Number, required: true },
     creator: { type: ObjectId, ref: 'User' },
     lastEditedBy: { type: ObjectId, ref: 'User' }

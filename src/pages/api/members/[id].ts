@@ -1,9 +1,11 @@
 import type { NextApiResponse } from 'next'
-import connectMongoDB from 'server/libs/mongodb'
+import { validateAdmin, validateSignin } from 'server/controllers/validate'
+
 import Member from 'server/models/Member'
-import { Ireq } from '../me/login'
-import { validateAdmin, validateMasterAdmin, validateSignin } from 'server/controllers/validate'
+import Transaction from 'server/models/Transaction'
 import { IMember } from 'server/type/Member'
+import { Ireq } from '../me/login'
+import connectMongoDB from 'server/libs/mongodb'
 
 type Data = {
   status: string
@@ -22,11 +24,33 @@ async function GETID(req: Ireq, res: NextApiResponse<Data>) {
 
 async function DELETE(req: Ireq, res: NextApiResponse<Data>) {
   let param = `${req.query.id}`
+  const transactions = await Transaction.findOne({ member: param })
+  if (transactions) {
+    const { updatedAt } = req.body as IMember
+    const data = await Member.findOneAndUpdate(
+      { _id: param, updatedAt },
+      {
+        $set: { isDeleted: true },
+        $unset: { avatar: '' }
+      },
+      { new: true }
+    )
+
+    if (!data) {
+      return res.status(501).json({ status: '501 Not Implemented', message: 'Delete Failed' })
+    }
+
+    return res.json({
+      status: 'ok',
+      message: "The member has made a transaction, this member's avatar will be deleted",
+      data
+    })
+  }
+
   const data = await Member.findByIdAndDelete(param)
 
   if (!data) {
-    res.status(501).json({ status: '501 Not Implemented', message: 'Delete Failed' })
-    throw new Error('')
+    return res.status(501).json({ status: '501 Not Implemented', message: 'Delete Failed' })
   }
 
   return res.json({ status: 'ok', message: 'Delete Success', data })

@@ -1,10 +1,11 @@
 import type { NextApiResponse } from 'next'
 import { validateAdmin, validateSignin } from 'server/controllers/validate'
-import connectMongoDB from 'server/libs/mongodb'
+ 
 import { Ireq } from '../me/login'
 import { IPromo } from 'server/type/Promo'
 import Promo from 'server/models/Promo'
 import { PromoInput } from 'src/type/promo'
+import connectMongoDB from 'server/libs/mongodb'
 
 type Data = {
   status: string
@@ -33,8 +34,7 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
   )
 
   if (!data) {
-    res.status(501).json({ status: '501 Not Implemented', message: 'Update Failed' })
-    throw new Error('')
+    return res.status(501).json({ status: '501 Not Implemented', message: 'Update Failed' })
   }
 
   return res.json({ status: 'ok', message: 'Update Success', data })
@@ -45,14 +45,12 @@ async function DELETE(req: Ireq, res: NextApiResponse<Data>) {
   const { statusEdit, updatedAt } = req.body as IPromo
 
   if (!statusEdit) {
-    res.status(405).json({ status: '405 Method Not Allowed', message: 'Promo sudah digunakan' })
-    throw new Error('')
+    return res.status(405).json({ status: '405 Method Not Allowed', message: 'Promo sudah digunakan' })
   }
   const data = await Promo.findOneAndDelete({ _id: param, updatedAt })
 
   if (!data) {
-    res.status(501).json({ status: '501 Not Implemented', message: 'Delete Failed' })
-    throw new Error('')
+    return res.status(501).json({ status: '501 Not Implemented', message: 'Delete Failed' })
   }
 
   return res.json({ status: 'ok', message: 'Delete Success', data })

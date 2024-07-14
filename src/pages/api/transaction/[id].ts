@@ -1,6 +1,6 @@
 import type { NextApiResponse } from 'next'
 import { validateAdmin, validateSignin } from 'server/controllers/validate'
-import connectMongoDB from 'server/libs/mongodb'
+ 
 import Transaction from 'server/models/Transaction'
 import { ITransaction } from 'server/type/Transaction'
 import { Ireq } from '../me/login'
@@ -8,6 +8,7 @@ import Referral from 'server/models/Referal'
 import { PendingRecordInput } from 'src/type/transaction'
 import { removeEmptyStringProperties } from 'src/components/utility/formats'
 import { ObjectId } from 'mongodb'
+import connectMongoDB from 'server/libs/mongodb'
 
 type Data = {
   status: string
@@ -32,13 +33,14 @@ async function DELETE(req: Ireq, res: NextApiResponse<Data>) {
   if (pendingId) {
     const transaction = await Transaction.findOne({ _id: id, updatedAt })
     if (!transaction) {
-      res.status(501).json({ status: '501 Not Implemented', message: 'Update failed' })
-      throw new Error('Update failed')
+      return res.status(501).json({ status: '501 Not Implemented', message: 'Update failed' })
     }
 
     const pandingIndex = transaction.pending.findIndex(f => `${f._id}` === `${pendingId}`)
     const nextPendingIndex = transaction.pending.findIndex(f => `${f._id}` === `${nextPendingId}`)
-    if (pandingIndex < 0) throw new Error('transaction.pending not found')
+    if (pandingIndex < 0) {
+      return res.status(501).json({ status: '501 Not Implemented', message: 'transaction.pending not found' })
+    }
 
     // Memperbarui subdocument
     transaction.status =
@@ -53,8 +55,7 @@ async function DELETE(req: Ireq, res: NextApiResponse<Data>) {
   }
 
   if (!createdAt) {
-    res.status(400).json({ status: '405 Method Not Allowed', message: 'createdAt is required' })
-    throw new Error('')
+    return res.status(400).json({ status: '405 Method Not Allowed', message: 'createdAt is required' })
   }
 
   const createdDate = new Date(createdAt)
@@ -66,21 +67,17 @@ async function DELETE(req: Ireq, res: NextApiResponse<Data>) {
   const differenceInDays = differenceInTime / (1000 * 3600 * 24)
 
   if (differenceInDays >= 1) {
-    res
-      .status(400)
-      .json({
-        status: '405 Method Not Allowed',
-        message: 'Transactions cannot be edited if they are more than one day old'
-      })
-    throw new Error('')
+    return res.status(400).json({
+      status: '405 Method Not Allowed',
+      message: 'Transactions cannot be edited if they are more than one day old'
+    })
   }
 
   if (referral?._id) {
     const findTransaction = await Transaction.findOne({ _id: param, updatedAt })
 
     if (!findTransaction) {
-      res.status(404).json({ status: '404 Not Found', message: 'Transaction not founded' })
-      throw new Error('')
+      return res.status(404).json({ status: '404 Not Found', message: 'Transaction not founded' })
     }
     if (findTransaction.referral) {
       const referralInvitation = await Referral.findOneAndUpdate(
@@ -90,16 +87,16 @@ async function DELETE(req: Ireq, res: NextApiResponse<Data>) {
       )
 
       if (!referralInvitation) {
-        res.status(501).json({ status: '501 Not Implemented', message: 'Referral remove useCount update Failed' })
-        throw new Error('')
+        return res
+          .status(501)
+          .json({ status: '501 Not Implemented', message: 'Referral remove useCount update Failed' })
       }
     }
   }
   const data = await Transaction.findOneAndDelete({ _id: param, updatedAt })
 
   if (!data) {
-    res.status(501).json({ status: '501 Not Implemented', message: 'Delete Failed' })
-    throw new Error('')
+    return res.status(501).json({ status: '501 Not Implemented', message: 'Delete Failed' })
   }
 
   return res.json({ status: 'ok', message: 'Delete Success', data })
@@ -123,23 +120,20 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
   if (pendingId) {
     const transaction = await Transaction.findOne({ _id: id, updatedAt })
     if (!transaction) {
-      res.status(404).json({ status: '404 Not Found', message: 'Transaction not found' })
-      throw new Error('Transaction not found')
+      return res.status(404).json({ status: '404 Not Found', message: 'Transaction not found' })
     }
 
     const pandingIndex = transaction.pending.findIndex(f => `${f._id}` === `${pendingId}`)
     const pandingFind = transaction.pending.find(f => `${f._id}` === `${pendingId}`)
     if (pandingIndex < 0) {
-      res.status(404).json({ status: '404 Not Found', message: 'transaction.pending not found' })
-      throw new Error('transaction.pending not found')
+      return res.status(404).json({ status: '404 Not Found', message: 'transaction.pending not found' })
     }
     const canEdit = isWithinOneDay(`${pandingFind?.createdAt}`) && pandingIndex === 0
     if (!canEdit) {
-      res.status(501).json({
+      return res.status(501).json({
         status: '501 Not Implemented',
         message: 'Transactions cannot be edited if they are more than one day old'
       })
-      throw new Error('Transactions cannot be edited if they are more than one day old')
     }
 
     // Memperbarui subdocument
@@ -180,8 +174,7 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
   )
 
   if (!data) {
-    res.status(501).json({ status: '501 Not Implemented', message: 'Create Failed' })
-    throw new Error('')
+    return res.status(501).json({ status: '501 Not Implemented', message: 'Create Failed' })
   }
 
   return res.json({ status: 'ok', message: 'Create Success', data })

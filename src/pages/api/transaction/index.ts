@@ -1,13 +1,14 @@
 import { FilterQuery } from 'mongoose'
 import type { NextApiResponse } from 'next'
 import { validateAdmin, validateSignin } from 'server/controllers/validate'
-import connectMongoDB from 'server/libs/mongodb'
+ 
 import Package from 'server/models/Package'
 import Promo from 'server/models/Promo'
 import Referral from 'server/models/Referal'
 import Transaction from 'server/models/Transaction'
 import { ITransaction } from 'server/type/Transaction'
 import { Ireq } from '../me/login'
+import connectMongoDB from 'server/libs/mongodb'
 
 type Data = {
   status: string
@@ -53,8 +54,7 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
 
   if (_id) {
     if (!createdAt) {
-      res.status(400).json({ status: '405 Method Not Allowed', message: 'createdAt is required' })
-      throw new Error('')
+      return res.status(400).json({ status: '405 Method Not Allowed', message: 'createdAt is required' })
     }
 
     const createdDate = new Date(createdAt)
@@ -62,11 +62,10 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
     const differenceInTime = now.getTime() - createdDate.getTime()
     const differenceInDays = differenceInTime / (1000 * 3600 * 24)
     if (differenceInDays >= 1) {
-      res.status(400).json({
+      return res.status(400).json({
         status: '405 Method Not Allowed',
         message: 'Transactions cannot be edit if they are more than one day old'
       })
-      throw new Error('')
     }
 
     // Cek dan update Package
@@ -78,13 +77,12 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
         { new: true, timestamps: false }
       )
       if (!packageUpdated) {
-        res.status(501).json({ status: '501 Not Implemented', message: 'Package statusEdit update Failed' })
-        throw new Error('')
+        return res.status(501).json({ status: '501 Not Implemented', message: 'Package statusEdit update Failed' })
       }
     }
 
     // Cek dan update Promo
-    if (promo){
+    if (promo) {
       const promoToUpdate = await Promo.findOne({ _id: promo, statusEdit: true })
       if (promoToUpdate) {
         const promoUpdated = await Promo.findOneAndUpdate(
@@ -93,8 +91,7 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
           { new: true, timestamps: false }
         )
         if (!promoUpdated) {
-          res.status(501).json({ status: '501 Not Implemented', message: 'Promo statusEdit update Failed' })
-          throw new Error('')
+          return res.status(501).json({ status: '501 Not Implemented', message: 'Promo statusEdit update Failed' })
         }
       }
     }
@@ -104,8 +101,7 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
       const findTransaction = await Transaction.findOne({ _id, updatedAt })
 
       if (!findTransaction) {
-        res.status(404).json({ status: '404 Not Found', message: 'Transaction not founded' })
-        throw new Error('')
+        return res.status(404).json({ status: '404 Not Found', message: 'Transaction not founded' })
       }
 
       if (`${referral}` !== `${findTransaction.referral?._id}`) {
@@ -116,8 +112,9 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
             { new: true, timestamps: false }
           )
           if (!referralInvitationBefore) {
-            res.status(501).json({ status: '501 Not Implemented', message: 'Referral before useCount update Failed' })
-            throw new Error('')
+            return res
+              .status(501)
+              .json({ status: '501 Not Implemented', message: 'Referral before useCount update Failed' })
           }
         }
 
@@ -128,16 +125,16 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
         )
 
         if (!referralInvitationAfter) {
-          res.status(501).json({ status: '501 Not Implemented', message: 'Referral after useCount update Failed' })
-          throw new Error('')
+          return res
+            .status(501)
+            .json({ status: '501 Not Implemented', message: 'Referral after useCount update Failed' })
         }
       }
     } else {
       const findTransaction = await Transaction.findOne({ _id, updatedAt })
 
       if (!findTransaction) {
-        res.status(404).json({ status: '404 Not Found', message: 'Transaction not founded' })
-        throw new Error('')
+        return res.status(404).json({ status: '404 Not Found', message: 'Transaction not founded' })
       }
 
       if (findTransaction.referral) {
@@ -148,8 +145,9 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
         )
 
         if (!referralInvitation) {
-          res.status(501).json({ status: '501 Not Implemented', message: 'Referral remove useCount update Failed' })
-          throw new Error('')
+          return res
+            .status(501)
+            .json({ status: '501 Not Implemented', message: 'Referral remove useCount update Failed' })
         }
       }
     }
@@ -171,8 +169,7 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
     )
 
     if (!data) {
-      res.status(501).json({ status: '501 Not Implemented', message: 'Update Failed' })
-      throw new Error('')
+      return res.status(501).json({ status: '501 Not Implemented', message: 'Update Failed' })
     }
 
     return res.json({ status: 'ok', message: 'Update Success', data })
@@ -180,11 +177,10 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
 
   const findActiveTransaction = await Transaction.find({ member, status: { $in: ['ACTIVE', 'PENDING'] } })
   if (findActiveTransaction.length > 0) {
-    res.status(405).json({
+    return res.status(405).json({
       status: '405 Method Not Allowed',
       message: 'Cant not create new transaction if there is an active or pending transaction'
     })
-    throw new Error('')
   }
 
   // Cek dan update Package
@@ -196,13 +192,12 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
       { new: true, timestamps: false }
     )
     if (!packageUpdated) {
-      res.status(501).json({ status: '501 Not Implemented', message: 'Package statusEdit update Failed' })
-      throw new Error('')
+      return res.status(501).json({ status: '501 Not Implemented', message: 'Package statusEdit update Failed' })
     }
   }
 
   // Cek dan update Promo
-  if (promo){
+  if (promo) {
     const promoToUpdate = await Promo.findOne({ _id: promo, statusEdit: true })
     if (promoToUpdate) {
       const promoUpdated = await Promo.findOneAndUpdate(
@@ -211,8 +206,7 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
         { new: true, timestamps: false }
       )
       if (!promoUpdated) {
-        res.status(501).json({ status: '501 Not Implemented', message: 'Promo statusEdit update Failed' })
-        throw new Error('')
+        return res.status(501).json({ status: '501 Not Implemented', message: 'Promo statusEdit update Failed' })
       }
     }
   }
@@ -224,8 +218,7 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
       { new: true, timestamps: false }
     )
     if (!referralInvitation) {
-      res.status(405).json({ status: '405 Method Not Allowed', message: 'Referral is not active' })
-      throw new Error('')
+      return res.status(405).json({ status: '405 Method Not Allowed', message: 'Referral is not active' })
     }
   }
 

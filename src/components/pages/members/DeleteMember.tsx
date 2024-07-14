@@ -29,9 +29,10 @@ function DeleteMember({ data }: { data: IMember }) {
         open={open}
         close={() => setOpen(false)}
         runFunction={async () => {
-          await deleteMember(data._id)
+          await deleteMember(data._id, data)
         }}
         refetch={mutate}
+        refetchWhenError={mutate}
       />
     </>
   )

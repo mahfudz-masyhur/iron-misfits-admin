@@ -1,9 +1,10 @@
 'use client'
 import Cookies from 'js-cookie'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/router'
 import React from 'react'
 import { toast } from 'react-hot-toast'
 import { getMyAccount } from 'server/api'
+import { getURLParams, removeUndefinedProperties } from 'src/components/utility/formats'
 import { WINDOW_USER_SCRIPT_VARIABLE } from 'src/constant'
 import ContextAction from 'src/context/AppContext/action'
 import type { IAppContext } from 'src/context/types'
@@ -38,8 +39,6 @@ export default function AppContextComponent(props: IAppContextComponent) {
   const { setUser, state, setToken, setIsLoading } = ContextAction()
   const { user, isLoading } = state
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const url = searchParams.get('url')
 
   const checkUserData = async () => {
     try {
@@ -47,8 +46,8 @@ export default function AppContextComponent(props: IAppContextComponent) {
       const result = await getMyAccount()
       setUser(result.data)
       if (noAuthPath.includes(window.location.pathname)) {
-        if (url) {
-          router.push(url)
+        if (router.query.url) {
+          router.push(`${router.query.url}`)
         } else {
           router.push('/')
         }
@@ -56,7 +55,7 @@ export default function AppContextComponent(props: IAppContextComponent) {
       setIsLoading(false)
     } catch (err) {
       if (!noAuthPath.includes(window.location.pathname)) {
-        router.push('/login')
+        router.push(`/login${router.asPath !== '/' ? '?' + getURLParams({ url: router.asPath }) : ''}`)
       }
       setTimeout(() => {
         setIsLoading(false)

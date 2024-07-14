@@ -1,11 +1,11 @@
-import "src/styles/globals.css";
-import type { AppProps } from "next/app";
-import { Toaster } from 'react-hot-toast'
-import NextNProgress from 'nextjs-progressbar'
-import { ThemeProvider } from 'next-themes'
 import { NextComponentType } from 'next'
-import AppContext from 'src/context/AppContext'
+import { ThemeProvider } from 'next-themes'
+import type { AppProps } from 'next/app'
+import NextNProgress from 'nextjs-progressbar'
+import { Toaster } from 'react-hot-toast'
 import MainLayout from 'src/components/Layouts/main'
+import AppContext from 'src/context/AppContext'
+import 'src/styles/globals.css'
 
 interface CustomAppProps extends AppProps {
   Component: NextComponentType & {

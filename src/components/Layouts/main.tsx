@@ -7,6 +7,7 @@ import MenuItem from '../ui/Menu/MenuItem'
 import Paper from '../ui/Paper'
 import Typography from '../ui/Typograph'
 import Notification from './Notification'
+import CircularProgress from '../ui/CircularProgress'
 
 const ProfilMenu = () => {
   const { auth } = useAppContext()
@@ -32,13 +33,32 @@ const ProfilMenu = () => {
             </Typography>
           </div>
         </div>
-        <MenuItem onClick={logout}>Logout</MenuItem>
+        <MenuItem
+          onClick={() => {
+            menu.onClose()
+            logout?.()
+          }}
+        >
+          Logout
+        </MenuItem>
       </Menu>
     </>
   )
 }
 
+export const LoadingPage = () => {
+  return (
+    <div className='h-[100dvh] flex justify-center items-center'>
+      <CircularProgress size={60} />
+    </div>
+  )
+}
+
 function MainLayout({ children }: { children: ReactNode }) {
+  const { auth } = useAppContext()
+  const { isLoading } = auth
+  if (isLoading) return <LoadingPage />
+
   return (
     <div>
       <Paper className='flex justify-between m-4 p-2 bg-primary-main/10'>

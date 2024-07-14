@@ -1,10 +1,11 @@
 import { FilterQuery } from 'mongoose'
 import type { NextApiResponse } from 'next'
 import { validateSignin } from 'server/controllers/validate'
-import connectMongoDB from 'server/libs/mongodb'
+ 
 import Referral from 'server/models/Referal'
 import { IReferral } from 'server/type/Referral'
 import { Ireq } from '../me/login'
+import connectMongoDB from 'server/libs/mongodb'
 
 type Data = {
   status: string

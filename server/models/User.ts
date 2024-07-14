@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: 'Email required' },
     name: { type: String, required: 'Name required' },
     avatar: { type: String },
-    handphone: { type: Number},
+    handphone: { type: Number },
     password: { type: String, required: 'Password required' },
     role: [
       {
@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema(
         // 2 = viewer
       }
     ],
+    isDeleted: { type: Boolean },
     lastEditedBy: { type: ObjectId, ref: 'User' },
     creator: { type: ObjectId, ref: 'User' }
   },
