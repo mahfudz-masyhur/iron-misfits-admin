@@ -1,3 +1,4 @@
+import RefreshButton from 'src/components/ReuseableComponent/RefreshButton'
 import AddPackage from 'src/components/pages/packages/AddPackage'
 import DeletePackage from 'src/components/pages/packages/DeletePackage'
 import PackageEditOnly from 'src/components/pages/packages/PackageEditOnly'
@@ -11,15 +12,23 @@ import TableRow from 'src/components/ui/Table/TableRow'
 import Typography from 'src/components/ui/Typograph'
 import { priceFormatter } from 'src/components/utility/formats'
 import { IResponsePackages } from 'src/type/package'
+import { KeyedMutator } from 'swr'
 
-function PackagePage({ data }: { data: IResponsePackages }) {
+interface Props {
+  data: IResponsePackages
+  mutate: KeyedMutator<IResponsePackages>
+}
+
+function PackagePage({ data, mutate }: Props) {
   return (
     <Paper className='p-4 m-4'>
       <div className='flex justify-between mb-2'>
         <Typography variant='h5' fontWeight='semibold'>
           Table Package
         </Typography>
-        <AddPackage />
+        <div>
+          <AddPackage mutate={mutate} /> <RefreshButton mutate={mutate} />
+        </div>
       </div>
       <Table>
         <TableHead>
@@ -55,11 +64,11 @@ function PackagePage({ data }: { data: IResponsePackages }) {
               <TableCell className='text-right whitespace-nowrap'>
                 {v.statusEdit ? (
                   <>
-                    <UpdatePackage data={v} key={v._id} />
-                    <DeletePackage data={v} key={v._id} />
+                    <UpdatePackage data={v} mutate={mutate} />
+                    <DeletePackage data={v} mutate={mutate} />
                   </>
                 ) : (
-                  <PackageEditOnly data={v} key={v._id} />
+                  <PackageEditOnly data={v} mutate={mutate} />
                 )}
               </TableCell>
             </TableRow>

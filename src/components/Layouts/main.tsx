@@ -8,6 +8,7 @@ import Paper from '../ui/Paper'
 import Typography from '../ui/Typograph'
 import Notification from './Notification'
 import CircularProgress from '../ui/CircularProgress'
+import Link from '../ui/Link'
 
 const ProfilMenu = () => {
   const { auth } = useAppContext()
@@ -33,6 +34,9 @@ const ProfilMenu = () => {
             </Typography>
           </div>
         </div>
+        <MenuItem Link={Link} href='/settings' onClick={menu.onClose}>
+          Setting
+        </MenuItem>
         <MenuItem
           onClick={() => {
             menu.onClose()
@@ -62,7 +66,28 @@ function MainLayout({ children }: { children: ReactNode }) {
   return (
     <div>
       <Paper className='flex justify-between m-4 p-2 bg-primary-main/10'>
-        <div>MisFits</div>
+        <div className='inline-flex items-center gap-3'>
+          <Link href='/'>
+            <Typography fontWeight='semibold'>MisFits</Typography>
+          </Link>
+          <ul className='flex gap-2'>
+            <li>
+              <Link href='/users'>users</Link>
+            </li>
+            <li>
+              <Link href='/members'>members</Link>
+            </li>
+            <li>
+              <Link href='/packages'>packages</Link>
+            </li>
+            <li>
+              <Link href='/promos'>promos</Link>
+            </li>
+            <li>
+              <Link href='/referrals'>referrals</Link>
+            </li>
+          </ul>
+        </div>
         <div className='inline-flex gap-1'>
           <Notification />
           <ProfilMenu />

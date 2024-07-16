@@ -10,7 +10,7 @@ import useSWR from 'swr'
 
 export const GetUserSWR = () => {
   const { query, asPath, push } = useRouter()
-  const data = useSWR<IResponseUsers>(`/api/users${getURLParams(query)}`, fetcherClient)
+  const data = useSWR<IResponseUsers>(`/api/users?${getURLParams(query)}`, fetcherClient)
 
   if (data.error) {
     let destination = '/500'
@@ -27,7 +27,7 @@ export const GetUserSWR = () => {
 
 export const GetReferralSWR = () => {
   const { query, asPath, push } = useRouter()
-  const data = useSWR<IResponseReferrals>(`/api/referral${getURLParams(query)}`, fetcherClient)
+  const data = useSWR<IResponseReferrals>(`/api/referral?${getURLParams(query)}`, fetcherClient)
 
   if (data.error) {
     let destination = '/500'
@@ -44,7 +44,7 @@ export const GetReferralSWR = () => {
 
 export const GetPromosSWR = () => {
   const { query, asPath, push } = useRouter()
-  const data = useSWR<IResponsePromos>(`/api/promo${getURLParams(query)}`, fetcherClient)
+  const data = useSWR<IResponsePromos>(`/api/promo?${getURLParams(query)}`, fetcherClient)
 
   if (data.error) {
     let destination = '/500'
@@ -78,7 +78,7 @@ export const GetPackageSWR = () => {
 
 export const GetMembersSWR = () => {
   const { query, asPath, push } = useRouter()
-  const data = useSWR<IResponseMembers>(`/api/members${getURLParams(query)}`, fetcherClient)
+  const data = useSWR<IResponseMembers>(`/api/members?${getURLParams(query)}`, fetcherClient)
 
   if (data.error) {
     let destination = '/500'

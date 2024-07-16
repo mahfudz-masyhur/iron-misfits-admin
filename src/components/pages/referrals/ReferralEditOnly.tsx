@@ -12,7 +12,8 @@ import IconButton from 'src/components/ui/IconButton'
 import Select from 'src/components/ui/Select'
 import Option from 'src/components/ui/Select/Option'
 import { getURLParams, toastError } from 'src/components/utility/formats'
-import { IUpdateReferralIfStatusEditFalse } from 'src/type/referral'
+import { IResponseReferrals, IUpdateReferralIfStatusEditFalse } from 'src/type/referral'
+import { KeyedMutator } from 'swr'
 
 const StudentField = ({ field, form, meta }: FieldProps) => {
   const fetchSuggestions = async (value: string) => {
@@ -58,12 +59,13 @@ interface Props {
   setStopClose: Dispatch<SetStateAction<boolean>>
   value?: IReferral
   handleClose: () => void | null
+  mutate: KeyedMutator<IResponseReferrals>
 }
+
 const statuses = ['active', 'inactive']
 
 function FormReferral(props: Props) {
-  const { setStopClose, value, handleClose } = props
-  const router = useRouter()
+  const { setStopClose, value, handleClose, mutate } = props
   const initialValues: IUpdateReferralIfStatusEditFalse = {
     _id: value?._id || '',
     member: value?.member || { _id: '', name: '', handphone: 0 },
@@ -85,8 +87,7 @@ function FormReferral(props: Props) {
     try {
       setStopClose(true)
       await updateReferralIfStatusEditFalse(values._id, values)
-      if (value) formikHelpers.resetForm()
-      await router.push(router.asPath)
+      await mutate()
       setStopClose(false)
       handleClose()
     } catch (error: any) {
@@ -142,7 +143,12 @@ function FormReferral(props: Props) {
   )
 }
 
-function ReferralEditOnly({ data }: { data: IReferral }) {
+interface ReferralEditOnlyProps {
+  data: IReferral
+  mutate: KeyedMutator<IResponseReferrals>
+}
+
+function ReferralEditOnly({ data, mutate }: ReferralEditOnlyProps) {
   const [open, setOpen] = useState(false)
   const [stopClose, setStopClose] = useState(false)
 
@@ -156,7 +162,7 @@ function ReferralEditOnly({ data }: { data: IReferral }) {
       </IconButton>
       <Dialog title='Edit Member' open={open} onClose={handleClose} closeButtom fullWidth maxWidth='md'>
         <div className='px-4 pb-4'>
-          <FormReferral value={data} setStopClose={setStopClose} handleClose={handleClose} />
+          <FormReferral value={data} setStopClose={setStopClose} handleClose={handleClose} mutate={mutate} />
         </div>
       </Dialog>
     </>

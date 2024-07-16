@@ -1,15 +1,19 @@
-import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { deleteReferral } from 'server/api'
 import { IReferral } from 'server/type/Referral'
 import DialogDelete from 'src/components/ReuseableComponent/DialogDelete'
 import IconDelete from 'src/components/ui/Icon/IconDelete'
 import IconButton from 'src/components/ui/IconButton'
+import { IResponseReferrals } from 'src/type/referral'
+import { KeyedMutator } from 'swr'
 
-function DeleteReferral({ data }: { data: IReferral }) {
+interface Props {
+  data: IReferral
+  mutate: KeyedMutator<IResponseReferrals>
+}
+
+function DeleteReferral({ data, mutate }: Props) {
   const [open, setOpen] = useState(false)
-  const router = useRouter()
-  const mutate = () => router.push(router.asPath)
 
   return (
     <>

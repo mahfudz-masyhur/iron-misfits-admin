@@ -2,6 +2,7 @@ import Axios from 'axios'
 import { IncomingMessage } from 'http'
 import { IUser } from 'server/type/User'
 import { updateStatusTransactionValue } from 'src/components/pages/members/id/EditStatusTransactionMember'
+import { ChangePasswordInputValue } from 'src/components/pages/settings/security'
 import {
   convertToNumber,
   convertToNumericPhoneNumber,
@@ -21,7 +22,7 @@ import { IResponseTransaction, IResponseTransactions, PendingRecordInput, Transa
 import { IResponseUser, IResponseUsers, UserInput } from 'src/type/users'
 
 const axios = Axios.create({
-  baseURL: 'http://localhost:4001',
+  baseURL: process.env.BASE_URL,
   headers: {
     'Content-Type': 'application/json'
   }
@@ -30,7 +31,7 @@ const axios = Axios.create({
 export const fetcherClient = async (url: string) => await axios.get(url).then(res => res.data)
 
 const fetchServer = async (url: string, req: IncomingMessage) => {
-  const { data } = await axios.get(`http://localhost:${process.env.PORT}${url}`, {
+  const { data } = await axios.get(`${process.env.BASE_URL}${url}`, {
     headers: { Cookie: req.headers.cookie || '' }
   })
 
@@ -229,6 +230,19 @@ export const addOrUpdateExtraTimeTransaction = async (
 ): Promise<IResponseTransaction> => {
   const url = `/api/transaction/${id}?${getURLParams(query)}`
   const { data } = await axios.post(url, values)
+
+  return data
+}
+
+export const resetMyPassword = async (body: ChangePasswordInputValue) => {
+  const { data } = await axios.post(`/api/me/reset-password`, body)
+
+  return data
+}
+
+export const changeProfile = async (body: UserInput) => {
+  body.handphone = body.handphone ? convertToNumericPhoneNumber(body.handphone).toString() : ''
+  const { data } = await axios.post(`/api/me/profile`, removeEmptyStringProperties(body))
 
   return data
 }

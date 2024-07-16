@@ -3,8 +3,14 @@ import Button from 'src/components/ui/Button'
 import Dialog from 'src/components/ui/Dialog'
 import IconPlus from 'src/components/ui/Icon/IconPlus'
 import FormUser from './FormUser'
+import { KeyedMutator } from 'swr'
+import { IResponseUsers } from 'src/type/users'
 
-function AddUser() {
+interface Props {
+  mutate: KeyedMutator<IResponseUsers>
+}
+
+function AddUser({ mutate }: Props) {
   const [open, setOpen] = useState(false)
   const [stopClose, setStopClose] = useState(false)
 
@@ -18,7 +24,7 @@ function AddUser() {
       </Button>
       <Dialog title='Add User' open={open} onClose={handleClose} closeButtom fullWidth maxWidth='md'>
         <div className='px-4 pb-4'>
-          <FormUser setStopClose={setStopClose} handleClose={handleClose} />
+          <FormUser setStopClose={setStopClose} handleClose={handleClose} mutate={mutate} />
         </div>
       </Dialog>
     </>

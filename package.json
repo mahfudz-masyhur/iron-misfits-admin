@@ -10,6 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@radix-ui/react-popover": "^1.1.1",
     "@types/mongoose": "^5.11.97",
     "axios": "^1.7.2",
     "bcrypt": "^5.1.1",
@@ -25,6 +26,7 @@
     "next": "14.2.4",
     "next-themes": "^0.3.0",
     "nextjs-progressbar": "^0.0.16",
+    "nodemon": "^3.1.4",
     "pica": "^9.0.1",
     "react": "^18",
     "react-avatar-editor": "^13.0.2",
@@ -32,6 +34,7 @@
     "react-dom": "^18",
     "react-dropzone": "^14.2.3",
     "react-hot-toast": "^2.4.1",
+    "server-timing": "^3.3.3",
     "swr": "^2.2.5",
     "tailwind-merge": "^2.3.0"
   },

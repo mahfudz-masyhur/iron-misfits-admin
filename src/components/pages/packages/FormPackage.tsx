@@ -8,19 +8,20 @@ import Select from 'src/components/ui/Select'
 import Option from 'src/components/ui/Select/Option'
 import TextField from 'src/components/ui/TextField'
 import { formatNumber, toastError } from 'src/components/utility/formats'
-import { PackageInput } from 'src/type/package'
+import { IResponsePackages, PackageInput } from 'src/type/package'
+import { KeyedMutator } from 'swr'
 
 interface Props {
   setStopClose: Dispatch<SetStateAction<boolean>>
   value?: IPackage
   handleClose: () => void | null
+  mutate: KeyedMutator<IResponsePackages>
 }
 const packageTypes = ['daily', 'weekly', 'monthly', 'quarterly', 'annual']
 const statuses = ['active', 'inactive']
 
 function FormPackage(props: Props) {
-  const { setStopClose, value, handleClose } = props
-  const router = useRouter()
+  const { setStopClose, value, handleClose, mutate } = props
   const initialValues: PackageInput = {
     _id: value?._id || '',
     name: value?.name || '',
@@ -46,8 +47,7 @@ function FormPackage(props: Props) {
     try {
       setStopClose(true)
       await addOrUpdatePackage(values)
-      if (value) formikHelpers.resetForm()
-      await router.push(router.asPath)
+      await mutate()
       setStopClose(false)
       handleClose()
     } catch (error: any) {

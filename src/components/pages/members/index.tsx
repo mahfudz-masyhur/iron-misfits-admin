@@ -14,8 +14,14 @@ import TableRow from 'src/components/ui/Table/TableRow'
 import Typography from 'src/components/ui/Typograph'
 import { formatPhoneNumber } from 'src/components/utility/formats'
 import { IResponseMembers } from 'src/type/member'
+import { KeyedMutator } from 'swr'
 
-function MembersPage({ data }: { data: IResponseMembers }) {
+interface Props {
+  mutate: KeyedMutator<IResponseMembers>
+  data: IResponseMembers
+}
+
+function MembersPage({ data, mutate }: Props) {
   return (
     <Paper className='p-4 m-4'>
       <div className='flex justify-between mb-2'>
@@ -23,8 +29,8 @@ function MembersPage({ data }: { data: IResponseMembers }) {
           Table Members
         </Typography>
         <div>
-          <AddMember />
-          <RefreshButton />
+          <AddMember mutate={mutate} />
+          <RefreshButton mutate={mutate} />
         </div>
       </div>
       <Table>
@@ -64,8 +70,8 @@ function MembersPage({ data }: { data: IResponseMembers }) {
                 >
                   <IconTransaction fontSize={20} />
                 </IconButton>
-                <UpdateMember data={v} />
-                <DeleteMember data={v} />
+                <UpdateMember data={v} mutate={mutate} />
+                <DeleteMember data={v} mutate={mutate} />
               </TableCell>
             </TableRow>
           ))}

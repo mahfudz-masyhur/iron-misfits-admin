@@ -1,15 +1,19 @@
-import { useRouter } from 'next/router'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { deleteUser } from 'server/api'
 import { IUser } from 'server/type/User'
 import DialogDelete from 'src/components/ReuseableComponent/DialogDelete'
 import IconDelete from 'src/components/ui/Icon/IconDelete'
 import IconButton from 'src/components/ui/IconButton'
+import { IResponseUsers } from 'src/type/users'
+import { KeyedMutator } from 'swr'
 
-function DeleteUser({ user }: { user: IUser }) {
+interface Props {
+  mutate: KeyedMutator<IResponseUsers>
+  user: IUser
+}
+
+function DeleteUser({ user, mutate }: Props) {
   const [open, setOpen] = useState(false)
-  const router = useRouter()
-  const mutate = () => router.push(router.asPath)
 
   return (
     <>

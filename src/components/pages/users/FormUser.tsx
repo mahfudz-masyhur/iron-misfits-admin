@@ -1,27 +1,27 @@
 import { Field, FieldProps, Form, Formik, FormikErrors, FormikHelpers } from 'formik'
-import { useRouter } from 'next/router'
 import { ChangeEvent, Dispatch, SetStateAction } from 'react'
 import { addOrUpdateUser } from 'server/api'
 import { IUser } from 'server/type/User'
+import FieldInputImage from 'src/components/ReuseableComponent/FieldInputImage/OnChange'
 import Button from 'src/components/ui/Button'
+import IconInfo from 'src/components/ui/Icon/IconInfo'
 import Select from 'src/components/ui/Select'
 import Option from 'src/components/ui/Select/Option'
 import TextField from 'src/components/ui/TextField'
 import Tooltip from 'src/components/ui/Tolltip'
 import { formatDate, formatPhoneNumber, toastError } from 'src/components/utility/formats'
-import { UserInput } from 'src/type/users'
-import FieldInputImage from 'src/components/ReuseableComponent/FieldInputImage/OnChange'
-import IconInfo from 'src/components/ui/Icon/IconInfo'
+import { IResponseUsers, UserInput } from 'src/type/users'
+import { KeyedMutator } from 'swr'
 
 interface Props {
   setStopClose: Dispatch<SetStateAction<boolean>>
   value?: IUser
   handleClose: () => void | null
+  mutate: KeyedMutator<IResponseUsers>
 }
 
 function FormUser(props: Props) {
-  const { setStopClose, value, handleClose } = props
-  const router = useRouter()
+  const { setStopClose, value, handleClose, mutate } = props
   const initialValues: UserInput = {
     _id: value?._id || '',
     name: value?.name || '',
@@ -45,9 +45,8 @@ function FormUser(props: Props) {
   const onSubmit = async (values: UserInput, formikHelpers: FormikHelpers<UserInput>) => {
     try {
       setStopClose(true)
-      const data = await addOrUpdateUser(values)
-      if (value) formikHelpers.resetForm()
-      await router.push(router.asPath)
+      await addOrUpdateUser(values)
+      await mutate()
       setStopClose(false)
       handleClose()
     } catch (error: any) {

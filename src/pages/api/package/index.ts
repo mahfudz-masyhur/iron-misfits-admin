@@ -26,7 +26,7 @@ async function GET(req: Ireq, res: NextApiResponse<Data>) {
   if (packageType) filter.packageType = packageType
   if (status) filter.status = status
 
-  const data = await Package.find(filter)
+  const data = await Package.find(filter).sort({ updatedAt: -1 })
 
   return res.json({ status: 'ok', message: 'Get Success', data })
 }

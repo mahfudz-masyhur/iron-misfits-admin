@@ -28,10 +28,10 @@ async function GET(req: Ireq, res: NextApiResponse<Data>) {
       filter.$or = [{ name: { $regex: match } }, { email: { $regex: match } }]
     }
   }
-  if (isDeleted) filter.isDeleted = isDeleted
+  if (isDeleted === 'true') filter.isDeleted = true
   else filter.isDeleted = { $in: [null, undefined, false] }
 
-  const data = await User.find(filter, { password: 0 }).sort({ updatedAt: 1 })
+  const data = await User.find(filter, { password: 0 }).sort({ updatedAt: -1 })
 
   return res.json({ status: 'ok', message: 'Get Success', data })
 }
@@ -61,9 +61,9 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
     return res.json({ status: 'ok', message: 'Update Success', data })
   }
 
-  const findEmail = await User.findOne({ email })
+  const findEmail = await User.findOne({ $or: [{ email }, { handphone }] })
   if (findEmail) {
-    return res.status(405).json({ status: '405 Method Not Allowed', message: 'Email sudah terdaftar' })
+    return res.status(405).json({ status: '405 Method Not Allowed', message: 'Email or Handphone alrady register' })
   }
 
   const salt = await bcrypt.genSalt(10)

@@ -25,15 +25,18 @@ type Data = {
 const userLogin = async (req: Ireq, res: NextApiResponse<Data>) => {
   const { email, password } = req.body
 
+  console.log('\n\n\n', 'Login', { email })
   const userData = await User.findOne({ email })
+  console.log({ userData })
 
   if (!userData) {
     return res.status(404).json({ status: '404 Not Found', message: 'Email Tidak Terdaftar' })
   }
 
-  const user = JSON.parse(JSON.stringify(userData)) as UserAccount
-
+  const user = userData as unknown as UserAccount
+  console.log({ password, 'user.password':user.password })
   const result = await bcrypt.compare(password, user.password)
+  console.log({ result })
 
   if (!result) {
     return res.status(404).json({ status: '404 Not Found', message: 'Password anda salah' })
@@ -41,24 +44,23 @@ const userLogin = async (req: Ireq, res: NextApiResponse<Data>) => {
 
   req.user = user
 
+  console.log({ user })
   const token = createToken(user)
+  console.log({ token })
 
   if (user?.email === process.env.MASTER_ADMIN) user.isMasterAdmin = true
   if (user?.role.includes(1)) user.isAdmin = true
   if (user?.role.includes(2)) user.isViewer = true
 
-  return { message: 'Login Success', data: { user, token } }
+  return res.json({ status: 'ok', message: 'Login Success', data: { user, token } })
 }
 
 export default async function handler(req: Ireq, res: NextApiResponse<Data>) {
   try {
     await connectMongoDB()
-    let data
-    if (req.method === 'POST') data = await userLogin(req, res)
+    if (req.method === 'POST') return await userLogin(req, res)
 
-    if (!data) throw new Error('No data found')
-
-    return res.json({ status: 'ok', ...data })
+    throw new Error('No data found')
   } catch (error: any) {
     return res.status(500).json({ status: 'error', message: error.message, error })
   }

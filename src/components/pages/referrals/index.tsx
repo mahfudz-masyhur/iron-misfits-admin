@@ -10,15 +10,21 @@ import TableHead from 'src/components/ui/Table/TableHead'
 import TableRow from 'src/components/ui/Table/TableRow'
 import Typography from 'src/components/ui/Typograph'
 import { IResponseReferrals } from 'src/type/referral'
+import { KeyedMutator } from 'swr'
 
-function ReferralPage({ data }: { data: IResponseReferrals }) {
+interface ReferralPageProps {
+  data: IResponseReferrals
+  mutate: KeyedMutator<IResponseReferrals>
+}
+
+function ReferralPage({ data, mutate }: ReferralPageProps) {
   return (
     <Paper className='p-4 m-4'>
       <div className='flex justify-between mb-2'>
         <Typography variant='h5' fontWeight='semibold'>
           Table Referral
         </Typography>
-        <AddReferral />
+        <AddReferral mutate={mutate} />
       </div>
       <Table>
         <TableHead>
@@ -53,16 +59,16 @@ function ReferralPage({ data }: { data: IResponseReferrals }) {
               <TableCell>{v.name}</TableCell>
               <TableCell>{v.code}</TableCell>
               <TableCell>{v.type === 'percentage' ? `${v.discounts}%` : v.discounts}</TableCell>
-              <TableCell>{v.member.name}</TableCell>
+              <TableCell>{v.member?.name}</TableCell>
               <TableCell>{v.status}</TableCell>
               <TableCell className='text-right whitespace-nowrap'>
                 {v.statusEdit ? (
                   <>
-                    <UpdateReferral data={v} />
-                    <DeleteReferral data={v} />
+                    <UpdateReferral data={v} mutate={mutate} />
+                    <DeleteReferral data={v} mutate={mutate} />
                   </>
                 ) : (
-                  <ReferralEditOnly data={v} />
+                  <ReferralEditOnly data={v} mutate={mutate} />
                 )}
               </TableCell>
             </TableRow>

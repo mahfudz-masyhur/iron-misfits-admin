@@ -10,18 +10,19 @@ import IconButton from 'src/components/ui/IconButton'
 import Select from 'src/components/ui/Select'
 import Option from 'src/components/ui/Select/Option'
 import { toastError } from 'src/components/utility/formats'
-import { IupdatePromoIfStatusEditFalse } from 'src/type/promo'
+import { IResponsePromos, IupdatePromoIfStatusEditFalse } from 'src/type/promo'
+import { KeyedMutator } from 'swr'
 
 interface Props {
   setStopClose: Dispatch<SetStateAction<boolean>>
   value?: IPromo
   handleClose: () => void | null
+  mutate: KeyedMutator<IResponsePromos>
 }
 const statuses = ['active', 'inactive']
 
 function FormPromo(props: Props) {
-  const { setStopClose, value, handleClose } = props
-  const router = useRouter()
+  const { setStopClose, value, handleClose, mutate } = props
   const initialValues: IupdatePromoIfStatusEditFalse = {
     _id: value?._id || '',
     status: value?.status || 'active',
@@ -43,8 +44,7 @@ function FormPromo(props: Props) {
     try {
       setStopClose(true)
       await updatePromoIfStatusEditFalse(values._id, values)
-      if (value) formikHelpers.resetForm()
-      await router.push(router.asPath)
+      await mutate()
       setStopClose(false)
       handleClose()
     } catch (error: any) {
@@ -99,7 +99,7 @@ function FormPromo(props: Props) {
   )
 }
 
-function PromoEditOnly({ data }: { data: IPromo }) {
+function PromoEditOnly({ data, mutate }: { data: IPromo; mutate: KeyedMutator<IResponsePromos> }) {
   const [open, setOpen] = useState(false)
   const [stopClose, setStopClose] = useState(false)
 
@@ -113,7 +113,7 @@ function PromoEditOnly({ data }: { data: IPromo }) {
       </IconButton>
       <Dialog title='Edit Promo' open={open} onClose={handleClose} closeButtom fullWidth maxWidth='md'>
         <div className='px-4 pb-4'>
-          <FormPromo value={data} setStopClose={setStopClose} handleClose={handleClose} />
+          <FormPromo value={data} setStopClose={setStopClose} handleClose={handleClose} mutate={mutate} />
         </div>
       </Dialog>
     </>

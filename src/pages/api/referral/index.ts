@@ -27,7 +27,7 @@ async function GET(req: Ireq, res: NextApiResponse<Data>) {
   if (status) filter.status = status
   if (member) filter.member = member
 
-  const data = await Referral.find(filter)
+  const data = await Referral.find(filter).sort({ updatedAt: -1 })
 
   return res.json({ status: 'ok', message: 'Get Success', data })
 }

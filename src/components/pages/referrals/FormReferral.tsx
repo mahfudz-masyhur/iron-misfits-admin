@@ -1,5 +1,4 @@
 import { Field, FieldProps, Form, Formik, FormikErrors, FormikHelpers } from 'formik'
-import { useRouter } from 'next/router'
 import { ChangeEvent, Dispatch, SetStateAction } from 'react'
 import { addOrUpdateReferral, getMembers } from 'server/api'
 import { IMember } from 'server/type/Member'
@@ -10,7 +9,8 @@ import Select from 'src/components/ui/Select'
 import Option from 'src/components/ui/Select/Option'
 import TextField from 'src/components/ui/TextField'
 import { convertToNumber, formatNumber, getURLParams, toastError } from 'src/components/utility/formats'
-import { ReferralInput } from 'src/type/referral'
+import { IResponseReferrals, ReferralInput } from 'src/type/referral'
+import { KeyedMutator } from 'swr'
 
 const StudentField = ({ field, form, meta }: FieldProps) => {
   const fetchSuggestions = async (value: string) => {
@@ -56,12 +56,12 @@ interface Props {
   setStopClose: Dispatch<SetStateAction<boolean>>
   value?: IReferral
   handleClose: () => void | null
+  mutate: KeyedMutator<IResponseReferrals>
 }
 const statuses = ['active', 'inactive']
 
 function FormReferral(props: Props) {
-  const { setStopClose, value, handleClose } = props
-  const router = useRouter()
+  const { setStopClose, value, handleClose, mutate } = props
   const initialValues: IReferral = {
     _id: value?._id || '',
     name: value?.name || '',
@@ -103,8 +103,7 @@ function FormReferral(props: Props) {
         member: values.member._id
       }
       await addOrUpdateReferral(body)
-      if (value) formikHelpers.resetForm()
-      await router.push(router.asPath)
+        await mutate()
       setStopClose(false)
       handleClose()
     } catch (error: any) {

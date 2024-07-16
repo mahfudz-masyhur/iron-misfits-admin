@@ -26,10 +26,10 @@ async function GET(req: Ireq, res: NextApiResponse<Data>) {
       filter.$or = [{ name: { $regex: match } }, { email: { $regex: match } }]
     }
   }
-  if (isDeleted) filter.isDeleted = isDeleted
+  if (isDeleted === 'true') filter.isDeleted = true
   else filter.isDeleted = { $in: [null, undefined, false] }
 
-  const data = await Member.find(filter).sort({ updatedAt: 1 })
+  const data = await Member.find(filter).sort({ updatedAt: -1 })
 
   return res.json({ status: 'ok', message: 'Get Success', data })
 }

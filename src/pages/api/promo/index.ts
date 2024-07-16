@@ -25,7 +25,7 @@ async function GET(req: Ireq, res: NextApiResponse<Data>) {
   if (type) filter.type = type
   if (status) filter.status = status
 
-  const data = await Promo.find(filter)
+  const data = await Promo.find(filter).sort({ updatedAt: -1 })
 
   return res.json({ status: 'ok', message: 'Get Success', data })
 }

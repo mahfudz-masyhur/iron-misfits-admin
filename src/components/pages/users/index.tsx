@@ -1,3 +1,4 @@
+import RefreshButton from 'src/components/ReuseableComponent/RefreshButton'
 import AddUser from 'src/components/pages/users/AddUser'
 import DeleteUser from 'src/components/pages/users/DeleteUser'
 import UpdateUser from 'src/components/pages/users/UpdateUser'
@@ -10,15 +11,23 @@ import TableRow from 'src/components/ui/Table/TableRow'
 import Typography from 'src/components/ui/Typograph'
 import { formatPhoneNumber } from 'src/components/utility/formats'
 import { IResponseUsers } from 'src/type/users'
+import { KeyedMutator } from 'swr'
 
-function UsersPage({ data }: { data: IResponseUsers }) {
+interface Props {
+  mutate: KeyedMutator<IResponseUsers>
+  data: IResponseUsers
+}
+
+function UsersPage({ data, mutate }: Props) {
   return (
     <Paper className='p-4 m-4'>
       <div className='flex justify-between mb-2'>
         <Typography variant='h5' fontWeight='semibold'>
           Table Users
         </Typography>
-        <AddUser />
+        <div>
+          <AddUser mutate={mutate} /> <RefreshButton mutate={mutate} />
+        </div>
       </div>
       <Table>
         <TableHead>
@@ -42,14 +51,14 @@ function UsersPage({ data }: { data: IResponseUsers }) {
         </TableHead>
         <TableBody>
           {data.data.map((v, i) => (
-            <TableRow hover key={`${i}`}>
+            <TableRow hover key={`${v._id}`}>
               <TableCell>{i + 1}.</TableCell>
               <TableCell>{v.name}</TableCell>
               <TableCell>{v.email}</TableCell>
               <TableCell className='text-center whitespace-nowrap'>{formatPhoneNumber(v.handphone)}</TableCell>
               <TableCell className='text-right whitespace-nowrap'>
-                <UpdateUser data={v} />
-                <DeleteUser user={v} />
+                <UpdateUser data={v} mutate={mutate} key={`${v._id}`} />
+                <DeleteUser user={v} mutate={mutate} key={`${v._id}`} />
               </TableCell>
             </TableRow>
           ))}

@@ -4,8 +4,15 @@ import Dialog from 'src/components/ui/Dialog'
 import IconEditAnimated from 'src/components/ui/Icon/IconEditAnimated'
 import IconButton from 'src/components/ui/IconButton'
 import FormPromo from './FormPromo'
+import { KeyedMutator } from 'swr'
+import { IResponsePromos } from 'src/type/promo'
 
-function UpdatePromo({ data }: { data: IPromo }) {
+interface Props {
+  mutate: KeyedMutator<IResponsePromos>
+  data: IPromo
+}
+
+function UpdatePromo({ data, mutate }: Props) {
   const [open, setOpen] = useState(false)
   const [stopClose, setStopClose] = useState(false)
 
@@ -23,6 +30,7 @@ function UpdatePromo({ data }: { data: IPromo }) {
             value={data}
             setStopClose={setStopClose}
             handleClose={handleClose}
+            mutate={mutate}
             key={`update-promo-${data._id}`}
           />
         </div>

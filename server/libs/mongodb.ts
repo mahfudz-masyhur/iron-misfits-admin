@@ -31,7 +31,6 @@ const connectMongoDB = async () => {
 
   try {
     await mongoose.connect(MONGODB_URI, {
-      bufferCommands: false,
       serverSelectionTimeoutMS: 30000
     })
     console.log('Connected to MongoDB.')

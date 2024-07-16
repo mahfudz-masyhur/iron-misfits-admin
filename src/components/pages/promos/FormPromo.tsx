@@ -1,5 +1,4 @@
 import { Field, FieldProps, Form, Formik, FormikErrors, FormikHelpers } from 'formik'
-import { useRouter } from 'next/router'
 import { ChangeEvent, Dispatch, SetStateAction } from 'react'
 import DatePicker from 'react-datepicker'
 import { addOrUpdatePromo } from 'server/api'
@@ -10,7 +9,8 @@ import Option from 'src/components/ui/Select/Option'
 import TextField from 'src/components/ui/TextField'
 import useMediaQuery from 'src/components/utility/UI/useMediaQuery'
 import { convertToNumber, formatNumber, toastError } from 'src/components/utility/formats'
-import { PromoInput } from 'src/type/promo'
+import { IResponsePromos, PromoInput } from 'src/type/promo'
+import { KeyedMutator } from 'swr'
 
 interface InitialValues {
   _id: string
@@ -60,12 +60,12 @@ interface Props {
   setStopClose: Dispatch<SetStateAction<boolean>>
   value?: IPromo
   handleClose: () => void | null
+  mutate: KeyedMutator<IResponsePromos>
 }
 const statuses = ['active', 'inactive']
 
 function FormPromo(props: Props) {
-  const { setStopClose, value, handleClose } = props
-  const router = useRouter()
+  const { setStopClose, value, handleClose, mutate } = props
   const initialValues: InitialValues = {
     _id: value?._id || '',
     name: value?.name || '',
@@ -105,8 +105,7 @@ function FormPromo(props: Props) {
         updatedAt: values.updatedAt
       }
       await addOrUpdatePromo(body)
-      if (value) formikHelpers.resetForm()
-      await router.push(router.asPath)
+      await mutate()
       setStopClose(false)
       handleClose()
     } catch (error: any) {

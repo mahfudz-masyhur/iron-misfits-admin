@@ -12,19 +12,21 @@ import Select from 'src/components/ui/Select'
 import Option from 'src/components/ui/Select/Option'
 import TextField from 'src/components/ui/TextField'
 import { formatNumber, toastError } from 'src/components/utility/formats'
-import { IUpdatePackageIfStatusEditFalse } from 'src/type/package'
+import { IResponsePackages, IUpdatePackageIfStatusEditFalse } from 'src/type/package'
+import { KeyedMutator } from 'swr'
 
 interface Props {
   setStopClose: Dispatch<SetStateAction<boolean>>
   value?: IPackage
   handleClose: () => void | null
+  mutate: KeyedMutator<IResponsePackages>
 }
+
 const packageTypes = ['daily', 'weekly', 'monthly', 'quarterly', 'annual']
 const statuses = ['active', 'inactive']
 
 function FormPackage(props: Props) {
-  const { setStopClose, value, handleClose } = props
-  const router = useRouter()
+  const { setStopClose, value, handleClose, mutate } = props
   const initialValues: IUpdatePackageIfStatusEditFalse = {
     _id: value?._id || '',
     status: value?.status || 'active',
@@ -46,8 +48,7 @@ function FormPackage(props: Props) {
     try {
       setStopClose(true)
       await updatePackageIfStatusEditFalse(values._id, values)
-      if (value) formikHelpers.resetForm()
-      await router.push(router.asPath)
+      await mutate()
       setStopClose(false)
       handleClose()
     } catch (error: any) {
@@ -100,7 +101,7 @@ function FormPackage(props: Props) {
   )
 }
 
-function PackageEditOnly({ data }: { data: IPackage }) {
+function PackageEditOnly({ data, mutate }: { data: IPackage; mutate: KeyedMutator<IResponsePackages> }) {
   const [open, setOpen] = useState(false)
   const [stopClose, setStopClose] = useState(false)
 
@@ -114,7 +115,7 @@ function PackageEditOnly({ data }: { data: IPackage }) {
       </IconButton>
       <Dialog title='Edit Package' open={open} onClose={handleClose} closeButtom fullWidth maxWidth='md'>
         <div className='px-4 pb-4'>
-          <FormPackage value={data} setStopClose={setStopClose} handleClose={handleClose} />
+          <FormPackage value={data} setStopClose={setStopClose} handleClose={handleClose} mutate={mutate} />
         </div>
       </Dialog>
     </>

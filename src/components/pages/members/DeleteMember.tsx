@@ -1,15 +1,14 @@
-import { useRouter } from 'next/router'
 import { useState } from 'react'
-import { deleteMember, deleteUser } from 'server/api'
+import { deleteMember } from 'server/api'
 import { IMember } from 'server/type/Member'
 import DialogDelete from 'src/components/ReuseableComponent/DialogDelete'
 import IconDelete from 'src/components/ui/Icon/IconDelete'
 import IconButton from 'src/components/ui/IconButton'
+import { IResponseMembers } from 'src/type/member'
+import { KeyedMutator } from 'swr'
 
-function DeleteMember({ data }: { data: IMember }) {
+function DeleteMember({ data, mutate }: { data: IMember; mutate: KeyedMutator<IResponseMembers> }) {
   const [open, setOpen] = useState(false)
-  const router = useRouter()
-  const mutate = () => router.push(router.asPath)
 
   return (
     <>

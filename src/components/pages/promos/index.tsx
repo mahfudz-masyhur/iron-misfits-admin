@@ -1,3 +1,4 @@
+import RefreshButton from 'src/components/ReuseableComponent/RefreshButton'
 import AddPromo from 'src/components/pages/promos/AddPromo'
 import DeletePromo from 'src/components/pages/promos/DeletePromo'
 import PromoEditOnly from 'src/components/pages/promos/PromoEditOnly'
@@ -10,15 +11,23 @@ import TableHead from 'src/components/ui/Table/TableHead'
 import TableRow from 'src/components/ui/Table/TableRow'
 import Typography from 'src/components/ui/Typograph'
 import { IResponsePromos } from 'src/type/promo'
+import { KeyedMutator } from 'swr'
 
-function PromosPage({ data }: { data: IResponsePromos }) {
+interface Props {
+  mutate: KeyedMutator<IResponsePromos>
+  data: IResponsePromos
+}
+
+function PromosPage({ data, mutate }: Props) {
   return (
     <Paper className='p-4 m-4'>
       <div className='flex justify-between mb-2'>
         <Typography variant='h5' fontWeight='semibold'>
           Table Promo
         </Typography>
-        <AddPromo />
+        <div>
+          <AddPromo mutate={mutate} /> <RefreshButton mutate={mutate} />
+        </div>
       </div>
       <Table>
         <TableHead>
@@ -50,11 +59,11 @@ function PromosPage({ data }: { data: IResponsePromos }) {
               <TableCell className='text-right whitespace-nowrap'>
                 {v.statusEdit ? (
                   <>
-                    <UpdatePromo data={v} key={v._id} />
-                    <DeletePromo data={v} key={v._id} />
+                    <UpdatePromo data={v} key={v._id} mutate={mutate} />
+                    <DeletePromo data={v} key={v._id} mutate={mutate} />
                   </>
                 ) : (
-                  <PromoEditOnly data={v} key={v._id} />
+                  <PromoEditOnly data={v} key={v._id} mutate={mutate} />
                 )}
               </TableCell>
             </TableRow>

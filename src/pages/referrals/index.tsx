@@ -5,10 +5,10 @@ import { GetReferralSWR } from 'src/context/swrHook'
 const ReferralPage = dynamic(() => import('src/components/pages/referrals'), { ssr: false, loading: LoadingPage })
 
 function Referral() {
-  const { data } = GetReferralSWR()
+  const { data, mutate } = GetReferralSWR()
   if (!data) return <LoadingPage />
 
-  return <ReferralPage data={data} />
+  return <ReferralPage data={data} mutate={mutate} />
 }
 
 export default Referral

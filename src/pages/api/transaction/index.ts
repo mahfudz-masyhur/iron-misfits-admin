@@ -29,7 +29,7 @@ async function GET(req: Ireq, res: NextApiResponse<Data>) {
   if (member) filter.member = member
   if (expired) filter.expired = { $lt: expired }
 
-  const data = await Transaction.find(filter)
+  const data = await Transaction.find(filter).sort({ createdAt: -1 })
 
   return res.json({ status: 'ok', message: 'Get Success', data })
 }

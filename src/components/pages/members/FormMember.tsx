@@ -13,12 +13,14 @@ import TextField from 'src/components/ui/TextField'
 import Tooltip from 'src/components/ui/Tolltip'
 import Typography from 'src/components/ui/Typograph'
 import { formatDate, formatNumber, formatPhoneNumber, toastError } from 'src/components/utility/formats'
-import { MemberInput } from 'src/type/member'
+import { IResponseMembers, MemberInput } from 'src/type/member'
+import { KeyedMutator } from 'swr'
 
 interface Props {
   setStopClose: Dispatch<SetStateAction<boolean>>
   value?: IMember
   handleClose: () => void | null
+  mutate: KeyedMutator<IResponseMembers>
 }
 
 const SocialmediaField = (props: FieldProps) => {
@@ -83,8 +85,7 @@ const SocialmediaField = (props: FieldProps) => {
 }
 
 function FormMember(props: Props) {
-  const { setStopClose, value, handleClose } = props
-  const router = useRouter()
+  const { setStopClose, value, handleClose, mutate } = props
   const initialValues: MemberInput = {
     _id: value?._id || '',
     name: value?.name || '',
@@ -124,8 +125,7 @@ function FormMember(props: Props) {
     try {
       setStopClose(true)
       await addOrUpdateMember(values)
-      if (value) formikHelpers.resetForm()
-      await router.push(router.asPath)
+      await mutate()
       setStopClose(false)
       handleClose()
     } catch (error: any) {

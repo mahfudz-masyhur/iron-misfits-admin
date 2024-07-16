@@ -1,6 +1,7 @@
-import mongoose, { Model } from "mongoose";
-import { ObjectId } from "mongodb";
-import { IUser } from "server/type/User";
+import bcrypt from 'bcrypt'
+import mongoose, { Model } from 'mongoose'
+import { ObjectId } from 'mongodb'
+import { IUser } from 'server/type/User'
 
 const userSchema = new mongoose.Schema(
   {
@@ -26,20 +27,17 @@ const userSchema = new mongoose.Schema(
 )
 
 userSchema
-  .pre("findOne", function (next) {
-    this.populate("creator", "_id name");
-    this.populate("lastEditedBy", "_id name");
-    next();
+  .pre('findOne', function (next) {
+    this.populate('creator', '_id name')
+    this.populate('lastEditedBy', '_id name')
+    next()
   })
-  .pre("find", function (next) {
-    this.populate("creator", "_id name ");
-    this.populate("lastEditedBy", "_id name");
-    next();
-  });
+  .pre('find', function (next) {
+    this.populate('creator', '_id name ')
+    this.populate('lastEditedBy', '_id name')
+    next()
+  })
 
-userSchema.index({ email: 1 })
-userSchema.index({ email: 1, _id: 1 })
+const User = (mongoose.models.User as Model<IUser>) || mongoose.model<IUser>('User', userSchema)
 
-const User = mongoose.models.User as Model<IUser> || mongoose.model<IUser>("User", userSchema);
-
-export default User;
+export default User

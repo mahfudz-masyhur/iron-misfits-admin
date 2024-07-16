@@ -5,10 +5,10 @@ import { GetUserSWR } from 'src/context/swrHook'
 const UsersPage = dynamic(() => import('src/components/pages/users'), { ssr: false, loading: LoadingPage })
 
 function Users() {
-  const { data } = GetUserSWR()
+  const { data, mutate } = GetUserSWR()
   if (!data) return <LoadingPage />
 
-  return <UsersPage data={data} />
+  return <UsersPage data={data} mutate={mutate} />
 }
 
 export default Users

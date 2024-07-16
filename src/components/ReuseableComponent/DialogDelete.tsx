@@ -17,7 +17,7 @@ interface Props {
   runFunction?: () => Promise<void>
   secondRunFunction?: () => void
   refetch?: any
-  refetchWhenError?: () => Promise<boolean>
+  refetchWhenError?: any
 }
 
 const DialogDelete = ({ body, open, close, runFunction, secondRunFunction, refetchWhenError, refetch }: Props) => {
