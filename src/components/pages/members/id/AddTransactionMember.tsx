@@ -9,8 +9,16 @@ import IconRefresh from 'src/components/ui/Icon/IconRefresh'
 import { useRouter } from 'next/router'
 import { IReferral } from 'server/type/Referral'
 import RefreshButton from 'src/components/ReuseableComponent/RefreshButton'
+import { KeyedMutator } from 'swr'
+import { IResponseTransactions } from 'src/type/transaction'
 
-function TransactionMember({ data, referral }: { data: IMember; referral: IReferral }) {
+interface Props {
+  mutate: KeyedMutator<IResponseTransactions>
+  data: IMember;
+  referral: IReferral
+}
+
+function TransactionMember({ data, referral, mutate }: Props) {
   const [open, setOpen] = useState(false)
   const [stopClose, setStopClose] = useState(false)
 
@@ -29,6 +37,7 @@ function TransactionMember({ data, referral }: { data: IMember; referral: IRefer
             referralBA={referral}
             setStopClose={setStopClose}
             handleClose={handleClose}
+            mutate={mutate}
           />
         </div>
       </Dialog>

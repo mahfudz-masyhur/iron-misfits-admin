@@ -19,8 +19,8 @@ import { getURLParams, toastError } from 'src/components/utility/formats'
 import { STATUS } from 'src/constant'
 import { IResponsePackages } from 'src/type/package'
 import { IResponsePromos } from 'src/type/promo'
-import { TransactionInput } from 'src/type/transaction'
-import useSWR from 'swr'
+import { IResponseTransactions, TransactionInput } from 'src/type/transaction'
+import useSWR, { KeyedMutator } from 'swr'
 
 interface CountPack {
   member?: {
@@ -413,9 +413,10 @@ interface Props {
   member: IMember
   value?: ITransaction
   handleClose: () => void | null
+  mutate: KeyedMutator<IResponseTransactions>
 }
 const FormTransactionMember = (props: Props) => {
-  const { setStopClose, member, value, handleClose, referralBA } = props
+  const { setStopClose, member, value, handleClose, referralBA, mutate } = props
   const [countPack, setCountPack] = useState<CountPack>({
     member: value?.member,
     package: value?.package,
@@ -423,7 +424,7 @@ const FormTransactionMember = (props: Props) => {
     promo: value?.promo,
     referral: value?.referral
   })
-  const router = useRouter()
+
   const initialValues: initialValuesTransactionInput = {
     _id: value?._id || '',
     price: value?.price || undefined,
@@ -478,7 +479,7 @@ const FormTransactionMember = (props: Props) => {
       }
       await addOrUpdateTransaction(body)
       setStopClose(false)
-      await router.push(router.asPath)
+      await mutate()
       handleClose()
     } catch (error: any) {
       toastError(error)

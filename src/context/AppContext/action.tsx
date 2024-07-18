@@ -1,13 +1,12 @@
 import React from 'react'
 import { reducer } from 'src/context/AppContext/reducer'
 import { initialProps, AuthType } from 'src/context/AppContext/initialProps'
-
-import type { IUserAuth } from 'src/context/types'
+import { UserAccount } from 'src/pages/api/me/login'
 
 const ContextAction = () => {
   const [state, dispatch] = React.useReducer(reducer, initialProps)
 
-  const setUser = (user: IUserAuth) => {
+  const setUser = (user: UserAccount) => {
     dispatch({
       type: AuthType.SET_USER,
       payload: user

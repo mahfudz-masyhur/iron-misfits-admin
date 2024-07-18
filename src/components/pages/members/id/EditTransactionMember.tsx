@@ -6,8 +6,17 @@ import IconButton from 'src/components/ui/IconButton'
 import FormTransactionMember from './FormTransactionMember'
 import { ITransaction } from 'server/type/Transaction'
 import { IReferral } from 'server/type/Referral'
+import { KeyedMutator } from 'swr'
+import { IResponseTransactions } from 'src/type/transaction'
 
-function EditTransactionMember({ data, value, referral }: { data: IMember; value: ITransaction; referral: IReferral }) {
+interface Props {
+  data: IMember
+  value: ITransaction
+  referral: IReferral
+  mutate: KeyedMutator<IResponseTransactions>
+}
+
+function EditTransactionMember({ data, value, referral, mutate }: Props) {
   const [open, setOpen] = useState(false)
   const [stopClose, setStopClose] = useState(false)
 
@@ -27,6 +36,7 @@ function EditTransactionMember({ data, value, referral }: { data: IMember; value
             referralBA={referral}
             setStopClose={setStopClose}
             handleClose={handleClose}
+            mutate={mutate}
           />
         </div>
       </Dialog>

@@ -1,10 +1,11 @@
 import { useRouter } from 'next/router'
 import { fetcherClient } from 'server/api'
-import { getURLParams, toastError } from 'src/components/utility/formats'
-import { IResponseMembers } from 'src/type/member'
+import { getURLParams, removeUndefinedProperties, toastError } from 'src/components/utility/formats'
+import { IResponseMember, IResponseMembers } from 'src/type/member'
 import { IResponsePackages } from 'src/type/package'
 import { IResponsePromos } from 'src/type/promo'
-import { IResponseReferrals } from 'src/type/referral'
+import { IResponseReferral, IResponseReferrals } from 'src/type/referral'
+import { IResponseTransactions } from 'src/type/transaction'
 import { IResponseUsers } from 'src/type/users'
 import useSWR from 'swr'
 
@@ -79,6 +80,60 @@ export const GetPackageSWR = () => {
 export const GetMembersSWR = () => {
   const { query, asPath, push } = useRouter()
   const data = useSWR<IResponseMembers>(`/api/members?${getURLParams(query)}`, fetcherClient)
+
+  if (data.error) {
+    let destination = '/500'
+    if (data.error.response?.status === 401) {
+      destination = `/login?${getURLParams({ url: asPath })}`
+    } else {
+      toastError(data.error)
+    }
+    push(destination)
+  }
+
+  return data
+}
+
+export const GetMembersIdSWR = () => {
+  const { query, asPath, push } = useRouter()
+  const url = `/api/members/${query.id}?${getURLParams(removeUndefinedProperties({ ...query, id: undefined }))}`
+  const data = useSWR<IResponseMember>(url, fetcherClient)
+
+  if (data.error) {
+    let destination = '/500'
+    if (data.error.response?.status === 401) {
+      destination = `/login?${getURLParams({ url: asPath })}`
+    } else {
+      toastError(data.error)
+    }
+    push(destination)
+  }
+
+  return data
+}
+
+export const GetOneReferralSWR = () => {
+  const { query, asPath, push } = useRouter()
+  const url = `/api/referral/find-one?${getURLParams(removeUndefinedProperties({ ...query, id: undefined, member: query.id, status: 'active' }))}`
+  const data = useSWR<IResponseReferral>(url, fetcherClient)
+
+  if (data.error) {
+    let destination = '/500'
+    if (data.error.response?.status === 401) {
+      destination = `/login?${getURLParams({ url: asPath })}`
+    } else {
+      toastError(data.error)
+    }
+    push(destination)
+  }
+
+  return data
+}
+
+export const GetTransactionsSWR = () => {
+  const { query, asPath, push } = useRouter()
+  const url = `/api/transaction?${getURLParams(removeUndefinedProperties({ ...query, id: undefined, member: query.id }))}`
+  const data = useSWR<IResponseTransactions>(url, fetcherClient)
 
   if (data.error) {
     let destination = '/500'

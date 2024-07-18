@@ -139,7 +139,7 @@ export const getReferral = async (req?: IncomingMessage, query?: any): Promise<I
   return data
 }
 
-export const getOneReferral = async (req?: IncomingMessage, query?: any): Promise<IResponseReferrals> => {
+export const getOneReferral = async (req?: IncomingMessage, query?: any): Promise<IResponseReferral> => {
   if (req) return await fetchServer(`/api/referral/find-one?${query}`, req)
   const { data } = await axios.get(`/api/referral?/find-one${query}`)
 

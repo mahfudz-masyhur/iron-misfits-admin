@@ -15,13 +15,18 @@ import { formatDate, isWithinOneDay } from 'src/components/utility/formats'
 import { IResponseMember } from 'src/type/member'
 import { IResponseReferral } from 'src/type/referral'
 import { IResponseTransactions } from 'src/type/transaction'
+import { KeyedMutator } from 'swr'
 
 interface Props {
   member: IResponseMember
   referral: IResponseReferral
   transaction: IResponseTransactions
+  mutateMember: KeyedMutator<IResponseMember>
+  mutateReferral: KeyedMutator<IResponseReferral>
+  mutateTransactions: KeyedMutator<IResponseTransactions>
 }
-function MemberIdPage({ member: m, referral: r, transaction: t }: Props) {
+function MemberIdPage(props: Props) {
+  const { member: m, referral: r, transaction: t, mutateTransactions, mutateMember } = props
   const member = m.data
   const transaction = t.data
   const referral = r.data
@@ -68,7 +73,7 @@ function MemberIdPage({ member: m, referral: r, transaction: t }: Props) {
         </div>
       </Paper>
       <div className='mt-2 text-right mx-4'>
-        <TransactionMember data={member} referral={referral} />
+        <TransactionMember data={member} referral={referral} mutate={mutateTransactions} />
       </div>
       <Paper className='p-4 m-4'>
         <Table>
@@ -102,8 +107,14 @@ function MemberIdPage({ member: m, referral: r, transaction: t }: Props) {
                     <AddExtraTimeForTransactionMember data={member} referral={referral} transaction={v} key={v._id} />
                     {cantEdit ? (
                       <>
-                        <EditTransactionMember data={member} referral={referral} value={v} key={v._id} />
-                        <DeleteTransaction data={v} key={v._id} />
+                        <EditTransactionMember
+                          mutate={mutateTransactions}
+                          data={member}
+                          referral={referral}
+                          value={v}
+                          key={v._id}
+                        />
+                        <DeleteTransaction mutate={mutateTransactions} data={v} key={v._id} />
                       </>
                     ) : (
                       <EditStatusTransactionMember value={v} key={v._id} />

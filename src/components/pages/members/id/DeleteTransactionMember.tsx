@@ -1,15 +1,18 @@
-import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { deleteTransaction } from 'server/api'
 import { ITransaction } from 'server/type/Transaction'
 import DialogDelete from 'src/components/ReuseableComponent/DialogDelete'
 import IconDelete from 'src/components/ui/Icon/IconDelete'
 import IconButton from 'src/components/ui/IconButton'
+import { IResponseTransactions } from 'src/type/transaction'
+import { KeyedMutator } from 'swr'
 
-function DeleteTransaction({ data }: { data: ITransaction }) {
+interface Props {
+  data: ITransaction
+  mutate: KeyedMutator<IResponseTransactions>
+}
+function DeleteTransaction({ data, mutate }: Props) {
   const [open, setOpen] = useState(false)
-  const router = useRouter()
-  const mutate = () => router.push(router.asPath)
 
   return (
     <>
