@@ -14,7 +14,7 @@ export const GetUserSWR = () => {
   const data = useSWR<IResponseUsers>(`/api/users?${getURLParams(query)}`, fetcherClient)
 
   if (data.error) {
-    let destination = '/500'
+    let destination = '/_error'
     if (data.error.response?.status === 401) {
       destination = `/login?${getURLParams({ url: asPath })}`
     } else {
@@ -31,7 +31,7 @@ export const GetReferralSWR = () => {
   const data = useSWR<IResponseReferrals>(`/api/referral?${getURLParams(query)}`, fetcherClient)
 
   if (data.error) {
-    let destination = '/500'
+    let destination = '/_error'
     if (data.error.response?.status === 401) {
       destination = `/login?${getURLParams({ url: asPath })}`
     } else {
@@ -48,7 +48,7 @@ export const GetPromosSWR = () => {
   const data = useSWR<IResponsePromos>(`/api/promo?${getURLParams(query)}`, fetcherClient)
 
   if (data.error) {
-    let destination = '/500'
+    let destination = '/_error'
     if (data.error.response?.status === 401) {
       destination = `/login?${getURLParams({ url: asPath })}`
     } else {
@@ -65,7 +65,7 @@ export const GetPackageSWR = () => {
   const data = useSWR<IResponsePackages>(`/api/package${getURLParams(query)}`, fetcherClient)
 
   if (data.error) {
-    let destination = '/500'
+    let destination = '/_error'
     if (data.error.response?.status === 401) {
       destination = `/login?${getURLParams({ url: asPath })}`
     } else {
@@ -82,7 +82,7 @@ export const GetMembersSWR = () => {
   const data = useSWR<IResponseMembers>(`/api/members?${getURLParams(query)}`, fetcherClient)
 
   if (data.error) {
-    let destination = '/500'
+    let destination = '/_error'
     if (data.error.response?.status === 401) {
       destination = `/login?${getURLParams({ url: asPath })}`
     } else {
@@ -100,7 +100,7 @@ export const GetMembersIdSWR = () => {
   const data = useSWR<IResponseMember>(url, fetcherClient)
 
   if (data.error) {
-    let destination = '/500'
+    let destination = '/_error'
     if (data.error.response?.status === 401) {
       destination = `/login?${getURLParams({ url: asPath })}`
     } else {
@@ -114,11 +114,13 @@ export const GetMembersIdSWR = () => {
 
 export const GetOneReferralSWR = () => {
   const { query, asPath, push } = useRouter()
-  const url = `/api/referral/find-one?${getURLParams(removeUndefinedProperties({ ...query, id: undefined, member: query.id, status: 'active' }))}`
+  const url = `/api/referral/find-one?${getURLParams(
+    removeUndefinedProperties({ ...query, id: undefined, member: query.id, status: 'active' })
+  )}`
   const data = useSWR<IResponseReferral>(url, fetcherClient)
 
   if (data.error) {
-    let destination = '/500'
+    let destination = '/_error'
     if (data.error.response?.status === 401) {
       destination = `/login?${getURLParams({ url: asPath })}`
     } else {
@@ -132,11 +134,13 @@ export const GetOneReferralSWR = () => {
 
 export const GetTransactionsSWR = () => {
   const { query, asPath, push } = useRouter()
-  const url = `/api/transaction?${getURLParams(removeUndefinedProperties({ ...query, id: undefined, member: query.id }))}`
+  const url = `/api/transaction?${getURLParams(
+    removeUndefinedProperties({ ...query, id: undefined, member: query.id })
+  )}`
   const data = useSWR<IResponseTransactions>(url, fetcherClient)
 
   if (data.error) {
-    let destination = '/500'
+    let destination = '/_error'
     if (data.error.response?.status === 401) {
       destination = `/login?${getURLParams({ url: asPath })}`
     } else {

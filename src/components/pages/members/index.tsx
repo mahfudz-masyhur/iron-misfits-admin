@@ -1,4 +1,6 @@
 import Link from 'next/link'
+import { useRouter } from 'next/router'
+import RecycleBinButton from 'src/components/ReuseableComponent/RecycleBinButton'
 import RefreshButton from 'src/components/ReuseableComponent/RefreshButton'
 import AddMember from 'src/components/pages/members/AddMember'
 import DeleteMember from 'src/components/pages/members/DeleteMember'
@@ -15,6 +17,7 @@ import Typography from 'src/components/ui/Typograph'
 import { formatPhoneNumber } from 'src/components/utility/formats'
 import { IResponseMembers } from 'src/type/member'
 import { KeyedMutator } from 'swr'
+import RestoreMember from './RestoreMember'
 
 interface Props {
   mutate: KeyedMutator<IResponseMembers>
@@ -22,6 +25,9 @@ interface Props {
 }
 
 function MembersPage({ data, mutate }: Props) {
+  const router = useRouter()
+  const isDeleted = Boolean(router.query.isDeleted)
+
   return (
     <Paper className='p-4 m-4'>
       <div className='flex justify-between mb-2'>
@@ -31,6 +37,7 @@ function MembersPage({ data, mutate }: Props) {
         <div>
           <AddMember mutate={mutate} />
           <RefreshButton mutate={mutate} />
+          <RecycleBinButton />
         </div>
       </div>
       <Table>
@@ -71,6 +78,7 @@ function MembersPage({ data, mutate }: Props) {
                   <IconTransaction fontSize={20} />
                 </IconButton>
                 <UpdateMember data={v} mutate={mutate} />
+                {isDeleted && <RestoreMember data={v} mutate={mutate} />}
                 <DeleteMember data={v} mutate={mutate} />
               </TableCell>
             </TableRow>

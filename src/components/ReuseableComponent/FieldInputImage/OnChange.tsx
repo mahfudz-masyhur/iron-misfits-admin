@@ -21,9 +21,10 @@ interface AvatarEditorFieldProps {
   image: string
   onClose: () => void
   onChange: (base64: string, formData: FormData | null, base64Compres?: string) => void
+  compressedQuality?: 0.1 | 0.2 | 0.3 | 0.4 | 0.5 | 0.6 | 0.7 | 0.8 | 0.9 | 1
 }
 
-const AvatarEditorField = ({ width, height, image, onClose, onChange }: AvatarEditorFieldProps) => {
+const AvatarEditorField = ({ width, height, image, onClose, onChange, compressedQuality }: AvatarEditorFieldProps) => {
   const [zoom, setZoom] = useState(1.2)
   const [load, setLoad] = useState(false)
 
@@ -52,7 +53,8 @@ const AvatarEditorField = ({ width, height, image, onClose, onChange }: AvatarEd
         compressedCanvas.height = canvas.height
 
         await pica.resize(canvas, compressedCanvas)
-        const compressedBase64 = compressedCanvas.toDataURL('image/jpeg', 0.8) // Adjust quality as needed (0.8 is 80%)
+        if (!compressedQuality) compressedQuality = 0.8
+        const compressedBase64 = compressedCanvas.toDataURL('image/jpeg', compressedQuality) // Adjust quality as needed (0.8 is 80%)
 
         // Mengonversi compressedBase64 ke Blob
         const fetchImg = await fetch(compressedBase64)
@@ -113,6 +115,7 @@ interface InputImageProps {
   maxWidth?: boolean
   disabled?: boolean
   onChange: (base64: string, formData: FormData | null, base64Compres?: string) => void
+  compressedQuality?: 0.1 | 0.2 | 0.3 | 0.4 | 0.5 | 0.6 | 0.7 | 0.8 | 0.9 | 1.0
   variant?: 'circle' | 'square'
   confirmDeleteImage?: boolean
   message?: string
@@ -206,7 +209,8 @@ const ContentFieldInputImage = (
     confirmDeleteImage,
     message,
     localImage,
-    setLocalImage
+    setLocalImage,
+    compressedQuality
   } = props
   const [load, setLoad] = useState(false)
   const [openDialog, setOpenDialog] = useState(false)
@@ -371,6 +375,7 @@ const ContentFieldInputImage = (
           width={width}
           height={height}
           image={localImage}
+          compressedQuality={compressedQuality}
           onChange={(img, data, compress) => {
             setLocalImage(img)
             onChange(img, data, compress)

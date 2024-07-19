@@ -9,10 +9,12 @@ import IconInfo from 'src/components/ui/Icon/IconInfo'
 import IconMinus from 'src/components/ui/Icon/IconMinus'
 import IconPlus from 'src/components/ui/Icon/IconPlus'
 import IconButton from 'src/components/ui/IconButton'
+import Option from 'src/components/ui/Select/Option'
 import TextField from 'src/components/ui/TextField'
 import Tooltip from 'src/components/ui/Tolltip'
 import Typography from 'src/components/ui/Typograph'
 import { formatDate, formatNumber, formatPhoneNumber, toastError } from 'src/components/utility/formats'
+import { SOCIAL_MEDIA } from 'src/constant'
 import { IResponseMembers, MemberInput } from 'src/type/member'
 import { KeyedMutator } from 'swr'
 
@@ -23,7 +25,7 @@ interface Props {
   mutate: KeyedMutator<IResponseMembers>
 }
 
-const SocialmediaField = (props: FieldProps) => {
+export const SocialmediaField = (props: FieldProps) => {
   return (
     <FieldArray name={props.field.name}>
       {({ remove, push }) => (
@@ -41,7 +43,14 @@ const SocialmediaField = (props: FieldProps) => {
                       {...field}
                       error={Boolean(meta.error && meta.touched)}
                       helperText={meta.error && meta.touched && String(meta.error)}
-                    />
+                      select
+                    >
+                      {SOCIAL_MEDIA.map(v => (
+                        <Option key={v.value} value={v.value}>
+                          {v.label}
+                        </Option>
+                      ))}
+                    </TextField>
                   )}
                 </Field>
                 :

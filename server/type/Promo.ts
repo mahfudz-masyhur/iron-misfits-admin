@@ -2,6 +2,7 @@ export interface IPromo {
   _id: string
   name: string
   type: 'percentage' | 'nominal'
+  code: string
   discounts: number | string
   startDate: Date
   endDate: Date

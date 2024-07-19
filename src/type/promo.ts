@@ -15,6 +15,7 @@ export interface IResponsePromo {
 export interface PromoInput {
   _id: string
   name: string
+  code: string
   type: 'percentage' | 'nominal'
   discounts: number | string
   startDate: Date

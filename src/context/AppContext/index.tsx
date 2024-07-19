@@ -29,7 +29,7 @@ const defaultProvider: IAppContext = {
   }
 }
 
-const noAuthPath = ['/login', '/login/']
+const noAuthPath = ['/login', '/login/', '/members/registration', '/members/registration/']
 
 const AppContext = React.createContext(defaultProvider)
 
@@ -46,20 +46,14 @@ export default function AppContextComponent(props: IAppContextComponent) {
       const result = await getMyAccount()
       setUser(result.data)
       if (noAuthPath.includes(window.location.pathname)) {
-        if (router.query.url) {
-          router.push(`${router.query.url}`)
-        } else {
-          router.push('/')
-        }
+        if (router.query.url) router.push(`${router.query.url}`)
+        else router.push('/')
       }
       setIsLoading(false)
     } catch (err) {
       if (!noAuthPath.includes(window.location.pathname)) {
-        router.push(`/login${router.asPath !== '/' ? '?' + getURLParams({ url: router.asPath }) : ''}`)
+        router.push(`/login${router.asPath !== '/' ? '?' + getURLParams({ url: window.location.pathname }) : ''}`)
       }
-      setTimeout(() => {
-        setIsLoading(false)
-      }, 1000)
     }
   }
 

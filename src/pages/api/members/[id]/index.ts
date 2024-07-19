@@ -4,7 +4,7 @@ import { validateAdmin, validateSignin } from 'server/controllers/validate'
 import Member from 'server/models/Member'
 import Transaction from 'server/models/Transaction'
 import { IMember } from 'server/type/Member'
-import { Ireq } from '../me/login'
+import { Ireq } from '../../me/login'
 import connectMongoDB from 'server/libs/mongodb'
 
 type Data = {

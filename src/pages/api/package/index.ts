@@ -68,11 +68,11 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
 export default async function handler(req: Ireq, res: NextApiResponse<Data>) {
   try {
     await connectMongoDB()
-    await validateSignin<Data>(req, res)
     if (req.method === 'GET') {
       return await GET(req, res)
     }
     if (req.method === 'POST') {
+      await validateSignin<Data>(req, res)
       await validateAdmin(req, res)
       return await POST(req, res)
     }

@@ -7,6 +7,7 @@ import { ReferralInput } from 'src/type/referral'
 import Referral from 'server/models/Referal'
 import { FilterQuery } from 'mongoose'
 import connectMongoDB from 'server/libs/mongodb'
+import { ObjectId } from 'mongodb'
 
 type Data = {
   status: string
@@ -37,6 +38,18 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
   const { _id, name, code, discounts, member, type, status, statusEdit, updatedAt } = req.body as ReferralInput
 
   if (_id) {
+    const findReferrealCode = await Referral.findOne({ code, _id: { $ne: new ObjectId(_id) } })
+    if (findReferrealCode) {
+      return res.status(501).json({ status: '501 Not Implemented', message: 'Code already been used' })
+    }
+
+    const findReferreal = await Referral.findOne({ member, status: 'active', _id: { $ne: new ObjectId(_id) } })
+    if (findReferreal) {
+      return res
+        .status(501)
+        .json({ status: '501 Not Implemented', message: 'Only one member can get code referral active' })
+    }
+
     const data = await Referral.findOneAndUpdate(
       { _id, updatedAt },
       {
@@ -57,13 +70,13 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
     return res.json({ status: 'ok', message: 'Update Success', data })
   }
 
-  const findReferrealCode = await Referral.find({ code })
-  if (findReferrealCode.length > 0) {
+  const findReferrealCode = await Referral.findOne({ code })
+  if (findReferrealCode) {
     return res.status(501).json({ status: '501 Not Implemented', message: 'Code already been used' })
   }
 
-  const findReferreal = await Referral.find({ member, status: 'active' })
-  if (findReferreal.length > 0) {
+  const findReferreal = await Referral.findOne({ member, status: 'active' })
+  if (findReferreal) {
     return res
       .status(501)
       .json({ status: '501 Not Implemented', message: 'Only one member can get code referral active' })

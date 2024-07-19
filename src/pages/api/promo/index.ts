@@ -7,6 +7,7 @@ import { PromoInput } from 'src/type/promo'
 import Promo from 'server/models/Promo'
 import { FilterQuery } from 'mongoose'
 import connectMongoDB from 'server/libs/mongodb'
+import { ObjectId } from 'mongodb'
 
 type Data = {
   status: string
@@ -16,7 +17,7 @@ type Data = {
 }
 
 async function GET(req: Ireq, res: NextApiResponse<Data>) {
-  let { name, status, type } = req.query
+  let { name, status, type, code } = req.query
   const filter: FilterQuery<IPromo> = {}
   if (name) {
     const match = new RegExp(`${name}`, 'i')
@@ -24,6 +25,7 @@ async function GET(req: Ireq, res: NextApiResponse<Data>) {
   }
   if (type) filter.type = type
   if (status) filter.status = status
+  if (code) filter.code = code
 
   const data = await Promo.find(filter).sort({ updatedAt: -1 })
 
@@ -32,13 +34,19 @@ async function GET(req: Ireq, res: NextApiResponse<Data>) {
 
 async function POST(req: Ireq, res: NextApiResponse<Data>) {
   const { user } = req
-  const { _id, name, startDate, endDate, discounts, type, status, statusEdit, updatedAt } = req.body as PromoInput
+  const { _id, name, startDate, endDate, discounts, type, status, statusEdit, updatedAt, code } = req.body as PromoInput
 
   if (_id) {
+    const findPromoCode = await Promo.findOne({ code, _id: { $ne: new ObjectId(_id) } })
+    if (findPromoCode) {
+      return res.status(501).json({ status: '501 Not Implemented', message: 'Code already been used' })
+    }
+
     const data = await Promo.findOneAndUpdate(
       { _id, updatedAt },
       {
         name: statusEdit ? name : undefined,
+        code: statusEdit ? code : undefined,
         startDate: statusEdit ? startDate : undefined,
         endDate: statusEdit ? endDate : undefined,
         type: statusEdit ? type : undefined,
@@ -55,8 +63,14 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
     return res.json({ status: 'ok', message: 'Update Success', data })
   }
 
+  const findPromoCode = await Promo.findOne({ code })
+  if (findPromoCode) {
+    return res.status(501).json({ status: '501 Not Implemented', message: 'Code already been used' })
+  }
+
   const data = await Promo.create({
     name,
+    code,
     startDate,
     endDate,
     discounts,

@@ -12,3 +12,9 @@ export const DAYS_OF_WEEK = [
 
 export const STATUS = ['ACTIVE', 'INACTIVE', 'PENDING']
 export const TYPE = ['PENDING', 'CANCLE-PENDING']
+
+export const SOCIAL_MEDIA = [
+  { value: 'ig', label: 'Instagram' },
+  { value: 'fb', label: 'Facebook' },
+  { value: 'x', label: 'X' }
+]

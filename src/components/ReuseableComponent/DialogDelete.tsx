@@ -18,9 +18,24 @@ interface Props {
   secondRunFunction?: () => void
   refetch?: any
   refetchWhenError?: any
+  responBody?: {
+    titleSuccess?: string
+    titleFailed?: string
+    bodySuccess?: string
+    bodyFailed?: string
+  }
 }
 
-const DialogDelete = ({ body, open, close, runFunction, secondRunFunction, refetchWhenError, refetch }: Props) => {
+const DialogDelete = ({
+  body,
+  open,
+  close,
+  runFunction,
+  secondRunFunction,
+  refetchWhenError,
+  refetch,
+  responBody
+}: Props) => {
   const [secondDialogOpen, setSecondDialogOpen] = useState<boolean>(false)
   const [userInput, setUserInput] = useState<'yes' | 'cancel'>('yes')
   const [laod, setLaod] = useState(false)
@@ -86,10 +101,12 @@ const DialogDelete = ({ body, open, close, runFunction, secondRunFunction, refet
             {userInput === 'yes' && <IconConfirmCircleTwotone color='success' fontSize={88} />}
             {userInput === 'cancel' && <IconCloseCircleTwotone color='error' fontSize={88} />}
             <Typography variant='h4' style={{ marginBottom: 8 }}>
-              {userInput === 'yes' ? 'DELETED' : 'CANCELLED'}
+              {userInput === 'yes' ? responBody?.titleSuccess || 'DELETED' : responBody?.titleFailed || 'CANCELLED'}
             </Typography>
             <Typography>
-              {userInput === 'yes' ? 'Proses penghapusan berhasil' : 'Proses penghapusan dibatalkan'}
+              {userInput === 'yes'
+                ? responBody?.bodySuccess || 'Proses penghapusan berhasil'
+                : responBody?.bodyFailed || 'Proses penghapusan dibatalkan'}
             </Typography>
           </div>
         </div>

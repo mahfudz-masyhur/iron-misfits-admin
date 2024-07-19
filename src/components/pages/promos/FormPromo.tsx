@@ -15,6 +15,7 @@ import { KeyedMutator } from 'swr'
 interface InitialValues {
   _id: string
   name: string
+  code: string
   type: 'percentage' | 'nominal'
   discounts: number | string
   date: (Date | undefined)[]
@@ -69,6 +70,7 @@ function FormPromo(props: Props) {
   const initialValues: InitialValues = {
     _id: value?._id || '',
     name: value?.name || '',
+    code: value?.code || '',
     date: [value?.startDate || undefined, value?.endDate || undefined],
     type: value?.type || 'percentage',
     discounts: value?.discounts ? formatNumber(value?.discounts) : '',
@@ -81,6 +83,7 @@ function FormPromo(props: Props) {
     const errors: FormikErrors<InitialValues> = {}
 
     if (!values.name) errors.name = 'Required'
+    if (!values.code) errors.code = 'Required'
     if (!values.date[0] || !values.date[1]) errors.date = 'Required'
     if (!values.type) errors.type = 'Required'
     if (!values.discounts) errors.discounts = 'Required'
@@ -95,6 +98,7 @@ function FormPromo(props: Props) {
       const body: PromoInput = {
         _id: values._id,
         name: values.name,
+        code: values.code,
         type: values.type,
         startDate: values.date[0] as Date,
         endDate: values.date[1] as Date,
@@ -137,6 +141,21 @@ function FormPromo(props: Props) {
               </div>
               <div className='col-span-6'>
                 <Field name='date'>{FieldScheduledUntil}</Field>
+              </div>
+              <div className='col-span-6'>
+                <Field name='code'>
+                  {({ field, meta }: FieldProps) => (
+                    <TextField
+                      label='Code'
+                      placeholder='Code...'
+                      margin='normal'
+                      error={Boolean(meta.error && meta.touched)}
+                      helperText={meta.error && meta.touched && String(meta.error)}
+                      {...field}
+                      fullWidth
+                    />
+                  )}
+                </Field>
               </div>
               <div className='col-span-2'>
                 <Field name='type'>

@@ -5,6 +5,7 @@ import { IPromo } from 'server/type/Promo'
 const promoSchema = new mongoose.Schema(
   {
     name: { type: String, required: 'Name required' },
+    code: { type: String },
     type: { type: String, enum: ['percentage', 'nominal'], required: 'Type required' },
     discounts: { type: Number, required: 'Discounts required' },
     startDate: { type: Date, required: 'Start Date required' },

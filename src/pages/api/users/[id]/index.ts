@@ -1,10 +1,10 @@
 import type { NextApiResponse } from 'next'
- 
+
 import User from 'server/models/User'
 import { IUser } from 'server/type/User'
-import { Ireq } from '../me/login'
 import { validateMasterAdmin, validateSignin } from 'server/controllers/validate'
 import connectMongoDB from 'server/libs/mongodb'
+import { Ireq } from '../../me/login'
 
 type Data = {
   status: string
@@ -25,7 +25,9 @@ async function DELETE(req: Ireq, res: NextApiResponse<Data>) {
   const { email, updatedAt } = body as IUser
 
   if (user.email === email) {
-    return res.status(405).json({ status: '405 Method Not Allowed', message: 'Anda tidak bisa menghapus akun anda sendiri' })
+    return res
+      .status(405)
+      .json({ status: '405 Method Not Allowed', message: 'Anda tidak bisa menghapus akun anda sendiri' })
   }
 
   const data = await User.findOneAndUpdate(

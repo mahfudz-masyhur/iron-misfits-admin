@@ -1,6 +1,7 @@
 import Axios from 'axios'
 import { IncomingMessage } from 'http'
 import { IUser } from 'server/type/User'
+import { RegisterMemberValues } from 'src/components/pages/members/RegistrationPage'
 import { updateStatusTransactionValue } from 'src/components/pages/members/id/EditStatusTransactionMember'
 import { ChangePasswordInputValue } from 'src/components/pages/settings/security'
 import {
@@ -68,6 +69,12 @@ export const deleteUser = async (body: IUser): Promise<IResponseUser> => {
   return data
 }
 
+export const restoreUser = async (body: IUser): Promise<IResponseUser> => {
+  const { data } = await axios.delete(`/api/users/${body._id}/restore`, { data: body })
+
+  return data
+}
+
 export const loginApi = async ({ email, password }: { email: string; password: string }) => {
   const source = Axios.CancelToken.source()
   const { data } = await axios.post(`/api/me/login`, { email, password }, { cancelToken: source.token })
@@ -97,8 +104,21 @@ export const addOrUpdateMember = async (values: MemberInput): Promise<IResponseM
   return data
 }
 
+export const memberRegisration = async (values: RegisterMemberValues): Promise<IResponseMember> => {
+  values.handphone = values.handphone ? convertToNumericPhoneNumber(values.handphone).toString() : ''
+  const { data } = await axios.post('/api/members/registration', removeEmptyStringProperties(values))
+
+  return data
+}
+
 export const deleteMember = async (id: string, body: IResponseMember['data']): Promise<IResponseMember> => {
   const { data } = await axios.delete(`/api/members/${id}`, { data: body })
+
+  return data
+}
+
+export const restoreMember = async (id: string, body: IResponseMember['data']): Promise<IResponseMember> => {
+  const { data } = await axios.put(`/api/members/${id}/restore`, body)
 
   return data
 }
@@ -139,6 +159,13 @@ export const getReferral = async (req?: IncomingMessage, query?: any): Promise<I
   return data
 }
 
+export const getReferralByCode = async (req?: IncomingMessage, query?: any): Promise<IResponseReferrals> => {
+  if (req) return await fetchServer(`/api/referral/code?${query}`, req)
+  const { data } = await axios.get(`/api/referral/code?${query}`)
+
+  return data
+}
+
 export const getOneReferral = async (req?: IncomingMessage, query?: any): Promise<IResponseReferral> => {
   if (req) return await fetchServer(`/api/referral/find-one?${query}`, req)
   const { data } = await axios.get(`/api/referral?/find-one${query}`)
@@ -166,9 +193,16 @@ export const deleteReferral = async (id: string, body: IResponseReferral['data']
   return data
 }
 
-export const getPromos = async (req?: IncomingMessage): Promise<IResponsePromos> => {
-  if (req) return await fetchServer('/api/promo', req)
-  const { data } = await axios.get('/api/promo')
+export const getPromos = async (req?: IncomingMessage, query?: any): Promise<IResponsePromos> => {
+  if (req) return await fetchServer(`/api/promo?${query}`, req)
+  const { data } = await axios.get(`/api/promo?${query}`)
+
+  return data
+}
+
+export const getPromosBycode = async (req?: IncomingMessage, query?: any): Promise<IResponsePromos> => {
+  if (req) return await fetchServer(`/api/promo/code?${query}`, req)
+  const { data } = await axios.get(`/api/promo/code?${query}`)
 
   return data
 }

@@ -22,7 +22,7 @@ import { IResponsePromos } from 'src/type/promo'
 import { IResponseTransactions, TransactionInput } from 'src/type/transaction'
 import useSWR, { KeyedMutator } from 'swr'
 
-interface CountPack {
+export interface CountPack {
   member?: {
     _id: string
     name: string
@@ -53,7 +53,7 @@ interface CountPack {
     discounts: string | number
   }
 }
-interface countPack extends FieldProps {
+export interface countPack extends FieldProps {
   setCountPack: Dispatch<SetStateAction<CountPack>>
 }
 const FieldPackage = ({ field, meta, form, setCountPack }: countPack) => {
@@ -187,8 +187,9 @@ interface IFieldPrice {
     shouldValidate?: boolean | undefined
   ) => Promise<void | FormikErrors<initialValuesTransactionInput>>
   countPack: CountPack
+  removeStatusField?: boolean
 }
-const FieldPrice = ({ setFieldValue, countPack, isEditAble, referralBA }: IFieldPrice) => {
+export const FieldPrice = ({ setFieldValue, countPack, isEditAble, referralBA, removeStatusField }: IFieldPrice) => {
   const addDays = (date: Date, days: number) => {
     const result = new Date(date)
     result.setDate(result.getDate() + days)
@@ -366,27 +367,29 @@ const FieldPrice = ({ setFieldValue, countPack, isEditAble, referralBA }: IField
           )}
         </Field>
       </div>
-      <div className='col-span-6'>
-        <Field name='status'>
-          {({ field, form, meta }: FieldProps) => (
-            <Select
-              margin='normal'
-              readOnly={!isEditAble}
-              label='Status'
-              fullWidth
-              {...field}
-              error={Boolean(meta.error && meta.touched)}
-              helperText={meta.error && meta.touched && String(meta.error)}
-            >
-              {STATUS.map(v => (
-                <Option value={v} key={v} className='capitalize'>
-                  {v}
-                </Option>
-              ))}
-            </Select>
-          )}
-        </Field>
-      </div>
+      {!removeStatusField && (
+        <div className='col-span-6'>
+          <Field name='status'>
+            {({ field, form, meta }: FieldProps) => (
+              <Select
+                margin='normal'
+                readOnly={!isEditAble}
+                label='Status'
+                fullWidth
+                {...field}
+                error={Boolean(meta.error && meta.touched)}
+                helperText={meta.error && meta.touched && String(meta.error)}
+              >
+                {STATUS.map(v => (
+                  <Option value={v} key={v} className='capitalize'>
+                    {v}
+                  </Option>
+                ))}
+              </Select>
+            )}
+          </Field>
+        </div>
+      )}
     </>
   )
 }

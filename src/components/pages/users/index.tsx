@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import RefreshButton from 'src/components/ReuseableComponent/RefreshButton'
 import AddUser from 'src/components/pages/users/AddUser'
 import DeleteUser from 'src/components/pages/users/DeleteUser'
@@ -12,6 +13,8 @@ import Typography from 'src/components/ui/Typograph'
 import { formatPhoneNumber } from 'src/components/utility/formats'
 import { IResponseUsers } from 'src/type/users'
 import { KeyedMutator } from 'swr'
+import RestoreUser from './RestoreUser'
+import RecycleBinButton from 'src/components/ReuseableComponent/RecycleBinButton'
 
 interface Props {
   mutate: KeyedMutator<IResponseUsers>
@@ -19,6 +22,9 @@ interface Props {
 }
 
 function UsersPage({ data, mutate }: Props) {
+  const router = useRouter()
+  const isDeleted = Boolean(router.query.isDeleted)
+
   return (
     <Paper className='p-4 m-4'>
       <div className='flex justify-between mb-2'>
@@ -27,6 +33,7 @@ function UsersPage({ data, mutate }: Props) {
         </Typography>
         <div>
           <AddUser mutate={mutate} /> <RefreshButton mutate={mutate} />
+          <RecycleBinButton />
         </div>
       </div>
       <Table>
@@ -58,6 +65,7 @@ function UsersPage({ data, mutate }: Props) {
               <TableCell className='text-center whitespace-nowrap'>{formatPhoneNumber(v.handphone)}</TableCell>
               <TableCell className='text-right whitespace-nowrap'>
                 <UpdateUser data={v} mutate={mutate} key={`${v._id}`} />
+                {isDeleted && <RestoreUser user={v} mutate={mutate} key={`${v._id}`} />}
                 <DeleteUser user={v} mutate={mutate} key={`${v._id}`} />
               </TableCell>
             </TableRow>

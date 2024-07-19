@@ -25,7 +25,7 @@ const variants = cva(['animate-spin'], {
 export type ChipProps = HTMLAttributes<SVGSVGElement> & MoreProps
 
 const CircularProgress = forwardRef<SVGSVGElement, ChipProps>((props: ChipProps, ref) => {
-  const { className, color, size = 20, ...rest } = props
+  const { className, color = 'primary', size = 20, ...rest } = props
 
   return (
     <svg
