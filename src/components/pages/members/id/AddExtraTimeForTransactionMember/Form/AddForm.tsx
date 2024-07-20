@@ -12,7 +12,7 @@ import { PendingRecordInput } from 'src/type/transaction'
 import { AddExtraTimeForTransactionMemberFormProps } from '.'
 
 function AddForm(props: AddExtraTimeForTransactionMemberFormProps) {
-  const { handleClose, member, referralBA, setStopClose, transaction } = props
+  const { handleClose, setStopClose, transaction } = props
   const router = useRouter()
 
   const initialValues: PendingRecordInput = {
