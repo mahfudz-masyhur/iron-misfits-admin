@@ -1,6 +1,7 @@
 import mongoose, { Model } from 'mongoose'
 import { ObjectId } from 'mongodb'
 import { IPromo } from 'server/type/Promo'
+import 'server/models/User'
 
 const promoSchema = new mongoose.Schema(
   {

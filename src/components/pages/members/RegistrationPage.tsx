@@ -78,7 +78,6 @@ const FieldPromo = ({ field, meta, form, setCountPack, disabled }: countPack & {
       const query: typeQuery = { code: value, status: 'active' }
       const res = await getPromosBycode(undefined, getURLParams(query))
 
-      console.log({ FieldPromo: res })
       return res.data
     } catch (error) {
       return [{ name: 'tidak di temukan' }]
@@ -130,7 +129,6 @@ const FieldReferral = ({ field, meta, form, setCountPack, disabled }: countPack 
       }
       const query: typeQuery = { code: value, status: 'active' }
       const res = await getReferralByCode(undefined, getURLParams(query))
-      console.log({ FieldReferral: res })
 
       return res.data
     } catch (error) {

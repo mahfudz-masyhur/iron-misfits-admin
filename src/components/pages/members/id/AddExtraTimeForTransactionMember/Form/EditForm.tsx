@@ -18,7 +18,6 @@ import DeleteExtraTime from './DeleteExtraTime'
 
 interface EditFormProps {
   setStopClose: Dispatch<SetStateAction<boolean>>
-  referralBA: IReferral
   member: IMember
   transaction: ITransaction
   value: IPendingRecord
@@ -27,7 +26,7 @@ interface EditFormProps {
 }
 
 function EditForm(props: EditFormProps) {
-  const { handleClose, member, value, nextPending, referralBA, setStopClose, transaction } = props
+  const { handleClose, member, value, nextPending, setStopClose, transaction } = props
   const canEdit = value.statusEdit && value.type === 'PENDING'
   const router = useRouter()
 

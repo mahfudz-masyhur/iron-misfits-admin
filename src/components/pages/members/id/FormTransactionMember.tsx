@@ -17,6 +17,7 @@ import TextField from 'src/components/ui/TextField'
 import Tooltip from 'src/components/ui/Tolltip'
 import { getURLParams, toastError } from 'src/components/utility/formats'
 import { STATUS } from 'src/constant'
+import { GetOneReferralSWR } from 'src/context/swrHook'
 import { IResponsePackages } from 'src/type/package'
 import { IResponsePromos } from 'src/type/promo'
 import { IResponseTransactions, TransactionInput } from 'src/type/transaction'
@@ -412,13 +413,12 @@ interface initialValuesTransactionInput {
 
 interface Props {
   setStopClose: Dispatch<SetStateAction<boolean>>
-  referralBA: IReferral
   member: IMember
   value?: ITransaction
   handleClose: () => void | null
   mutate: KeyedMutator<IResponseTransactions>
 }
-const FormTransactionMember = (props: Props) => {
+const Content = (props: Props & { referralBA: IReferral }) => {
   const { setStopClose, member, value, handleClose, referralBA, mutate } = props
   const [countPack, setCountPack] = useState<CountPack>({
     member: value?.member,
@@ -547,6 +547,13 @@ const FormTransactionMember = (props: Props) => {
       }}
     </Formik>
   )
+}
+
+const FormTransactionMember = (props: Props) => {
+  const { data: referral, mutate } = GetOneReferralSWR()
+  if (!referral) return <>loading...</>
+
+  return <Content {...props} referralBA={referral.data} />
 }
 
 export default FormTransactionMember

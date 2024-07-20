@@ -18,10 +18,10 @@ type Data = {
 }
 
 async function GET(req: Ireq, res: NextApiResponse<Data>) {
-  let { name, packageType, status, member, expired } = req.query
+  let { search, packageType, status, member, expired } = req.query
   const filter: FilterQuery<ITransaction> = {}
-  if (name) {
-    const match = new RegExp(`${name}`, 'i')
+  if (search) {
+    const match = new RegExp(`${search}`, 'i')
     filter.name = { $regex: match }
   }
   if (packageType) filter.packageType = packageType

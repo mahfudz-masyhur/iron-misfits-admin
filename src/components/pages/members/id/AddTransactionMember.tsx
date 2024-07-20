@@ -14,16 +14,16 @@ import { IResponseTransactions } from 'src/type/transaction'
 
 interface Props {
   mutate: KeyedMutator<IResponseTransactions>
-  data: IMember;
-  referral: IReferral
+  data?: IMember
 }
 
-function TransactionMember({ data, referral, mutate }: Props) {
+function AddTransactionMember({ data, mutate }: Props) {
   const [open, setOpen] = useState(false)
   const [stopClose, setStopClose] = useState(false)
 
   const handleOpen = () => setOpen(true)
   const handleClose = () => (stopClose ? null : setOpen(false))
+  if (!data) return <>loading</>
 
   return (
     <>
@@ -34,7 +34,6 @@ function TransactionMember({ data, referral, mutate }: Props) {
         <div className='px-4 pb-4'>
           <FormTransactionMember
             member={data}
-            referralBA={referral}
             setStopClose={setStopClose}
             handleClose={handleClose}
             mutate={mutate}
@@ -46,4 +45,4 @@ function TransactionMember({ data, referral, mutate }: Props) {
   )
 }
 
-export default TransactionMember
+export default AddTransactionMember

@@ -1,6 +1,7 @@
 import mongoose, { Model } from 'mongoose'
 import { ObjectId } from 'mongodb'
 import { IPackage } from 'server/type/Package'
+import 'server/models/User'
 
 const packageSchema = new mongoose.Schema(
   {

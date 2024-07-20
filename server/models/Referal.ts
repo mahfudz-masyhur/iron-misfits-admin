@@ -1,6 +1,8 @@
 import mongoose, { Model } from 'mongoose'
 import { ObjectId } from 'mongodb'
 import { IReferral } from 'server/type/Referral'
+import 'server/models/Member'
+import 'server/models/User'
 
 const referralSchema = new mongoose.Schema(
   {

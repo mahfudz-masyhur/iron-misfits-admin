@@ -17,10 +17,10 @@ type Data = {
 }
 
 async function GET(req: Ireq, res: NextApiResponse<Data>) {
-  let { name, status, type, code } = req.query
+  let { search, status, type, code } = req.query
   const filter: FilterQuery<IPromo> = {}
-  if (name) {
-    const match = new RegExp(`${name}`, 'i')
+  if (search) {
+    const match = new RegExp(`${search}`, 'i')
     filter.name = { $regex: match }
   }
   if (type) filter.type = type

@@ -27,9 +27,8 @@ interface HoverTableCellProps {
 }
 
 const HoverTableCell = ({ children, sortBy, sortByActive, onClick, sort }: HoverTableCellProps) => {
-  const [enter, setEnter] = useState<{ show: boolean; sort: 'ASC' | 'DESC' }>({
+  const [enter, setEnter] = useState<{ show: boolean }>({
     show: false,
-    sort: sort
   })
 
   useLayoutEffect(() => {
@@ -45,23 +44,22 @@ const HoverTableCell = ({ children, sortBy, sortByActive, onClick, sort }: Hover
       <span>{children}</span>
       {enter.show && (
         <>
-          {enter.sort === 'ASC' && (
+          {sort === 'ASC' ? (
             <IconSortAsc
               fontSize={13}
               className='cursor-pointer'
               onClick={() => {
                 setEnter(p => ({ ...p, sort: 'DESC' }))
-                onClick(sortBy, enter.sort)
+                onClick(sortBy, 'DESC')
               }}
             />
-          )}
-          {enter.sort === 'DESC' && (
+          ) : (
             <IconSortDesc
               fontSize={13}
               className='cursor-pointer'
               onClick={() => {
                 setEnter(p => ({ ...p, sort: 'ASC' }))
-                onClick(sortBy, enter.sort)
+                onClick(sortBy, 'ASC')
               }}
             />
           )}

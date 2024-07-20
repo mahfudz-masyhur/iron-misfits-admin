@@ -19,10 +19,10 @@ interface Props {
   refetch?: any
   refetchWhenError?: any
   responBody?: {
-    titleSuccess?: string
-    titleFailed?: string
-    bodySuccess?: string
-    bodyFailed?: string
+    titleSuccess?: string | JSX.Element
+    titleFailed?: string | JSX.Element
+    bodySuccess?: string | JSX.Element
+    bodyFailed?: string | JSX.Element
   }
 }
 
@@ -103,7 +103,7 @@ const DialogDelete = ({
             <Typography variant='h4' style={{ marginBottom: 8 }}>
               {userInput === 'yes' ? responBody?.titleSuccess || 'DELETED' : responBody?.titleFailed || 'CANCELLED'}
             </Typography>
-            <Typography>
+            <Typography textAlign='center'>
               {userInput === 'yes'
                 ? responBody?.bodySuccess || 'Proses penghapusan berhasil'
                 : responBody?.bodyFailed || 'Proses penghapusan dibatalkan'}

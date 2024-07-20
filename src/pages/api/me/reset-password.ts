@@ -24,7 +24,6 @@ type Data = {
 }
 
 const POST = async (req: Ireq, res: NextApiResponse<Data>) => {
-  console.log('\n\n\n', 'reset-password')
   const { body, user } = req
   const { newPassword, confirmNewPassword, currentPassword } = body
 
@@ -40,13 +39,9 @@ const POST = async (req: Ireq, res: NextApiResponse<Data>) => {
   if (result) throw new Error('The current password cannot be used as a new password')
 
   const salt = await bcrypt.genSalt(10)
-  console.log({ newPassword, salt })
   const password = await bcrypt.hash(newPassword, salt)
-  console.log({ password })
 
-  console.log(account._id, { password, lastEditedBy: user._id }, { new: true })
   const userData = await User.findByIdAndUpdate(account._id, { password })
-  console.log({ userData })
 
   return res.json({ status: 'ok', message: 'Change password success', data: userData })
 }

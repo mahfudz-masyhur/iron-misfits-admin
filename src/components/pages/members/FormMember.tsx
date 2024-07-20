@@ -1,5 +1,4 @@
 import { Field, FieldArray, FieldProps, Form, Formik, FormikHelpers } from 'formik'
-import { useRouter } from 'next/router'
 import { ChangeEvent, Dispatch, SetStateAction } from 'react'
 import { addOrUpdateMember } from 'server/api'
 import { IMember } from 'server/type/Member'

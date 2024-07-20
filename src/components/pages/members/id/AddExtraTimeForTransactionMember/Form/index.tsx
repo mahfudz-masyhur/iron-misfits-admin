@@ -16,7 +16,6 @@ import Typography from 'src/components/ui/Typograph'
 
 export interface AddExtraTimeForTransactionMemberFormProps {
   setStopClose: Dispatch<SetStateAction<boolean>>
-  referralBA: IReferral
   member: IMember
   transaction: ITransaction
   handleClose: () => void | null

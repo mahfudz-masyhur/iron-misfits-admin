@@ -1,6 +1,11 @@
 import mongoose, { Model } from 'mongoose'
 import { ObjectId } from 'mongodb'
 import { ITransaction } from 'server/type/Transaction'
+import 'server/models/Member'
+import 'server/models/Package'
+import 'server/models/Promo'
+import 'server/models/Referal'
+import 'server/models/User'
 
 let pendingRecortSchema = new mongoose.Schema(
   {

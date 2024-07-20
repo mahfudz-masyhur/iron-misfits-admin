@@ -10,17 +10,16 @@ import AddExtraTimeForTransactionMemberForm from './Form'
 function AddExtraTimeForTransactionMember({
   data,
   transaction,
-  referral
 }: {
-  data: IMember
+  data?: IMember
   transaction: ITransaction
-  referral: IReferral
 }) {
   const [open, setOpen] = useState(false)
   const [stopClose, setStopClose] = useState(false)
 
   const handleOpen = () => setOpen(true)
   const handleClose = () => (stopClose ? null : setOpen(false))
+  if(!data) return <>loading..</>
 
   return (
     <>
@@ -32,7 +31,6 @@ function AddExtraTimeForTransactionMember({
           <AddExtraTimeForTransactionMemberForm
             member={data}
             transaction={transaction}
-            referralBA={referral}
             setStopClose={setStopClose}
             handleClose={handleClose}
           />

@@ -10,18 +10,19 @@ import { KeyedMutator } from 'swr'
 import { IResponseTransactions } from 'src/type/transaction'
 
 interface Props {
-  data: IMember
+  data?: IMember
   value: ITransaction
-  referral: IReferral
   mutate: KeyedMutator<IResponseTransactions>
 }
 
-function EditTransactionMember({ data, value, referral, mutate }: Props) {
+function EditTransactionMember({ data, value, mutate }: Props) {
   const [open, setOpen] = useState(false)
   const [stopClose, setStopClose] = useState(false)
 
   const handleOpen = () => setOpen(true)
   const handleClose = () => (stopClose ? null : setOpen(false))
+
+  if (!data) return <>loading...</>
 
   return (
     <>
@@ -33,7 +34,6 @@ function EditTransactionMember({ data, value, referral, mutate }: Props) {
           <FormTransactionMember
             member={data}
             value={value}
-            referralBA={referral}
             setStopClose={setStopClose}
             handleClose={handleClose}
             mutate={mutate}

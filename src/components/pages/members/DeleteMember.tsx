@@ -32,6 +32,14 @@ function DeleteMember({ data, mutate }: { data: IMember; mutate: KeyedMutator<IR
         }}
         refetch={mutate}
         refetchWhenError={mutate}
+        responBody={{
+          bodyFailed: (
+            <>
+              Member gagal di hapus, hal ini bisa terjadi jika ada masalah pada server atau{' '}
+              <strong>member memiliki history transaksi</strong>
+            </>
+          )
+        }}
       />
     </>
   )

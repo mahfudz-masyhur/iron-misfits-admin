@@ -1,6 +1,7 @@
 import mongoose, { Model } from 'mongoose'
 import { ObjectId } from 'mongodb'
 import { IMember } from 'server/type/Member'
+import 'server/models/User'
 
 const memberSchema = new mongoose.Schema(
   {

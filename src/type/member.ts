@@ -4,6 +4,12 @@ export interface IResponseMembers {
   status: 'ok' | 'error'
   message: 'Get Success'
   data: IMember[]
+  paginate: {
+    maxPage: number
+    page: number
+    total: number
+    query: { [key: string]: any }
+  }
 }
 
 export interface IResponseMember {

@@ -6,32 +6,65 @@ import { IMember } from 'server/type/Member'
 import { MemberInput } from 'src/type/member'
 import { Ireq } from '../me/login'
 import connectMongoDB from 'server/libs/mongodb'
+import { SortOrder } from 'mongoose'
+import { removeEmptyStringProperties, removeUndefinedProperties } from 'src/components/utility/formats'
 
 type Data = {
   status: string
   message: string
   data?: IMember | IMember[] | null
+  paginate?: {
+    maxPage: number
+    page: number
+    total: number
+    query: { [key: string]: any }
+  }
   error?: any
 }
 
 async function GET(req: Ireq, res: NextApiResponse<Data>) {
-  let { name, isDeleted } = req.query
+  let { search, isDeleted, sort, order, limit, page } = req.query
+
+  let shortByParams: string | { [key: string]: SortOrder | { $meta: any } } | [string, SortOrder][] = {
+    updatedAt: -1
+  }
+  if (order === 'ASC') shortByParams = { [`${sort}`]: 1 }
+  if (order === 'DESC') shortByParams = { [`${sort}`]: -1 }
+
+  const limitNum = parseInt(`${limit ? limit : '10'}`, 10)
+  const pageNum = parseInt(`${page ? page : '1'}`, 10)
+
   const filter: FilterQuery<IMember> = {}
-  if (name) {
-    const isNumeric = /^\d+$/.test(name as string)
+  if (search) {
+    const isNumeric = /^\d+$/.test(search as string)
     if (isNumeric) {
-      filter.handphone = Number(name)
+      filter.handphone = Number(search)
     } else {
-      const match = new RegExp(`${name}`, 'i')
+      const match = new RegExp(`${search}`, 'i')
       filter.$or = [{ name: { $regex: match } }, { email: { $regex: match } }]
     }
   }
   if (isDeleted === 'true') filter.isDeleted = true
   else filter.isDeleted = { $in: [null, undefined, false] }
 
-  const data = await Member.find(filter).sort({ updatedAt: -1 })
+  const data = await Member.find(filter)
+    .sort(shortByParams)
+    .skip((pageNum - 1) * limitNum)
+    .limit(limitNum)
 
-  return res.json({ status: 'ok', message: 'Get Success', data })
+  const total = await Member.find(filter).countDocuments()
+
+  return res.json({
+    status: 'ok',
+    message: 'Get Success',
+    data,
+    paginate: {
+      maxPage: Math.ceil(total / limitNum) || 1,
+      page: pageNum,
+      total,
+      query: removeUndefinedProperties(removeEmptyStringProperties(req.query))
+    }
+  })
 }
 
 async function POST(req: Ireq, res: NextApiResponse<Data>) {

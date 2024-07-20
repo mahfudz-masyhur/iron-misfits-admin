@@ -16,15 +16,15 @@ type Data = {
 }
 
 async function GET(req: Ireq, res: NextApiResponse<Data>) {
-  let { name, isDeleted } = req.query
+  let { search, isDeleted } = req.query
 
   const filter: FilterQuery<IUser> = {}
-  if (name) {
-    const isNumeric = /^\d+$/.test(name as string)
+  if (search) {
+    const isNumeric = /^\d+$/.test(search as string)
     if (isNumeric) {
-      filter.handphone = Number(name)
+      filter.handphone = Number(search)
     } else {
-      const match = new RegExp(`${name}`, 'i')
+      const match = new RegExp(`${search}`, 'i')
       filter.$or = [{ name: { $regex: match } }, { email: { $regex: match } }]
     }
   }

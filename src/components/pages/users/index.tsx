@@ -32,8 +32,7 @@ function UsersPage({ data, mutate }: Props) {
           Table Users
         </Typography>
         <div>
-          <AddUser mutate={mutate} /> <RefreshButton mutate={mutate} />
-          <RecycleBinButton />
+          <AddUser mutate={mutate} /> <RefreshButton mutate={mutate} /> <RecycleBinButton />
         </div>
       </div>
       <Table>
@@ -65,8 +64,11 @@ function UsersPage({ data, mutate }: Props) {
               <TableCell className='text-center whitespace-nowrap'>{formatPhoneNumber(v.handphone)}</TableCell>
               <TableCell className='text-right whitespace-nowrap'>
                 <UpdateUser data={v} mutate={mutate} key={`${v._id}`} />
-                {isDeleted && <RestoreUser user={v} mutate={mutate} key={`${v._id}`} />}
-                <DeleteUser user={v} mutate={mutate} key={`${v._id}`} />
+                {isDeleted ? (
+                  <RestoreUser user={v} mutate={mutate} key={`${v._id}`} />
+                ) : (
+                  <DeleteUser user={v} mutate={mutate} key={`${v._id}`} />
+                )}
               </TableCell>
             </TableRow>
           ))}

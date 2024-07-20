@@ -1,11 +1,5 @@
 // server\libs\mongodb.js
-import mongoose from "mongoose";
-import 'server/models/Member'
-import 'server/models/Package'
-import 'server/models/Promo'
-import 'server/models/Referal'
-import 'server/models/Transaction'
-import 'server/models/User'
+import mongoose from 'mongoose'
 
 export const getDatabaseStats = async () => {
   if (mongoose.connection.readyState === 1) {
@@ -21,7 +15,6 @@ const MONGODB_URI = process.env.MONGODB_URI || ''
 const connectMongoDB = async () => {
   const connect = mongoose.connection.readyState
   if (connect === 1) {
-    console.log('MongoDB is already connected.')
     return
   }
   if (connect === 2) {

@@ -1,5 +1,4 @@
 import { useRouter } from 'next/router'
-import IconRefresh from 'src/components/ui/Icon/IconRefresh'
 import IconButton from 'src/components/ui/IconButton'
 import IconChevronLeft from '../ui/Icon/IconChevronLeft'
 import IconDelete from '../ui/Icon/IconDelete'
@@ -7,14 +6,13 @@ import IconDelete from '../ui/Icon/IconDelete'
 export default function RecycleBinButton() {
   const router = useRouter()
   const isDeleted = Boolean(router.query.isDeleted)
-  console.log(isDeleted)
 
   const onClick = () => {
     router.push({ query: { isDeleted: true } })
   }
 
   const back = () => {
-    router.back()
+    router.push({ query: {} })
   }
 
   return isDeleted ? (

@@ -23,12 +23,13 @@ async function GETID(req: Ireq, res: NextApiResponse<Data>) {
 }
 
 async function DELETE(req: Ireq, res: NextApiResponse<Data>) {
+  const {} = req.body
   let param = `${req.query.id}`
   const transactions = await Transaction.findOne({ member: param })
   if (transactions) {
     const { updatedAt } = req.body as IMember
     const data = await Member.findOneAndUpdate(
-      { _id: param, updatedAt },
+      { _id: param, updatedAt, isDeleted: { $exists: false } },
       {
         $set: { isDeleted: true },
         $unset: { avatar: '' }

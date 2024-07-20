@@ -25,18 +25,14 @@ type Data = {
 const userLogin = async (req: Ireq, res: NextApiResponse<Data>) => {
   const { email, password } = req.body
 
-  console.log('\n\n\n', 'Login', { email })
   const userData = await User.findOne({ email })
-  console.log({ userData })
 
   if (!userData) {
     return res.status(404).json({ status: '404 Not Found', message: 'Email Tidak Terdaftar' })
   }
 
   const user = userData as unknown as UserAccount
-  console.log({ password, 'user.password':user.password })
   const result = await bcrypt.compare(password, user.password)
-  console.log({ result })
 
   if (!result) {
     return res.status(404).json({ status: '404 Not Found', message: 'Password anda salah' })
@@ -44,9 +40,7 @@ const userLogin = async (req: Ireq, res: NextApiResponse<Data>) => {
 
   req.user = user
 
-  console.log({ user })
   const token = createToken(user)
-  console.log({ token })
 
   if (user?.email === process.env.MASTER_ADMIN) user.isMasterAdmin = true
   if (user?.role.includes(1)) user.isAdmin = true
