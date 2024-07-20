@@ -23,7 +23,7 @@ const MemberInfo = ({ member }: { member: IMember | undefined }) => {
   if (!member) return <>loading...</>
   return (
     <Paper className='p-4 m-4'>
-      <div className='flex gap-4'>
+      <div className='flex flex-col sm:flex-row sm:items-center gap-4'>
         <Avatar
           alt={member.name}
           src={member.avatar}
@@ -31,6 +31,7 @@ const MemberInfo = ({ member }: { member: IMember | undefined }) => {
           width={160}
           height={220}
           variant='rounded'
+          className='self-center'
           style={{
             minWidth: 160,
             maxWidth: 160,
