@@ -1,4 +1,5 @@
 import dynamic from 'next/dynamic'
+import Head from 'next/head'
 import { LoadingPage } from 'src/components/Layouts/main'
 import { GetPromosSWR } from 'src/context/swrHook'
 
@@ -8,7 +9,14 @@ function Promos() {
   const { data, mutate } = GetPromosSWR()
   if (!data) return <LoadingPage />
 
-  return <PromosPage data={data} mutate={mutate} />
+  return (
+    <>
+      <Head>
+        <title>Iron Misfits | Promos</title>
+      </Head>
+      <PromosPage data={data} mutate={mutate} />
+    </>
+  )
 }
 
 export default Promos

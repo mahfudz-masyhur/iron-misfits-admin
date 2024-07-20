@@ -1,6 +1,7 @@
 import { NextComponentType } from 'next'
 import { ThemeProvider } from 'next-themes'
 import type { AppProps } from 'next/app'
+import Head from 'next/head'
 import NextNProgress from 'nextjs-progressbar'
 import { Toaster } from 'react-hot-toast'
 import MainLayout from 'src/components/Layouts/main'
@@ -18,6 +19,9 @@ export default function App({ Component, pageProps }: CustomAppProps) {
 
   return (
     <ThemeProvider attribute='class' enableSystem={false}>
+    <Head>
+      <title>Iron Misfits</title>
+    </Head>
       <NextNProgress color='#185a9d' options={{ showSpinner: false }} />
       <Toaster position='top-right' />
       <AppContext>

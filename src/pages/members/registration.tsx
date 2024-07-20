@@ -1,4 +1,5 @@
 import dynamic from 'next/dynamic'
+import Head from 'next/head'
 import React from 'react'
 import { LoadingPage } from 'src/components/Layouts/main'
 
@@ -8,7 +9,14 @@ const RegistrationPage = dynamic(() => import('src/components/pages/members/Regi
 })
 
 function Registration() {
-  return <RegistrationPage />
+  return (
+    <>
+      <Head>
+        <title>Iron Misfits | Registration member</title>
+      </Head>
+      <RegistrationPage />
+    </>
+  )
 }
 
 Registration.isGuest = true

@@ -15,8 +15,6 @@ import TableHead from 'src/components/ui/Table/TableHead'
 import TableRow from 'src/components/ui/Table/TableRow'
 import { formatDate, isWithinOneDay } from 'src/components/utility/formats'
 import { GetMembersIdSWR, GetTransactionsSWR } from 'src/context/swrHook'
-import { IResponseMember } from 'src/type/member'
-import { IResponseReferral } from 'src/type/referral'
 import { IResponseTransactions } from 'src/type/transaction'
 import { KeyedMutator } from 'swr'
 

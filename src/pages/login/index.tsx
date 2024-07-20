@@ -1,9 +1,13 @@
+import Head from 'next/head'
 import FormLogin from 'src/components/pages/login/FormLogin'
 import Typography from 'src/components/ui/Typograph'
 
 function LoginPage() {
   return (
     <>
+      <Head>
+        <title>Iron Misfits | Login</title>
+      </Head>
       <div
         className='fixed top-0 bottom-0 left-0 right-0 text-center text-white bg-center bg-cover sm:static sm:pt-16 -z-10 bg-primary-dark sm:rounded-2xl sm:h-96'
         style={{

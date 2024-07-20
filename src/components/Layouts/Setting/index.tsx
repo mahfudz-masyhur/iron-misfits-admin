@@ -1,9 +1,13 @@
+import Head from 'next/head'
 import React, { ReactNode } from 'react'
 import Link from 'src/components/ui/Link'
 
 function SettingLayout({ children }: { children: ReactNode }) {
   return (
     <div className='flex gap-2 h-[calc(100dvh-104px)] m-4'>
+      <Head>
+        <title>Iron Misfits | Settings</title>
+      </Head>
       <div className='w-72 border rounded-md p-4'>
         <div>
           <Link href='/settings'>Profil</Link>
