@@ -22,15 +22,11 @@ const referralSchema = new mongoose.Schema(
 
 referralSchema
   .pre('findOne', function (next) {
-    this.populate('member', '_id name avatar socialmedia handphone')
-    this.populate('creator', '_id name')
-    this.populate('lastEditedBy', '_id name')
+    this.populate('member', '_id name socialmedia handphone')
     next()
   })
   .pre('find', function (next) {
-    this.populate('member', '_id name avatar socialmedia handphone')
-    this.populate('creator', '_id name ')
-    this.populate('lastEditedBy', '_id name')
+    this.populate('member', '_id name socialmedia handphone')
     next()
   })
   

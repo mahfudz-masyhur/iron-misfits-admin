@@ -20,12 +20,11 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
     avatar,
     handphone,
     socialmedia,
-    expired,
     price,
     priceAfterdiscount,
     package: pckge,
     promo,
-    referral
+    referral,
   } = req.body as RegisterMemberValues
 
   const data = await Member.create({
@@ -41,13 +40,12 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
 
   const transaction = await Transaction.create({
     price,
-    expired,
     member: data._id,
     package: pckge,
     priceAfterdiscount,
     promo,
     referral,
-    status: 'ACTIVE',
+    status: 'NOT-YEY-PAID',
     creator: data._id
   })
 

@@ -1,7 +1,7 @@
 import { Field, FieldProps, Form, Formik, FormikErrors, FormikHelpers } from 'formik'
 import { useRouter } from 'next/router'
 import { Dispatch, SetStateAction, useState } from 'react'
-import { addOrUpdateTransaction, updateStatusTransaction } from 'server/api'
+import { updateStatusTransaction } from 'server/api'
 import { ITransaction } from 'server/type/Transaction'
 import Button from 'src/components/ui/Button'
 import Dialog from 'src/components/ui/Dialog'
@@ -14,7 +14,7 @@ import { STATUS } from 'src/constant'
 
 export interface updateStatusTransactionValue {
   _id: string
-  status: 'PENDING' | 'ACTIVE' | 'INACTIVE'
+  status: ITransaction['status']
   updatedAt: Date | undefined
 }
 

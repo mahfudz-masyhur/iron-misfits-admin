@@ -18,8 +18,10 @@ import { GetTransactionsSWR } from 'src/context/swrHook'
 import { IResponseMember } from 'src/type/member'
 import { IResponseTransactions } from 'src/type/transaction'
 import { KeyedMutator } from 'swr'
+import DeleteMember from '../DeleteMember'
+import UpdateMember from '../UpdateMember'
 
-const MemberInfo = ({ member }: { member: IMember }) => {
+const MemberInfo = ({ member, mutateMember }: { member: IMember; mutateMember: KeyedMutator<IResponseMember> }) => {
   return (
     <Paper className='p-4 m-4'>
       <div className='flex flex-col sm:flex-row sm:items-center gap-4'>
@@ -38,26 +40,30 @@ const MemberInfo = ({ member }: { member: IMember }) => {
             maxHeight: 220
           }}
         />
-        <div className='flex-1'>
-          <Table>
-            <TableBody>
-              <TableRow evenOdd='reverse'>
-                <TableCell>Name</TableCell>
-                <TableCell>:</TableCell>
-                <TableCell>{member.name}</TableCell>
-              </TableRow>
-              <TableRow evenOdd='reverse'>
-                <TableCell>handphone</TableCell>
-                <TableCell>:</TableCell>
-                <TableCell>{member.handphone}</TableCell>
-              </TableRow>
-              <TableRow evenOdd='reverse'>
-                <TableCell>registrationFee</TableCell>
-                <TableCell>:</TableCell>
-                <TableCell>{member.registrationFee}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+        <div className='text-right flex-1'>
+          <UpdateMember data={member} mutate={mutateMember as any} />{' '}
+          <DeleteMember data={member} mutate={mutateMember as any} back />
+          <div className='text-left'>
+            <Table>
+              <TableBody>
+                <TableRow evenOdd='reverse'>
+                  <TableCell>Name</TableCell>
+                  <TableCell>:</TableCell>
+                  <TableCell>{member.name}</TableCell>
+                </TableRow>
+                <TableRow evenOdd='reverse'>
+                  <TableCell>handphone</TableCell>
+                  <TableCell>:</TableCell>
+                  <TableCell>{member.handphone}</TableCell>
+                </TableRow>
+                <TableRow evenOdd='reverse'>
+                  <TableCell>registrationFee</TableCell>
+                  <TableCell>:</TableCell>
+                  <TableCell>{member.registrationFee}</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
         </div>
       </div>
     </Paper>
@@ -83,7 +89,7 @@ const TableTransaction = ({
     }
 
     return transaction.map((v, i) => {
-      const cantEdit = isWithinOneDay(`${v.createdAt}`)
+      const cantEdit = isWithinOneDay(`${v.createdAt}`) || v.status === 'NOT-YEY-PAID'
       return (
         <TableRow hover evenOdd key={v._id}>
           <TableCell>{i + 1}.</TableCell>
@@ -132,14 +138,19 @@ const TableTransaction = ({
   )
 }
 
-function MemberIdPage({ member: m }: { member: IResponseMember; mutateMember: KeyedMutator<IResponseMember> }) {
+interface Props {
+  member: IResponseMember
+  mutateMember: KeyedMutator<IResponseMember>
+}
+
+function MemberIdPage({ member: m, mutateMember }: Props) {
   const member = m.data
   const { data: t, mutate: mutateTransactions } = GetTransactionsSWR()
   const transaction = t?.data
 
   return (
     <>
-      <MemberInfo member={member} />
+      <MemberInfo member={member} mutateMember={mutateMember} />
       <div className='mt-2 text-right mx-4'>
         <AddTransactionMember data={member} mutate={mutateTransactions} />
       </div>

@@ -1,13 +1,12 @@
+import { ObjectId } from 'mongodb'
+import { FilterQuery } from 'mongoose'
 import type { NextApiResponse } from 'next'
 import { validateAdmin, validateSignin } from 'server/controllers/validate'
- 
-import { Ireq } from '../me/login'
+import connectMongoDB from 'server/libs/mongodb'
+import Promo from 'server/models/Promo'
 import { IPromo } from 'server/type/Promo'
 import { PromoInput } from 'src/type/promo'
-import Promo from 'server/models/Promo'
-import { FilterQuery } from 'mongoose'
-import connectMongoDB from 'server/libs/mongodb'
-import { ObjectId } from 'mongodb'
+import { Ireq } from '../me/login'
 
 type Data = {
   status: string
@@ -27,7 +26,10 @@ async function GET(req: Ireq, res: NextApiResponse<Data>) {
   if (status) filter.status = status
   if (code) filter.code = code
 
-  const data = await Promo.find(filter).sort({ updatedAt: -1 })
+  const data = await Promo.find(filter)
+    .populate('creator', '_id name')
+    .populate('lastEditedBy', '_id name')
+    .sort({ updatedAt: -1 })
 
   return res.json({ status: 'ok', message: 'Get Success', data })
 }

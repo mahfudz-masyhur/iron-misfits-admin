@@ -19,18 +19,6 @@ const promoSchema = new mongoose.Schema(
   { timestamps: true }
 )
 
-promoSchema
-  .pre('findOne', function (next) {
-    this.populate('creator', '_id name')
-    this.populate('lastEditedBy', '_id name')
-    next()
-  })
-  .pre('find', function (next) {
-    this.populate('creator', '_id name ')
-    this.populate('lastEditedBy', '_id name')
-    next()
-  })
-
 promoSchema.index({ _id: 1, statusEdit: 1 })
 
 const Promo = (mongoose.models.Promo as Model<IPromo>) || mongoose.model<IPromo>('Promo', promoSchema)

@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { deleteMember } from 'server/api'
 import { IMember } from 'server/type/Member'
@@ -7,8 +8,15 @@ import IconButton from 'src/components/ui/IconButton'
 import { IResponseMembers } from 'src/type/member'
 import { KeyedMutator } from 'swr'
 
-function DeleteMember({ data, mutate }: { data: IMember; mutate: KeyedMutator<IResponseMembers> }) {
+interface Props {
+  data: IMember
+  mutate: KeyedMutator<IResponseMembers>
+  back?: boolean
+}
+
+function DeleteMember({ data, mutate, back }: Props) {
   const [open, setOpen] = useState(false)
+  const router = useRouter()
 
   return (
     <>
@@ -30,8 +38,14 @@ function DeleteMember({ data, mutate }: { data: IMember; mutate: KeyedMutator<IR
         runFunction={async () => {
           await deleteMember(data._id, data)
         }}
-        refetch={mutate}
-        refetchWhenError={mutate}
+        refetch={() => {
+          if (back) router.push('/members')
+          else mutate()
+        }}
+        refetchWhenError={() => {
+          if (back) router.push('/members')
+          else mutate()
+        }}
         responBody={{
           bodyFailed: (
             <>

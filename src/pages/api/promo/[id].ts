@@ -1,11 +1,10 @@
 import type { NextApiResponse } from 'next'
 import { validateAdmin, validateSignin } from 'server/controllers/validate'
- 
-import { Ireq } from '../me/login'
-import { IPromo } from 'server/type/Promo'
-import Promo from 'server/models/Promo'
-import { PromoInput } from 'src/type/promo'
 import connectMongoDB from 'server/libs/mongodb'
+import Promo from 'server/models/Promo'
+import { IPromo } from 'server/type/Promo'
+import { PromoInput } from 'src/type/promo'
+import { Ireq } from '../me/login'
 
 type Data = {
   status: string
@@ -16,7 +15,7 @@ type Data = {
 
 async function GETID(req: Ireq, res: NextApiResponse<Data>) {
   const param = `${req.query.id}`
-  const data = await Promo.findById(param)
+  const data = await Promo.findById(param).populate('creator', '_id name').populate('lastEditedBy', '_id name')
 
   return res.json({ status: 'ok', message: 'Get Success', data })
 }

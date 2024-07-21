@@ -189,8 +189,10 @@ interface IFieldPrice {
   ) => Promise<void | FormikErrors<initialValuesTransactionInput>>
   countPack: CountPack
   removeStatusField?: boolean
+  removeExpiredField?: boolean
 }
-export const FieldPrice = ({ setFieldValue, countPack, isEditAble, referralBA, removeStatusField }: IFieldPrice) => {
+export const FieldPrice = (props: IFieldPrice) => {
+  const { setFieldValue, countPack, isEditAble, referralBA, removeStatusField, removeExpiredField } = props
   const addDays = (date: Date, days: number) => {
     const result = new Date(date)
     result.setDate(result.getDate() + days)
@@ -353,21 +355,23 @@ export const FieldPrice = ({ setFieldValue, countPack, isEditAble, referralBA, r
           )}
         </Field>
       </div>
-      <div className='col-span-6'>
-        <Field name='expired'>
-          {({ field, form, meta }: FieldProps) => (
-            <TextField
-              margin='normal'
-              readOnly
-              label='Expired date'
-              fullWidth
-              {...field}
-              error={Boolean(meta.error && meta.touched)}
-              helperText={meta.error && meta.touched && String(meta.error)}
-            />
-          )}
-        </Field>
-      </div>
+      {!removeExpiredField && (
+        <div className='col-span-6'>
+          <Field name='expired'>
+            {({ field, form, meta }: FieldProps) => (
+              <TextField
+                margin='normal'
+                readOnly
+                label='Expired date'
+                fullWidth
+                {...field}
+                error={Boolean(meta.error && meta.touched)}
+                helperText={meta.error && meta.touched && String(meta.error)}
+              />
+            )}
+          </Field>
+        </div>
+      )}
       {!removeStatusField && (
         <div className='col-span-6'>
           <Field name='status'>
@@ -406,7 +410,7 @@ interface initialValuesTransactionInput {
   pending?: ITransaction['pending']
   promo?: ITransaction['promo']
   referral?: ITransaction['referral']
-  status: 'PENDING' | 'ACTIVE' | 'INACTIVE'
+  status: ITransaction['status']
   createdAt?: Date
   updatedAt?: Date
 }

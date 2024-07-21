@@ -10,7 +10,7 @@ export const DAYS_OF_WEEK = [
   { value: 'saturday', label: 'Sabtu' }
 ]
 
-export const STATUS = ['ACTIVE', 'INACTIVE', 'PENDING']
+export const STATUS = ['ACTIVE', 'INACTIVE', 'PENDING', 'NOT-YEY-PAID']
 export const TYPE = ['PENDING', 'CANCLE-PENDING']
 
 export const SOCIAL_MEDIA = [

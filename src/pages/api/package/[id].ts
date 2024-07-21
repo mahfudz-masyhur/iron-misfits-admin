@@ -1,11 +1,10 @@
 import type { NextApiResponse } from 'next'
 import { validateAdmin, validateSignin } from 'server/controllers/validate'
- 
+import connectMongoDB from 'server/libs/mongodb'
 import Package from 'server/models/Package'
 import { IPackage } from 'server/type/Package'
-import { Ireq } from '../me/login'
 import { PackageInput } from 'src/type/package'
-import connectMongoDB from 'server/libs/mongodb'
+import { Ireq } from '../me/login'
 
 type Data = {
   status: string
@@ -16,7 +15,7 @@ type Data = {
 
 async function GETID(req: Ireq, res: NextApiResponse<Data>) {
   const param = `${req.query.id}`
-  const data = await Package.findById(param)
+  const data = await Package.findById(param).populate('creator', '_id name').populate('lastEditedBy', '_id name')
 
   return res.json({ status: 'ok', message: 'Get Success', data })
 }

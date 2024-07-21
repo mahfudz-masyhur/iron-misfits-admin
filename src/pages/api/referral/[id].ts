@@ -1,11 +1,10 @@
 import type { NextApiResponse } from 'next'
 import { validateAdmin, validateSignin } from 'server/controllers/validate'
- 
+import connectMongoDB from 'server/libs/mongodb'
 import Referral from 'server/models/Referal'
-import { Ireq } from '../me/login'
 import { IReferral } from 'server/type/Referral'
 import { ReferralInput } from 'src/type/referral'
-import connectMongoDB from 'server/libs/mongodb'
+import { Ireq } from '../me/login'
 
 type Data = {
   status: string
@@ -16,7 +15,7 @@ type Data = {
 
 async function GETID(req: Ireq, res: NextApiResponse<Data>) {
   const param = `${req.query.id}`
-  const data = await Referral.findById(param)
+  const data = await Referral.findById(param).populate('creator', '_id name').populate('lastEditedBy', '_id name')
 
   return res.json({ status: 'ok', message: 'Get Success', data })
 }

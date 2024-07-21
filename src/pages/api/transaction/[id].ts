@@ -1,14 +1,12 @@
+import { ObjectId } from 'mongodb'
 import type { NextApiResponse } from 'next'
 import { validateAdmin, validateSignin } from 'server/controllers/validate'
- 
+import connectMongoDB from 'server/libs/mongodb'
+import Referral from 'server/models/Referal'
 import Transaction from 'server/models/Transaction'
 import { ITransaction } from 'server/type/Transaction'
-import { Ireq } from '../me/login'
-import Referral from 'server/models/Referal'
 import { PendingRecordInput } from 'src/type/transaction'
-import { removeEmptyStringProperties } from 'src/components/utility/formats'
-import { ObjectId } from 'mongodb'
-import connectMongoDB from 'server/libs/mongodb'
+import { Ireq } from '../me/login'
 
 type Data = {
   status: string
@@ -19,7 +17,7 @@ type Data = {
 
 async function GETID(req: Ireq, res: NextApiResponse<Data>) {
   const param = `${req.query.id}`
-  const data = await Transaction.findById(param)
+  const data = await Transaction.findById(param).populate('creator', '_id name ').populate('lastEditedBy', '_id name')
 
   return res.json({ status: 'ok', message: 'Get Success', data })
 }

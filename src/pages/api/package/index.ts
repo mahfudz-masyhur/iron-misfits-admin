@@ -1,13 +1,11 @@
+import { FilterQuery } from 'mongoose'
 import type { NextApiResponse } from 'next'
 import { validateAdmin, validateSignin } from 'server/controllers/validate'
- 
-import { Ireq } from '../me/login'
+import connectMongoDB from 'server/libs/mongodb'
 import Package from 'server/models/Package'
 import { IPackage } from 'server/type/Package'
 import { PackageInput } from 'src/type/package'
-import { ObjectId } from 'mongodb'
-import { FilterQuery } from 'mongoose'
-import connectMongoDB from 'server/libs/mongodb'
+import { Ireq } from '../me/login'
 
 type Data = {
   status: string
@@ -26,7 +24,10 @@ async function GET(req: Ireq, res: NextApiResponse<Data>) {
   if (packageType) filter.packageType = packageType
   if (status) filter.status = status
 
-  const data = await Package.find(filter).sort({ updatedAt: -1 })
+  const data = await Package.find(filter)
+    .populate('creator', '_id name')
+    .populate('lastEditedBy', '_id name')
+    .sort({ updatedAt: -1 })
 
   return res.json({ status: 'ok', message: 'Get Success', data })
 }

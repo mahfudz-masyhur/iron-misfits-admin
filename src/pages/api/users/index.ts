@@ -1,12 +1,12 @@
 import bcrypt from 'bcrypt'
+import { FilterQuery } from 'mongoose'
 import type { NextApiResponse } from 'next'
 import { validateMasterAdmin, validateSignin } from 'server/controllers/validate'
+import connectMongoDB from 'server/libs/mongodb'
 import User from 'server/models/User'
 import { IUser } from 'server/type/User'
 import { UserInput } from 'src/type/users'
 import { Ireq } from '../me/login'
-import { FilterQuery } from 'mongoose'
-import connectMongoDB from 'server/libs/mongodb'
 
 type Data = {
   status: string
@@ -31,7 +31,10 @@ async function GET(req: Ireq, res: NextApiResponse<Data>) {
   if (isDeleted === 'true') filter.isDeleted = true
   else filter.isDeleted = { $in: [null, undefined, false] }
 
-  const data = await User.find(filter, { password: 0 }).sort({ updatedAt: -1 })
+  const data = await User.find(filter, { password: 0 })
+    .populate('creator', '_id name')
+    .populate('lastEditedBy', '_id name')
+    .sort({ updatedAt: -1 })
 
   return res.json({ status: 'ok', message: 'Get Success', data })
 }

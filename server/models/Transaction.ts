@@ -40,9 +40,9 @@ let transactionSchema = new mongoose.Schema(
     package: { type: ObjectId, ref: 'Package', required: true },
     promo: { type: ObjectId, ref: 'Promo' },
     referral: { type: ObjectId, ref: 'Referral' },
-    expired: { type: Date, required: true },
+    expired: { type: Date },
     discountBA: { type: String },
-    status: { type: String, enum: ['PENDING', 'ACTIVE', 'INACTIVE'], required: true },
+    status: { type: String, enum: ['PENDING', 'ACTIVE', 'INACTIVE', 'NOT-YEY-PAID'], required: true },
     description: { type: String },
     pending: [{ type: pendingRecortSchema }],
     creator: { type: ObjectId, ref: 'User', required: true },
@@ -53,21 +53,17 @@ let transactionSchema = new mongoose.Schema(
 
 transactionSchema
   .pre('findOne', function (next) {
-    this.populate('member', '_id name avatar handphone socialmedia')
+    this.populate('member', '_id name handphone socialmedia')
     this.populate('package', '_id name price packageType')
     this.populate('promo', '_id name type discounts startDate endDate')
     this.populate('referral', '_id name code type discounts')
-    this.populate('creator', '_id name')
-    this.populate('lastEditedBy', '_id name')
     next()
   })
   .pre('find', function (next) {
-    this.populate('member', '_id name avatar handphone socialmedia')
+    this.populate('member', '_id name handphone socialmedia')
     this.populate('package', '_id name price packageType')
     this.populate('promo', '_id name type discounts startDate endDate')
     this.populate('referral', '_id name code type discounts')
-    this.populate('creator', '_id name ')
-    this.populate('lastEditedBy', '_id name')
     next()
   })
 

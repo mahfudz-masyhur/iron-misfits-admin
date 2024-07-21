@@ -13,7 +13,7 @@ export interface IResponseTransaction {
 }
 
 export interface PendingRecordInput {
-  status: 'PENDING' | 'ACTIVE' | 'INACTIVE'
+  status: ITransaction['status']
   expired: Date
   pending: IPendingRecord
   createdAt?: Date
@@ -30,7 +30,7 @@ export interface TransactionInput {
   description: string
   member: string
   expired: Date
-  status: 'PENDING' | 'ACTIVE' | 'INACTIVE'
+  status: ITransaction['status']
   createdAt?: Date
   updatedAt?: Date
   discountBA?: string

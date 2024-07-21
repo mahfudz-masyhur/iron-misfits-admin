@@ -1,23 +1,23 @@
 import { Field, FieldProps, Form, Formik, FormikHelpers } from 'formik'
+import { useRouter } from 'next/router'
 import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react'
 import { fetcherClient, getPromosBycode, getReferralByCode, memberRegisration } from 'server/api'
+import { IPackage } from 'server/type/Package'
 import { IPromo } from 'server/type/Promo'
 import { IReferral } from 'server/type/Referral'
 import FieldInputImage from 'src/components/ReuseableComponent/FieldInputImage/OnChange'
 import Autocomplete from 'src/components/ui/Autocomplete'
 import Button from 'src/components/ui/Button'
 import Divider from 'src/components/ui/Divider'
+import Skeleton from 'src/components/ui/Skeleton'
 import TextField from 'src/components/ui/TextField'
 import Typography from 'src/components/ui/Typograph'
 import { formatPhoneNumber, getURLParams, toastError } from 'src/components/utility/formats'
 import { IResponseMember } from 'src/type/member'
+import { IResponsePackages } from 'src/type/package'
+import useSWR from 'swr'
 import { SocialmediaField } from './FormMember'
 import { CountPack, FieldPrice, countPack } from './id/FormTransactionMember'
-import Skeleton from 'src/components/ui/Skeleton'
-import useSWR from 'swr'
-import { IResponsePackages } from 'src/type/package'
-import { IPackage } from 'server/type/Package'
-import { useRouter } from 'next/router'
 
 export type RegisterMemberValues = {
   name: string
@@ -29,8 +29,6 @@ export type RegisterMemberValues = {
   package?: string
   priceAfterdiscount: string
   price: string
-  expired: Date | null
-  status: string
 }
 
 interface Props {
@@ -193,9 +191,7 @@ function FormMember(props: Props) {
     promo: undefined,
     package: undefined,
     priceAfterdiscount: '',
-    price: '',
-    expired: null,
-    status: 'ACTIVE'
+    price: ''
   }
 
   const validate = (values: RegisterMemberValues) => {
@@ -219,9 +215,7 @@ function FormMember(props: Props) {
       })
     }
 
-    if (!values.status) errors.status = 'Diperlukan!'
     if (!values.package) errors.package = 'Diperlukan!'
-    if (!values.expired) errors.expired = 'Diperlukan!'
 
     return errors
   }
@@ -321,6 +315,7 @@ function FormMember(props: Props) {
                 referralBA={null}
                 isEditAble={false}
                 removeStatusField
+                removeExpiredField
               />
               <div className='col-span-6'>
                 <Field name='package'>

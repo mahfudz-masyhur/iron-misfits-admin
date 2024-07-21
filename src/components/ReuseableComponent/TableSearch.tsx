@@ -153,7 +153,7 @@ function TableSearch({ children, moreFilter, maxPage, page, classNames }: Props)
           <Limit />
         </div>
         {/* search */}
-        <div className={twMerge(classNames?.search)}>
+        <div className={twMerge('flex gap-1', classNames?.search)}>
           <Search />
           {moreFilter}
         </div>

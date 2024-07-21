@@ -1,13 +1,13 @@
-import { FilterQuery } from 'mongoose'
+import { FilterQuery, SortOrder } from 'mongoose'
 import type { NextApiResponse } from 'next'
 import { validateAdmin, validateSignin } from 'server/controllers/validate'
+import connectMongoDB from 'server/libs/mongodb'
 import Member from 'server/models/Member'
+import Transaction from 'server/models/Transaction'
 import { IMember } from 'server/type/Member'
+import { removeEmptyStringProperties, removeUndefinedProperties } from 'src/components/utility/formats'
 import { MemberInput } from 'src/type/member'
 import { Ireq } from '../me/login'
-import connectMongoDB from 'server/libs/mongodb'
-import { SortOrder } from 'mongoose'
-import { removeEmptyStringProperties, removeUndefinedProperties } from 'src/components/utility/formats'
 
 type Data = {
   status: string
@@ -23,7 +23,7 @@ type Data = {
 }
 
 async function GET(req: Ireq, res: NextApiResponse<Data>) {
-  let { search, isDeleted, sort, order, limit, page } = req.query
+  let { search, isDeleted, sort, order, limit, page, registrationFee, transactionStatus } = req.query
 
   let shortByParams: string | { [key: string]: SortOrder | { $meta: any } } | [string, SortOrder][] = {
     updatedAt: -1
@@ -44,10 +44,21 @@ async function GET(req: Ireq, res: NextApiResponse<Data>) {
       filter.$or = [{ name: { $regex: match } }, { email: { $regex: match } }]
     }
   }
+  if (transactionStatus) {
+    const findTransaction = await Transaction.aggregate<{ _id: string; member: string; status: string }>([
+      { $match: { status: transactionStatus } },
+      { $group: { _id: '$member', transaction: { $first: '$$ROOT' } } },
+      { $project: { _id: '$transaction._id', member: '$transaction.member', status: '$transaction.status' } }
+    ])
+    filter._id = { $in: findTransaction.map(v => v.member) }
+  }
+  if (registrationFee) filter.registrationFee = registrationFee
   if (isDeleted === 'true') filter.isDeleted = true
   else filter.isDeleted = { $in: [null, undefined, false] }
 
   const data = await Member.find(filter)
+    .populate('creator', '_id name ')
+    .populate('lastEditedBy', '_id name')
     .sort(shortByParams)
     .skip((pageNum - 1) * limitNum)
     .limit(limitNum)

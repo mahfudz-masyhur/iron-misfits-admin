@@ -26,18 +26,6 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 )
 
-userSchema
-  .pre('findOne', function (next) {
-    this.populate('creator', '_id name')
-    this.populate('lastEditedBy', '_id name')
-    next()
-  })
-  .pre('find', function (next) {
-    this.populate('creator', '_id name ')
-    this.populate('lastEditedBy', '_id name')
-    next()
-  })
-
 const User = (mongoose.models.User as Model<IUser>) || mongoose.model<IUser>('User', userSchema)
 
 export default User

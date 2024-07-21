@@ -1,14 +1,13 @@
 import { FilterQuery } from 'mongoose'
 import type { NextApiResponse } from 'next'
 import { validateAdmin, validateSignin } from 'server/controllers/validate'
- 
+import connectMongoDB from 'server/libs/mongodb'
 import Package from 'server/models/Package'
 import Promo from 'server/models/Promo'
 import Referral from 'server/models/Referal'
 import Transaction from 'server/models/Transaction'
 import { ITransaction } from 'server/type/Transaction'
 import { Ireq } from '../me/login'
-import connectMongoDB from 'server/libs/mongodb'
 
 type Data = {
   status: string
@@ -29,7 +28,10 @@ async function GET(req: Ireq, res: NextApiResponse<Data>) {
   if (member) filter.member = member
   if (expired) filter.expired = { $lt: expired }
 
-  const data = await Transaction.find(filter).sort({ createdAt: -1 })
+  const data = await Transaction.find(filter)
+    .populate('creator', '_id name')
+    .populate('lastEditedBy', '_id name')
+    .sort({ createdAt: -1 })
 
   return res.json({ status: 'ok', message: 'Get Success', data })
 }

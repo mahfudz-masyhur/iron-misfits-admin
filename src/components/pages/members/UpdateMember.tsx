@@ -3,9 +3,9 @@ import { IMember } from 'server/type/Member'
 import Dialog from 'src/components/ui/Dialog'
 import IconEditAnimated from 'src/components/ui/Icon/IconEditAnimated'
 import IconButton from 'src/components/ui/IconButton'
-import FormMember from './FormMember'
-import { KeyedMutator } from 'swr'
 import { IResponseMembers } from 'src/type/member'
+import { KeyedMutator } from 'swr'
+import FormMember from './FormMember'
 
 function UpdateMember({ data, mutate }: { data: IMember; mutate: KeyedMutator<IResponseMembers> }) {
   const [open, setOpen] = useState(false)

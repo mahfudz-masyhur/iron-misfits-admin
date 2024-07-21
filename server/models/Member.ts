@@ -23,18 +23,6 @@ const memberSchema = new mongoose.Schema(
   { timestamps: true }
 )
 
-memberSchema
-  .pre('findOne', function (next) {
-    this.populate('creator', '_id name')
-    this.populate('lastEditedBy', '_id name')
-    next()
-  })
-  .pre('find', function (next) {
-    this.populate('creator', '_id name ')
-    this.populate('lastEditedBy', '_id name')
-    next()
-  })
-
 const Member = (mongoose.models.Member as Model<IMember>) || mongoose.model<IMember>('Member', memberSchema)
 
 export default Member

@@ -1,13 +1,12 @@
+import { ObjectId } from 'mongodb'
+import { FilterQuery } from 'mongoose'
 import type { NextApiResponse } from 'next'
 import { validateAdmin, validateSignin } from 'server/controllers/validate'
- 
-import { Ireq } from '../me/login'
+import connectMongoDB from 'server/libs/mongodb'
+import Referral from 'server/models/Referal'
 import { IReferral } from 'server/type/Referral'
 import { ReferralInput } from 'src/type/referral'
-import Referral from 'server/models/Referal'
-import { FilterQuery } from 'mongoose'
-import connectMongoDB from 'server/libs/mongodb'
-import { ObjectId } from 'mongodb'
+import { Ireq } from '../me/login'
 
 type Data = {
   status: string
@@ -28,7 +27,10 @@ async function GET(req: Ireq, res: NextApiResponse<Data>) {
   if (status) filter.status = status
   if (member) filter.member = member
 
-  const data = await Referral.find(filter).sort({ updatedAt: -1 })
+  const data = await Referral.find(filter)
+    .populate('creator', '_id name')
+    .populate('lastEditedBy', '_id name')
+    .sort({ updatedAt: -1 })
 
   return res.json({ status: 'ok', message: 'Get Success', data })
 }

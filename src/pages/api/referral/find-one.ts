@@ -1,11 +1,10 @@
 import { FilterQuery } from 'mongoose'
 import type { NextApiResponse } from 'next'
 import { validateSignin } from 'server/controllers/validate'
- 
+import connectMongoDB from 'server/libs/mongodb'
 import Referral from 'server/models/Referal'
 import { IReferral } from 'server/type/Referral'
 import { Ireq } from '../me/login'
-import connectMongoDB from 'server/libs/mongodb'
 
 type Data = {
   status: string
@@ -23,7 +22,7 @@ async function GETID(req: Ireq, res: NextApiResponse<Data>) {
   if (code) filter.code = code
   if (status) filter.status = status
   if (member) filter.member = member
-  const data = await Referral.findOne(filter)
+  const data = await Referral.findOne(filter).populate('creator', '_id name').populate('lastEditedBy', '_id name')
 
   return res.json({ status: 'ok', message: 'Get Success', data })
 }

@@ -1,25 +1,36 @@
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import RecycleBinButton from 'src/components/ReuseableComponent/RecycleBinButton'
 import RefreshButton from 'src/components/ReuseableComponent/RefreshButton'
+import TableSearch from 'src/components/ReuseableComponent/TableSearch'
 import AddMember from 'src/components/pages/members/AddMember'
 import DeleteMember from 'src/components/pages/members/DeleteMember'
 import UpdateMember from 'src/components/pages/members/UpdateMember'
 import IconTransaction from 'src/components/ui/Icon/IconTransaction'
 import IconButton from 'src/components/ui/IconButton'
 import Paper from 'src/components/ui/Paper'
+import Skeleton from 'src/components/ui/Skeleton'
 import Table from 'src/components/ui/Table'
 import TableBody from 'src/components/ui/Table/TableBody'
 import TableCell from 'src/components/ui/Table/TableCell'
 import TableHead from 'src/components/ui/Table/TableHead'
 import TableRow from 'src/components/ui/Table/TableRow'
+import Tooltip from 'src/components/ui/Tolltip'
 import Typography from 'src/components/ui/Typograph'
-import { FormatListArray, formatDate, formatPhoneNumber, isWithinOneDay } from 'src/components/utility/formats'
+import { FormatListArray, formatDate, formatPhoneNumber } from 'src/components/utility/formats'
 import { IResponseMembers } from 'src/type/member'
 import { KeyedMutator } from 'swr'
 import RestoreMember from './RestoreMember'
-import TableSearch from 'src/components/ReuseableComponent/TableSearch'
-import Tooltip from 'src/components/ui/Tolltip'
+
+const MoreFilterMember = dynamic(() => import('./MoreFilterMember'), {
+  ssr: false,
+  loading: () => (
+    <div>
+      <Skeleton height={40} width={40} variant='circular' />
+    </div>
+  )
+})
 
 interface Props {
   mutate: KeyedMutator<IResponseMembers>
@@ -50,7 +61,7 @@ function MembersPage({ data, mutate }: Props) {
           <RecycleBinButton />
         </div>
       </div>
-      <TableSearch maxPage={data.paginate.maxPage} page={data.paginate.page}>
+      <TableSearch maxPage={data.paginate.maxPage} page={data.paginate.page} moreFilter={<MoreFilterMember />}>
         <Table>
           <TableHead>
             <TableRow>
