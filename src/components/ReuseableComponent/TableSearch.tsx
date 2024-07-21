@@ -9,6 +9,7 @@ import IconClose from '../ui/Icon/IconClose'
 import Pagination from '../ui/Pagination'
 import useMediaQuery from '../utility/UI/useMediaQuery'
 import { twMerge } from 'tailwind-merge'
+import IconSearch from '../ui/Icon/IconSearch'
 
 const Limit = () => {
   const sm = useMediaQuery('sm')
@@ -35,8 +36,9 @@ const Limit = () => {
       onChange={onChange}
       placeholder={sm ? undefined : 'entries per page'}
       fullWidth={sm ? undefined : true}
-      sizes={sm ? 'small' : undefined}
+      sizes='small'
       className={sm ? 'w-14' : undefined}
+      noFocusAnimation
     >
       {limitValue.map(v => (
         <Option value={`${v}`} key={v}>
@@ -71,6 +73,8 @@ const Search = () => {
       value={search}
       fullWidth
       placeholder='Search...'
+      noFocusAnimation
+      startAdornment={<IconSearch fontSize={18} color='inherit' />}
       endAdornment={
         search ? (
           <button
@@ -138,7 +142,12 @@ function TableSearch({ children, moreFilter, maxPage, page, classNames }: Props)
   return (
     <>
       {/* root */}
-      <div className={twMerge('flex justify-between items-center mb-2', classNames?.root)}>
+      <div
+        className={twMerge(
+          'flex flex-col-reverse sm:flex-row gap-2 justify-between sm:items-center mb-2',
+          classNames?.root
+        )}
+      >
         {/* limit */}
         <div className={twMerge(classNames?.limit)}>
           <Limit />

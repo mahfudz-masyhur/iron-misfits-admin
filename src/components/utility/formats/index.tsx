@@ -493,7 +493,7 @@ export const coutNumArray = (array: number[]) => {
 }
 
 export function formatPhoneNumber(v?: number|string) {
-  if(!v) return '-'
+  if (!v) return ''
   // Jika v bukan string, konversi menjadi string
   const phoneNumber = typeof v === 'string' ? v : `${v}`
 

@@ -102,6 +102,7 @@ function FormPackage(props: Props) {
                       startAdornment={<>Rp.</>}
                       {...{
                         ...field,
+                        value: field.value || '',
                         onChange: (e: ChangeEvent<HTMLInputElement>) => handleNumber(e, field.onChange)
                       }}
                       error={Boolean(meta.error && meta.touched)}

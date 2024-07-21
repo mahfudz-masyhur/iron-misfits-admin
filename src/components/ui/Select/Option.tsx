@@ -1,12 +1,12 @@
 import React, { OptionHTMLAttributes, ReactNode, forwardRef } from 'react'
 import { twMerge } from 'tailwind-merge'
 
-export type OptionProps = { value?: string } & OptionHTMLAttributes<HTMLOptionElement>
+export type OptionProps = { value?: string } & OptionHTMLAttributes<HTMLDivElement>
 
-const Option = forwardRef<HTMLOptionElement, OptionProps>((props: OptionProps, ref) => {
+const Option = forwardRef<HTMLDivElement, OptionProps>((props: OptionProps, ref) => {
   const { className, value, ...rest } = props
   return (
-    <option
+    <div
       ref={ref}
       className={twMerge(
         `rounded-lg p-2 pl-8 hover:bg-gray-400/10 cursor-pointer whitespace-normal flex ${
@@ -14,7 +14,7 @@ const Option = forwardRef<HTMLOptionElement, OptionProps>((props: OptionProps, r
         }`,
         className
       )}
-      value={value === undefined ? '' : value}
+      data-value={value === undefined ? '' : value}
       {...rest}
       style={{ WebkitTapHighlightColor: 'transparent' }}
     />

@@ -8,6 +8,7 @@ import IconInfo from 'src/components/ui/Icon/IconInfo'
 import IconMinus from 'src/components/ui/Icon/IconMinus'
 import IconPlus from 'src/components/ui/Icon/IconPlus'
 import IconButton from 'src/components/ui/IconButton'
+import Select from 'src/components/ui/Select'
 import Option from 'src/components/ui/Select/Option'
 import TextField from 'src/components/ui/TextField'
 import Tooltip from 'src/components/ui/Tolltip'
@@ -34,7 +35,7 @@ export const SocialmediaField = (props: FieldProps) => {
               <div className='col-span-2 flex gap-1 items-center'>
                 <Field name={`${props.field.name}.${i}.key`}>
                   {({ field, form, meta }: FieldProps) => (
-                    <TextField
+                    <Select
                       margin='dense'
                       sizes='small'
                       placeholder='ig'
@@ -42,14 +43,14 @@ export const SocialmediaField = (props: FieldProps) => {
                       {...field}
                       error={Boolean(meta.error && meta.touched)}
                       helperText={meta.error && meta.touched && String(meta.error)}
-                      select
+                      noFocusAnimation
                     >
-                      {SOCIAL_MEDIA.map(v => (
+                      {[{ value: '', label: 'None' }, ...SOCIAL_MEDIA].map(v => (
                         <Option key={v.value} value={v.value}>
                           {v.label}
                         </Option>
                       ))}
-                    </TextField>
+                    </Select>
                   )}
                 </Field>
                 :
@@ -63,6 +64,7 @@ export const SocialmediaField = (props: FieldProps) => {
                       placeholder='ig'
                       fullWidth
                       {...field}
+                      noFocusAnimation
                       error={Boolean(meta.error && meta.touched)}
                       helperText={meta.error && meta.touched && String(meta.error)}
                     />
@@ -231,6 +233,7 @@ function FormMember(props: Props) {
                       startAdornment={<>Rp.</>}
                       {...{
                         ...field,
+                        value: field.value || '',
                         onChange: (e: ChangeEvent<HTMLInputElement>) => handleNumber(e, field.onChange)
                       }}
                       error={Boolean(meta.error && meta.touched)}
@@ -266,6 +269,7 @@ function FormMember(props: Props) {
                       startAdornment={<>+62</>}
                       {...{
                         ...field,
+                        value: field.value || '',
                         onChange: (e: ChangeEvent<HTMLInputElement>) => handlePhoneNumber(e, field.onChange)
                       }}
                       error={Boolean(meta.error && meta.touched)}

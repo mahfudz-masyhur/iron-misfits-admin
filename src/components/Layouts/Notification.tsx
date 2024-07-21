@@ -12,14 +12,20 @@ import Link from 'next/link'
 import IconNotifcations from '../ui/Icon/IconNotifcations'
 import IconButton from '../ui/IconButton'
 
-function Notification() {
+function Notification({ closeMenu }: { closeMenu: () => void }) {
   const { button, menu } = MenuClickHook()
   const { data } = useSWR<IResponseTransactions>(`/api/transaction/notification`, fetcherClient)
 
   return (
     <>
       <div className='relative'>
-        <IconButton {...button}>
+        <IconButton
+          {...button}
+          onClick={e => {
+            closeMenu()
+            button.onClick(e)
+          }}
+        >
           <IconNotifcations />
         </IconButton>
         {data && data.data.length > 0 && (

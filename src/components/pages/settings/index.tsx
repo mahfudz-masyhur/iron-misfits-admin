@@ -89,6 +89,7 @@ function ProfilePage() {
                       startAdornment={<>+62</>}
                       {...{
                         ...field,
+                        value: field.value || '',
                         onChange: (e: ChangeEvent<HTMLInputElement>) => handlePhoneNumber(e, field.onChange)
                       }}
                       error={Boolean(meta.error && meta.touched)}

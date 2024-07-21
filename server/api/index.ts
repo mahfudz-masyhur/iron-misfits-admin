@@ -23,7 +23,6 @@ import { IResponseTransaction, IResponseTransactions, PendingRecordInput, Transa
 import { IResponseUser, IResponseUsers, UserInput } from 'src/type/users'
 
 const axios = Axios.create({
-  baseURL: process.env.BASE_URL,
   headers: {
     'Content-Type': 'application/json'
   }

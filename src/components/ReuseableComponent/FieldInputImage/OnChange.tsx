@@ -154,10 +154,10 @@ const DisableComponent = ({
         )}
         style={{ height, maxWidth: maxWidth ? width : undefined }}
       >
-        {Boolean(localImage || imgFile) ? (
+        {Boolean(imgFile) ? (
           <Image
-            src={localImage ? localImage : `${imgFile}`}
-            alt={localImage ? 'upload' : `${imgFile}`}
+            src={`${imgFile}`}
+            alt={`${imgFile}`}
             width={convertToPixelSize(width as string)}
             height={convertToPixelSize(height as string)}
             className='object-cover w-full h-full'
@@ -283,10 +283,10 @@ const ContentFieldInputImage = (
         })}
         style={{ height, maxWidth: maxWidth ? width : undefined }}
       >
-        {Boolean(localImage || imgFile) ? (
+        {Boolean(imgFile) ? (
           <Image
-            src={localImage ? localImage : `${imgFile}`}
-            alt={localImage ? 'upload' : `${imgFile}`}
+            src={`${imgFile}`}
+            alt={`${imgFile}`}
             width={convertToPixelSize(width as string)}
             height={convertToPixelSize(height as string)}
             className='object-cover w-full h-full'

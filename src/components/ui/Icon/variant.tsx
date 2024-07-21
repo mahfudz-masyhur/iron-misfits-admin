@@ -9,7 +9,8 @@ const variantsIcon = cva([], {
       error: ['text-error-main'],
       warning: ['text-warning-main'],
       info: ['text-info-main'],
-      white: ['text-white']
+      white: ['text-white'],
+      inherit: ['text-inherit']
     }
   }
 })

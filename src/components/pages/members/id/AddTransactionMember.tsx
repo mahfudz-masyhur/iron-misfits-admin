@@ -14,7 +14,7 @@ import { IResponseTransactions } from 'src/type/transaction'
 
 interface Props {
   mutate: KeyedMutator<IResponseTransactions>
-  data?: IMember
+  data: IMember
 }
 
 function AddTransactionMember({ data, mutate }: Props) {
@@ -23,7 +23,6 @@ function AddTransactionMember({ data, mutate }: Props) {
 
   const handleOpen = () => setOpen(true)
   const handleClose = () => (stopClose ? null : setOpen(false))
-  if (!data) return <>loading</>
 
   return (
     <>
@@ -32,12 +31,7 @@ function AddTransactionMember({ data, mutate }: Props) {
       </Button>{' '}
       <Dialog title='Transaction Member' open={open} onClose={handleClose} closeButtom fullWidth maxWidth='md'>
         <div className='px-4 pb-4'>
-          <FormTransactionMember
-            member={data}
-            setStopClose={setStopClose}
-            handleClose={handleClose}
-            mutate={mutate}
-          />
+          <FormTransactionMember member={data} setStopClose={setStopClose} handleClose={handleClose} mutate={mutate} />
         </div>
       </Dialog>
       <RefreshButton />

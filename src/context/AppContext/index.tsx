@@ -29,7 +29,8 @@ const defaultProvider: IAppContext = {
   }
 }
 
-const noAuthPath = ['/login', '/login/', '/members/registration', '/members/registration/']
+const noAuthPathButAlow = ['/members/registration', '/members/registration/']
+const noAuthPath = ['/login', '/login/']
 
 const AppContext = React.createContext(defaultProvider)
 
@@ -51,7 +52,7 @@ export default function AppContextComponent(props: IAppContextComponent) {
       }
       setIsLoading(false)
     } catch (err) {
-      if (!noAuthPath.includes(window.location.pathname)) {
+      if (!noAuthPathButAlow.includes(window.location.pathname)) {
         router.push(`/login${router.asPath !== '/' ? '?' + getURLParams({ url: window.location.pathname }) : ''}`)
       }
     }

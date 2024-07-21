@@ -72,7 +72,7 @@ export const variantsInputOutline = cva(
         info: ['hover:outline-info-main']
       },
       sizes: {
-        small: ['text-sm', 'min-h-[1.875rem]', 'p-2'],
+        small: ['text-sm', 'min-h-[1.875rem]', 'px-2'],
         medium: ['min-h-[2.5rem]', 'px-2.5', 'leading-6'],
         large: ['text-lg', 'min-h-[3.125rem]', 'px-3']
       }
@@ -98,7 +98,7 @@ export const variantsInputDefault = cva(['rounded-xl'], {
       info: ['text-info-main', 'bg-info-main/20']
     },
     sizes: {
-      small: ['text-sm', 'min-h-[1.875rem]', 'p-2'],
+      small: ['text-sm', 'min-h-[1.875rem]', 'px-2'],
       medium: ['min-h-[2.5rem]', 'px-2.5', 'leading-6'],
       large: ['text-lg', 'min-h-[3.125rem]', 'px-3']
     }
@@ -123,7 +123,7 @@ export const variantsInputUnderlined = cva(['border-b-2'], {
       info: ['hover:border-info-main', 'border-info-light']
     },
     sizes: {
-      small: ['text-sm', 'min-h-[1.875rem]', 'p-2'],
+      small: ['text-sm', 'min-h-[1.875rem]', 'px-2'],
       medium: ['min-h-[2.5rem]', 'px-2.5', 'leading-6'],
       large: ['text-lg', 'min-h-[3.125rem]', 'px-3']
     }
@@ -155,12 +155,13 @@ export const variantIsChoose = (props: Props) => {
   let variantChoose
   switch (variant) {
     case 'bordered':
-      variantChoose =
-        variantsInputOutline({ sizes, color }) +
-        (error && ' outline-error-main dark:outline-error-main ') +
-        (disabled && ' outline-gray-100 hover:outline-gray-100 dark:outline-gray-700 hover:dark:outline-gray-700 ') +
-        (!disabled && focus && !noFocusAnimation && ' -translate-y-[0.125rem] ') +
-        (!disabled && focus && ' z-[1] ' + variantsInputFocus({ color }))
+      variantChoose = twMerge(
+        variantsInputOutline({ sizes, color }),
+        error && ' outline-error-main dark:outline-error-main ',
+        disabled && ' outline-gray-100 hover:outline-gray-100 dark:outline-gray-700 hover:dark:outline-gray-700 ',
+        !disabled && focus && !noFocusAnimation && ' -translate-y-[0.125rem] ',
+        !disabled && focus && ' z-[1] ' + variantsInputFocus({ color })
+      )
       break
     case 'underlined':
       variantChoose =
@@ -172,7 +173,8 @@ export const variantIsChoose = (props: Props) => {
       variantChoose =
         variantsInputDefault({ sizes, color }) +
         (disabled && ' bg-gray-50/90 dark:bg-gray-700 ') +
-        (focus && ' z-[1] -translate-y-[0.125rem] ')
+        (focus && ' z-[1] ') +
+        (focus && !noFocusAnimation && ' -translate-y-[0.125rem] ')
       break
   }
   return {

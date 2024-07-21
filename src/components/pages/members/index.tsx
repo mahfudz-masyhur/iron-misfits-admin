@@ -40,11 +40,11 @@ function MembersPage({ data, mutate }: Props) {
 
   return (
     <Paper className='p-4 m-4'>
-      <div className='flex justify-between mb-2'>
+      <div className='flex flex-col sm:flex-row justify-between mb-2'>
         <Typography variant='h5' fontWeight='semibold'>
           Table Members
         </Typography>
-        <div>
+        <div className='text-right'>
           <AddMember mutate={mutate} />
           <RefreshButton mutate={mutate} />
           <RecycleBinButton />

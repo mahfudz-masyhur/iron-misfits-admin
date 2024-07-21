@@ -551,7 +551,36 @@ const Content = (props: Props & { referralBA: IReferral }) => {
 
 const FormTransactionMember = (props: Props) => {
   const { data: referral, mutate } = GetOneReferralSWR()
-  if (!referral) return <>loading...</>
+  if (!referral) {
+    return (
+      <div className='grid flex-grow grid-cols-6 px-4 pb-4 gap-x-4'>
+        <div className='col-span-6'>
+          <Skeleton height={40} width='100%' variant='rounded' className='my-4' />
+        </div>
+        <div className='col-span-6'>
+          <Skeleton height={40} width='100%' variant='rounded' className='my-4' />
+        </div>
+        <div className='col-span-6'>
+          <Skeleton height={40} width='100%' variant='rounded' className='my-4' />
+        </div>
+        <div className='col-span-6'>
+          <Skeleton height={40} width='100%' variant='rounded' className='my-4' />
+        </div>
+        <div className='col-span-6'>
+          <Skeleton height={40} width='100%' variant='rounded' className='my-4' />
+        </div>
+        <div className='col-span-6'>
+          <Skeleton height={40} width='100%' variant='rounded' className='my-4' />
+        </div>
+        <div className='col-span-6'>
+          <Skeleton height={40} width='100%' variant='rounded' className='my-4' />
+        </div>
+        <div className='col-span-6'>
+          <Skeleton height={110} width='100%' variant='rounded' className='my-4' />
+        </div>
+      </div>
+    )
+  }
 
   return <Content {...props} referralBA={referral.data} />
 }

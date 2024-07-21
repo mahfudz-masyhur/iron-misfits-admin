@@ -12,15 +12,23 @@ import Link from '../ui/Link'
 import IconButton from '../ui/IconButton'
 import IconMenu from '../ui/Icon/IconMenu'
 import Collapse from '../ui/Collapse'
+import ClickAwayListener from '../ui/ClickAwayListener'
+import BackDrop from '../utility/UI/BackDrop'
 
-const ProfilMenu = () => {
+const ProfilMenu = ({ closeMenu }: { closeMenu: () => void }) => {
   const { auth } = useAppContext()
   const { user, logout } = auth
   const { button, menu } = MenuClickHook()
 
   return (
     <>
-      <button {...button}>
+      <button
+        {...button}
+        onClick={e => {
+          closeMenu()
+          button.onClick(e)
+        }}
+      >
         <Avatar alt={user?.name || ''} />
       </button>
       <Menu {...menu} anchor='bottom-end'>
@@ -55,7 +63,7 @@ const ProfilMenu = () => {
 
 export const LoadingPage = () => {
   return (
-    <div className='h-[100dvh] flex justify-center items-center'>
+    <div className='h-[calc(100dvh-88px)] flex justify-center items-center'>
       <CircularProgress size={60} />
     </div>
   )
@@ -69,50 +77,57 @@ const menu = [
   { link: '/referrals', label: 'referrals' }
 ]
 
-function MainLayout({ children }: { children: ReactNode }) {
-  const { auth } = useAppContext()
-  const { isLoading } = auth
+function Content({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false)
-  if (isLoading) return <LoadingPage />
+  BackDrop(open)
 
   return (
     <div>
-      <Paper className='flex justify-between m-4 p-2 bg-primary-main/10'>
-        <div className='inline-flex items-center gap-3'>
-          <Link href='/'>
-            <Typography fontWeight='semibold'>MisFits</Typography>
-          </Link>
-          <ul className='hidden sm:flex gap-2'>
-            {menu.map(v => (
-              <li key={v.link}>
-                <Link href={v.link}>{v.label}</Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className='inline-flex gap-1'>
-          <Notification />
-          <ProfilMenu />
-          <IconButton className='flex sm:hidden' onClick={() => setOpen(p => !p)}>
-            <IconMenu />
-          </IconButton>
-        </div>
-      </Paper>
-
-      <Collapse isOpen={open} className='sm:hidden fixed top-20 w-full z-50'>
-        <div className='bg-background-paper dark:bg-background-paper-dark mx-4 border p-4 rounded-xl'>
-          <ul>
-            {menu.map(v => (
-              <MenuItem href={v.link} Link={Link} key={v.link} onClick={()=>setOpen(false)}>
-                {v.label}
-              </MenuItem>
-            ))}
-          </ul>
-        </div>
-      </Collapse>
+      <ClickAwayListener onClickAway={() => setOpen(false)}>
+        <Paper className='flex justify-between m-4 p-2 bg-primary-main/10'>
+          <div className='inline-flex items-center gap-3'>
+            <Link href='/'>
+              <Typography fontWeight='semibold'>MisFits</Typography>
+            </Link>
+            <ul className='hidden sm:flex gap-2'>
+              {menu.map(v => (
+                <li key={v.link}>
+                  <Link href={v.link}>{v.label}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className='inline-flex gap-1'>
+            <Notification closeMenu={() => setOpen(false)} />
+            <ProfilMenu closeMenu={() => setOpen(false)} />
+            <IconButton className='flex sm:hidden' onClick={() => setOpen(p => !p)}>
+              <IconMenu />
+            </IconButton>
+          </div>
+        </Paper>
+        <Collapse isOpen={open} className='sm:hidden fixed top-20 w-full z-50'>
+          <div className='bg-background-paper dark:bg-background-paper-dark mx-4 border p-4 rounded-xl'>
+            <ul>
+              {menu.map(v => (
+                <MenuItem href={v.link} Link={Link} key={v.link} onClick={() => setOpen(false)}>
+                  {v.label}
+                </MenuItem>
+              ))}
+            </ul>
+          </div>
+        </Collapse>
+      </ClickAwayListener>
       {children}
     </div>
   )
+}
+
+function MainLayout(props: { children: ReactNode }) {
+  const { auth } = useAppContext()
+  const { isLoading } = auth
+  if (isLoading) return <LoadingPage />
+
+  return <Content {...props} />
 }
 
 export default MainLayout

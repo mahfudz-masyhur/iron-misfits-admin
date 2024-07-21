@@ -152,27 +152,26 @@ const Select = forwardRef<HTMLSelectElement, TextFieldProps>((props: TextFieldPr
     noFocusAnimation
   })
 
-  function handleSelect(e: any) {
+  function handleSelect(e:any, value:string, text:string) {
     const { name, onChange } = rest
-
     if (!multiple) {
       setMenuOpen(false)
-      setNameValue(e.target.value ? e.target.text : '')
+      setNameValue(value ? text : '')
       if (!onChange) return
-      onChange({ ...e, target: { value: e.target.value, name } })
+      onChange({ ...e, target: { value: value, name } })
     } else {
-      if ((intialValue as string[])?.includes(e.target.value)) {
-        if (e.target.value && e.target.text) {
-          if (Array.isArray(nameValue)) setNameValue(nameValue.filter(val => val !== e.target.text))
+      if ((intialValue as string[])?.includes(value)) {
+        if (value && text) {
+          if (Array.isArray(nameValue)) setNameValue(nameValue.filter(val => val !== text))
           if (!onChange) return
-          onChange({ ...e, target: { value: (intialValue as string[]).filter(val => val !== e.target.value), name } })
+          onChange({ ...e, target: { value: (intialValue as string[]).filter(val => val !== value), name } })
         }
       } else {
-        if (e.target.value) {
-          if (Array.isArray(nameValue)) setNameValue([...nameValue, e.target.text])
-          else setNameValue([e.target.text])
+        if (value) {
+          if (Array.isArray(nameValue)) setNameValue([...nameValue, text])
+          else setNameValue([text])
           if (!onChange) return
-          onChange({ ...e, target: { value: [...(intialValue as string[]), e.target.value], name } })
+          onChange({ ...e, target: { value: [...(intialValue as string[]), value], name } })
         }
       }
     }
@@ -275,7 +274,7 @@ const Select = forwardRef<HTMLSelectElement, TextFieldProps>((props: TextFieldPr
             if (isValidElement(child)) {
               // Menambahkan event listener onClick ke setiap elemen <option>
               return cloneElement(child as any, {
-                onClick: handleSelect,
+                onClick: (e: any)=>handleSelect(e, child.props.value, child.props.children),
                 className: !multiple
                   ? child.props.value === intialValue
                     ? "before:content-['✓'] before:block before:mr-3 -pl-3"

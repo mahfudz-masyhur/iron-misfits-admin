@@ -22,11 +22,11 @@ interface Props {
 function PackagePage({ data, mutate }: Props) {
   return (
     <Paper className='p-4 m-4'>
-      <div className='flex justify-between mb-2'>
+      <div className='flex flex-col sm:flex-row justify-between mb-2'>
         <Typography variant='h5' fontWeight='semibold'>
           Table Package
         </Typography>
-        <div>
+        <div className='text-right'>
           <AddPackage mutate={mutate} /> <RefreshButton mutate={mutate} />
         </div>
       </div>

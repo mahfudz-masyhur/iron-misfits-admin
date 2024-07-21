@@ -14,13 +14,12 @@ import TableCell from 'src/components/ui/Table/TableCell'
 import TableHead from 'src/components/ui/Table/TableHead'
 import TableRow from 'src/components/ui/Table/TableRow'
 import { formatDate, isWithinOneDay } from 'src/components/utility/formats'
-import { GetMembersIdSWR, GetTransactionsSWR } from 'src/context/swrHook'
+import { GetTransactionsSWR } from 'src/context/swrHook'
+import { IResponseMember } from 'src/type/member'
 import { IResponseTransactions } from 'src/type/transaction'
 import { KeyedMutator } from 'swr'
 
-
-const MemberInfo = ({ member }: { member: IMember | undefined }) => {
-  if (!member) return <>loading...</>
+const MemberInfo = ({ member }: { member: IMember }) => {
   return (
     <Paper className='p-4 m-4'>
       <div className='flex flex-col sm:flex-row sm:items-center gap-4'>
@@ -65,8 +64,52 @@ const MemberInfo = ({ member }: { member: IMember | undefined }) => {
   )
 }
 
-const TableTransaction = ({member,transaction, mutateTransactions}:{member?: IMember; transaction?: ITransaction[]; mutateTransactions: KeyedMutator<IResponseTransactions>}) => {
-  if (!transaction) return <>loading ...</>
+const TableTransaction = ({
+  member,
+  transaction,
+  mutateTransactions
+}: {
+  member: IMember
+  transaction?: ITransaction[]
+  mutateTransactions: KeyedMutator<IResponseTransactions>
+}) => {
+  const Body = () => {
+    if (!transaction) {
+      return (
+        <TableRow>
+          <TableCell colSpan={9}>loading ...</TableCell>
+        </TableRow>
+      )
+    }
+
+    return transaction.map((v, i) => {
+      const cantEdit = isWithinOneDay(`${v.createdAt}`)
+      return (
+        <TableRow hover evenOdd key={v._id}>
+          <TableCell>{i + 1}.</TableCell>
+          <TableCell>{v.price}</TableCell>
+          <TableCell>{v.priceAfterdiscount}</TableCell>
+          <TableCell>{formatDate(v.expired)}</TableCell>
+          <TableCell>{v.status}</TableCell>
+          <TableCell>{v.package.name}</TableCell>
+          <TableCell>{v.promo?.name}</TableCell>
+          <TableCell>{v.referral?.name}</TableCell>
+          <TableCell className='whitespace-nowrap'>
+            <AddExtraTimeForTransactionMember data={member} transaction={v} key={v._id} />
+            {cantEdit ? (
+              <>
+                <EditTransactionMember mutate={mutateTransactions} data={member} value={v} key={v._id} />
+                <DeleteTransaction mutate={mutateTransactions} data={v} key={v._id} />
+              </>
+            ) : (
+              <EditStatusTransactionMember value={v} key={v._id} />
+            )}
+          </TableCell>
+        </TableRow>
+      )
+    })
+  }
+
   return (
     <Table>
       <TableHead>
@@ -83,46 +126,15 @@ const TableTransaction = ({member,transaction, mutateTransactions}:{member?: IMe
         </TableRow>
       </TableHead>
       <TableBody>
-        {transaction.map((v, i) => {
-          const cantEdit = isWithinOneDay(`${v.createdAt}`)
-          return (
-            <TableRow hover evenOdd key={v._id}>
-              <TableCell>{i + 1}.</TableCell>
-              <TableCell>{v.price}</TableCell>
-              <TableCell>{v.priceAfterdiscount}</TableCell>
-              <TableCell>{formatDate(v.expired)}</TableCell>
-              <TableCell>{v.status}</TableCell>
-              <TableCell>{v.package.name}</TableCell>
-              <TableCell>{v.promo?.name}</TableCell>
-              <TableCell>{v.referral?.name}</TableCell>
-              <TableCell className='whitespace-nowrap'>
-                <AddExtraTimeForTransactionMember data={member} transaction={v} key={v._id} />
-                {cantEdit ? (
-                  <>
-                    <EditTransactionMember
-                      mutate={mutateTransactions}
-                      data={member}
-                      value={v}
-                      key={v._id}
-                    />
-                    <DeleteTransaction mutate={mutateTransactions} data={v} key={v._id} />
-                  </>
-                ) : (
-                  <EditStatusTransactionMember value={v} key={v._id} />
-                )}
-              </TableCell>
-            </TableRow>
-          )
-        })}
+        <Body />
       </TableBody>
     </Table>
   )
 }
 
-function MemberIdPage() {
-  const { data: m, mutate: mutateMember } = GetMembersIdSWR()
+function MemberIdPage({ member: m }: { member: IResponseMember; mutateMember: KeyedMutator<IResponseMember> }) {
+  const member = m.data
   const { data: t, mutate: mutateTransactions } = GetTransactionsSWR()
-  const member = m?.data
   const transaction = t?.data
 
   return (

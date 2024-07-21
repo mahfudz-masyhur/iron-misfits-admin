@@ -136,11 +136,12 @@ const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement | HTMLSelect
 
     return (
       <>
-        <div className={twMerge(fieldClassName, classNames?.root)}>
+        <div className={twMerge('text-inherit', fieldClassName, classNames?.root)}>
           <div
             className={twMerge(
               'relative',
               'inline-flex gap-2 items-center bg-inherit transition-transform duration-400 w-full',
+              'text-inherit',
               (sizes === 'small' || sizes === 'large') && 'px-2',
               variantChoose,
               className,
@@ -148,7 +149,9 @@ const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement | HTMLSelect
             )}
           >
             {/* startAdornment */}
-            {startAdornment && <div className={twMerge('text-sm', classNames?.startAdornment)}>{startAdornment}</div>}
+            {startAdornment && (
+              <div className={twMerge('text-sm', 'text-inherit', classNames?.startAdornment)}>{startAdornment}</div>
+            )}
 
             {/* input container */}
             <div
@@ -181,7 +184,6 @@ const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement | HTMLSelect
                   // placeholder={label && focus ? placeholder : label ? '' : placeholder}
                   className={twMerge(
                     classNames?.input,
-                    sizes === 'small' && 'py-1',
                     (sizes === 'medium' || sizes == undefined) && 'py-2',
                     sizes === 'large' && 'py-3',
                     rest.readOnly && 'cursor-default',
@@ -228,7 +230,9 @@ const TextField = forwardRef<HTMLInputElement | HTMLTextAreaElement | HTMLSelect
             </div>
 
             {/* endAdornment */}
-            {endAdornment && <div className={twMerge('text-sm', classNames?.endAdornment)}>{endAdornment}</div>}
+            {endAdornment && (
+              <div className={twMerge('text-sm', 'text-inherit', classNames?.endAdornment)}>{endAdornment}</div>
+            )}
           </div>
           {/* helperText */}
           {helperText && (

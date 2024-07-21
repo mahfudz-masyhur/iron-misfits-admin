@@ -27,11 +27,11 @@ function UsersPage({ data, mutate }: Props) {
 
   return (
     <Paper className='p-4 m-4'>
-      <div className='flex justify-between mb-2'>
+      <div className='flex flex-col sm:flex-row justify-between mb-2'>
         <Typography variant='h5' fontWeight='semibold'>
           Table Users
         </Typography>
-        <div>
+        <div className='text-right'>
           <AddUser mutate={mutate} /> <RefreshButton mutate={mutate} /> <RecycleBinButton />
         </div>
       </div>
@@ -63,11 +63,11 @@ function UsersPage({ data, mutate }: Props) {
               <TableCell>{v.email}</TableCell>
               <TableCell className='text-center whitespace-nowrap'>{formatPhoneNumber(v.handphone)}</TableCell>
               <TableCell className='text-right whitespace-nowrap'>
-                <UpdateUser data={v} mutate={mutate} key={`${v._id}`} />
+                <UpdateUser data={v} mutate={mutate} key={`update-user-${v._id}`} />
                 {isDeleted ? (
-                  <RestoreUser user={v} mutate={mutate} key={`${v._id}`} />
+                  <RestoreUser user={v} mutate={mutate} key={`restore-user-${v._id}`} />
                 ) : (
-                  <DeleteUser user={v} mutate={mutate} key={`${v._id}`} />
+                  <DeleteUser user={v} mutate={mutate} key={`delete-user-${v._id}`} />
                 )}
               </TableCell>
             </TableRow>

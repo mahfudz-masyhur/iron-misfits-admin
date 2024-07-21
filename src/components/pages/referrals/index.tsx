@@ -20,11 +20,13 @@ interface ReferralPageProps {
 function ReferralPage({ data, mutate }: ReferralPageProps) {
   return (
     <Paper className='p-4 m-4'>
-      <div className='flex justify-between mb-2'>
+      <div className='flex flex-col sm:flex-row justify-between mb-2'>
         <Typography variant='h5' fontWeight='semibold'>
           Table Referral
         </Typography>
-        <AddReferral mutate={mutate} />
+        <div className='text-right'>
+          <AddReferral mutate={mutate} />
+        </div>
       </div>
       <Table>
         <TableHead>
