@@ -15,6 +15,7 @@ import IconButton from '../ui/IconButton'
 function Notification({ closeMenu }: { closeMenu: () => void }) {
   const { button, menu } = MenuClickHook()
   const { data } = useSWR<IResponseTransactions>(`/api/transaction/notification`, fetcherClient)
+  const now = new Date()
 
   return (
     <>
@@ -37,13 +38,24 @@ function Notification({ closeMenu }: { closeMenu: () => void }) {
       </div>
       <Menu {...menu} anchor='bottom-end'>
         {data && data.data.length > 0 ? (
-          data?.data.map(v => (
-            <MenuItem key={v._id} Link={Link} href={`/members/${v.member._id}`}>
-              {v.member.name}, expire at {formatDate(v.expired)}
-            </MenuItem>
-          ))
+          data?.data.map(v => {
+            const isExpired = new Date(v.expired) <= now
+
+            return (
+              <MenuItem key={v._id} Link={Link} href={`/members/${v.member._id}`}>
+                {isExpired && (
+                  <span className='mr-2 inline-flex h-2 w-2'>
+                    <span className='relative inline-flex rounded-full h-2 w-2 bg-red-600'></span>
+                  </span>
+                )}
+                {v.member.name}, expire at {formatDate(v.expired)}
+              </MenuItem>
+            )
+          })
         ) : (
-          <MenuItem>No Data</MenuItem>
+          <MenuItem>
+            No Data
+          </MenuItem>
         )}
       </Menu>
     </>

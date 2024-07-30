@@ -21,3 +21,10 @@ export interface UserInput {
   role: string
   handphone?: string
 }
+
+export interface ChangePasswordBody {
+  email: string
+  updatedAt: Date
+  newPassword: string
+  confirmNewPassword: string
+}

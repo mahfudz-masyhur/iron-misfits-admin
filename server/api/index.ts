@@ -20,7 +20,7 @@ import {
   ReferralInput
 } from 'src/type/referral'
 import { IResponseTransaction, IResponseTransactions, PendingRecordInput, TransactionInput } from 'src/type/transaction'
-import { IResponseUser, IResponseUsers, UserInput } from 'src/type/users'
+import { ChangePasswordBody, IResponseUser, IResponseUsers, UserInput } from 'src/type/users'
 
 const axios = Axios.create({
   headers: {
@@ -58,6 +58,12 @@ export const addOrUpdateUser = async (values: UserInput): Promise<IResponseUser>
     role: [values.role]
   }
   const { data } = await axios.post('/api/users', removeEmptyStringProperties(body))
+
+  return data
+}
+
+export const changePasswordUser = async (id: string, values: ChangePasswordBody): Promise<IResponseUser> => {
+  const { data } = await axios.post(`/api/users/${id}/change-password`, removeEmptyStringProperties(values))
 
   return data
 }

@@ -15,6 +15,7 @@ import { IResponseUsers } from 'src/type/users'
 import { KeyedMutator } from 'swr'
 import RestoreUser from './RestoreUser'
 import RecycleBinButton from 'src/components/ReuseableComponent/RecycleBinButton'
+import ChangePasswordUser from './ChangePasswordUser'
 
 interface Props {
   mutate: KeyedMutator<IResponseUsers>
@@ -63,6 +64,7 @@ function UsersPage({ data, mutate }: Props) {
               <TableCell>{v.email}</TableCell>
               <TableCell className='text-center whitespace-nowrap'>{formatPhoneNumber(v.handphone)}</TableCell>
               <TableCell className='text-right whitespace-nowrap'>
+                <ChangePasswordUser data={v} mutate={mutate} key={`change-password-user-${v._id}`} />
                 <UpdateUser data={v} mutate={mutate} key={`update-user-${v._id}`} />
                 {isDeleted ? (
                   <RestoreUser user={v} mutate={mutate} key={`restore-user-${v._id}`} />
