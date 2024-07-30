@@ -23,7 +23,7 @@ interface Props {
   value?: ITransaction
   handleClose: () => void | null
 }
-const FormTransactionMember = (props: Props) => {
+const FormFormik = (props: Props) => {
   const { setStopClose, value, handleClose } = props
   const router = useRouter()
   const initialValues: updateStatusTransactionValue = {
@@ -109,7 +109,7 @@ function EditStatusTransactionMember({ value }: { value: ITransaction }) {
       </IconButton>
       <Dialog title='Transaction Member' open={open} onClose={handleClose} closeButtom fullWidth maxWidth='md'>
         <div className='px-4 pb-4'>
-          <FormTransactionMember value={value} setStopClose={setStopClose} handleClose={handleClose} />
+          <FormFormik value={value} setStopClose={setStopClose} handleClose={handleClose} />
         </div>
       </Dialog>
     </>

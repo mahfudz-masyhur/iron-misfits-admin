@@ -94,9 +94,9 @@ export const GetMembersSWR = () => {
   return data
 }
 
-export const GetMembersIdSWR = () => {
+export const GetMembersIdSWR = (id: string) => {
   const { query, asPath, push } = useRouter()
-  const url = `/api/members/${query.id}?${getURLParams(removeUndefinedProperties({ ...query, id: undefined }))}`
+  const url = `/api/members/${id}?${getURLParams(removeUndefinedProperties({ ...query, id: undefined }))}`
   const data = useSWR<IResponseMember>(url, fetcherClient)
 
   if (data.error) {
@@ -132,11 +132,9 @@ export const GetOneReferralSWR = () => {
   return data
 }
 
-export const GetTransactionsSWR = () => {
+export const GetTransactionsSWR = (member?: string) => {
   const { query, asPath, push } = useRouter()
-  const url = `/api/transaction?${getURLParams(
-    removeUndefinedProperties({ ...query, id: undefined, member: query.id })
-  )}`
+  const url = `/api/transaction?${getURLParams(removeUndefinedProperties({ ...query, id: undefined, member }))}`
   const data = useSWR<IResponseTransactions>(url, fetcherClient)
 
   if (data.error) {

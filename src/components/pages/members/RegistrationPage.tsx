@@ -12,7 +12,7 @@ import Divider from 'src/components/ui/Divider'
 import Skeleton from 'src/components/ui/Skeleton'
 import TextField from 'src/components/ui/TextField'
 import Typography from 'src/components/ui/Typograph'
-import { formatPhoneNumber, getURLParams, toastError } from 'src/components/utility/formats'
+import { formatPhoneNumber, getURLParams, sortPackages, toastError } from 'src/components/utility/formats'
 import { IResponseMember } from 'src/type/member'
 import { IResponsePackages } from 'src/type/package'
 import useSWR from 'swr'
@@ -41,6 +41,8 @@ const FieldPackage = ({ field, meta, form, setCountPack }: countPack) => {
     form.setFieldValue(field.name, v._id)
   }
 
+  const pack = sortPackages(data?.data || [])
+
   return data && data.data ? (
     <Autocomplete
       notFetching
@@ -48,7 +50,7 @@ const FieldPackage = ({ field, meta, form, setCountPack }: countPack) => {
       label='Package*'
       margin='normal'
       setFieldValue={setFieldValue}
-      options={data?.data || []}
+      options={pack}
       getOption={(option: IPackage) => ({
         _id: option?._id,
         name: option?.name,

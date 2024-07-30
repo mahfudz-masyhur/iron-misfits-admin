@@ -1,5 +1,4 @@
 import { Field, FieldProps, Form, Formik, FormikErrors, FormikHelpers } from 'formik'
-import { useRouter } from 'next/router'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { addOrUpdateTransaction, fetcherClient, getReferral } from 'server/api'
 import { IMember, ISocialMedia } from 'server/type/Member'
@@ -15,7 +14,7 @@ import Option from 'src/components/ui/Select/Option'
 import Skeleton from 'src/components/ui/Skeleton'
 import TextField from 'src/components/ui/TextField'
 import Tooltip from 'src/components/ui/Tolltip'
-import { getURLParams, toastError } from 'src/components/utility/formats'
+import { getURLParams, sortPackages, toastError } from 'src/components/utility/formats'
 import { STATUS } from 'src/constant'
 import { GetOneReferralSWR } from 'src/context/swrHook'
 import { IResponsePackages } from 'src/type/package'
@@ -71,7 +70,7 @@ const FieldPackage = ({ field, meta, form, setCountPack }: countPack) => {
       label='Package'
       margin='normal'
       setFieldValue={setFieldValue}
-      options={data?.data || []}
+      options={sortPackages(data.data)}
       getOption={(option: IPackage) => ({
         _id: option?._id,
         name: option?.name,

@@ -139,13 +139,14 @@ const TableTransaction = ({
 }
 
 interface Props {
+  id: string
   member: IResponseMember
   mutateMember: KeyedMutator<IResponseMember>
 }
 
-function MemberIdPage({ member: m, mutateMember }: Props) {
+function MemberIdPage({ id, member: m, mutateMember }: Props) {
   const member = m.data
-  const { data: t, mutate: mutateTransactions } = GetTransactionsSWR()
+  const { data: t, mutate: mutateTransactions } = GetTransactionsSWR(id)
   const transaction = t?.data
 
   return (

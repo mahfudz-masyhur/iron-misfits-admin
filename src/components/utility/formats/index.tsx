@@ -8,6 +8,7 @@
 
 import { CSSProperties } from 'react'
 import toast from 'react-hot-toast'
+import { IResponsePackages } from 'src/type/package'
 
 // ** Checks if the passed date is today
 const isToday = (date: Date | string) => {
@@ -632,4 +633,20 @@ export function isWithinOneDay(dateString: string): boolean {
   const dayDifference = timeDifference / (1000 * 3600 * 24)
 
   return dayDifference <= 1
+}
+
+
+export function sortPackages(packages: IResponsePackages['data']): IResponsePackages['data'] {
+  type PackageType = 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'annual';
+  
+  const priority: Record<PackageType, number> = {
+    daily: 1,
+    weekly: 2,
+    monthly: 3,
+    quarterly: 4,
+    annual: 5
+  };
+  return packages.sort((a, b) => {
+    return priority[a.packageType] - priority[b.packageType];
+  });
 }

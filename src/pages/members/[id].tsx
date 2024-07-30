@@ -1,22 +1,38 @@
+import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
 import dynamic from 'next/dynamic'
 import Head from 'next/head'
+import { ParsedUrlQuery } from 'querystring'
 import { LoadingPage } from 'src/components/Layouts/main'
 import { GetMembersIdSWR } from 'src/context/swrHook'
 
 const MemberIdPage = dynamic(() => import('src/components/pages/members/id'), { ssr: false, loading: LoadingPage })
 
-function MemberId() {
-  const { data, mutate } = GetMembersIdSWR()
+const Content = ({ id }: { id: string }) => {
+  const { data, mutate } = GetMembersIdSWR(id)
   if (!data) return <LoadingPage />
+
+  return <MemberIdPage id={id} member={data} mutateMember={mutate} />
+}
+
+function MemberId({ params }: Repo) {
+  if (!params?.id) return <LoadingPage />
 
   return (
     <>
       <Head>
         <title>Iron Misfits | Member</title>
       </Head>
-      <MemberIdPage member={data} mutateMember={mutate} />
+      <Content id={params.id.toString()} />
     </>
   )
 }
 
 export default MemberId
+
+type Repo = {
+  params: ParsedUrlQuery | undefined
+}
+
+export const getServerSideProps = (async ({ params }) => {
+  return { props: { params } }
+}) satisfies GetServerSideProps<Repo>
