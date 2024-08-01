@@ -12,6 +12,7 @@ const referralSchema = new mongoose.Schema(
     discounts: { type: Number },
     useCount: { type: Number, default: 0 },
     member: { type: ObjectId, ref: 'Member' },
+    memberUse: { type: [ObjectId], ref: 'Member' },
     status: { type: String, enum: ['active', 'inactive'] },
     statusEdit: { type: Boolean, default: true },
     creator: { type: ObjectId, ref: 'User' },
@@ -22,10 +23,12 @@ const referralSchema = new mongoose.Schema(
 
 referralSchema
   .pre('findOne', function (next) {
+    this.populate('memberUse', '_id name')
     this.populate('member', '_id name socialmedia handphone')
     next()
   })
   .pre('find', function (next) {
+    this.populate('memberUse', '_id name')
     this.populate('member', '_id name socialmedia handphone')
     next()
   })

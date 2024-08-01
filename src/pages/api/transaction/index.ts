@@ -85,11 +85,58 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
 
     // Cek dan update Promo
     if (promo) {
-      const promoToUpdate = await Promo.findOne({ _id: promo, statusEdit: true })
-      if (promoToUpdate) {
+      const findTransaction = await Transaction.findOne({ _id, updatedAt })
+
+      if (!findTransaction) {
+        return res.status(404).json({ status: '404 Not Found', message: 'Transaction not founded' })
+      }
+
+      if (`${promo}` !== `${findTransaction.promo?._id}`){
+        if (findTransaction.promo?._id) {
+          const promoBefore = await Promo.findOneAndUpdate(
+            { _id: findTransaction?.promo?._id },
+            { $set: { statusEdit: false }, $pull: { members: member } },
+            { new: true, timestamps: false }
+          )
+          if (!promoBefore) {
+            return res
+              .status(501)
+              .json({ status: '501 Not Implemented', message: 'Promo before useCount update Failed' })
+          }
+        }
+
+        const referralInvitationAfter = await Promo.findOneAndUpdate(
+          { _id: promo },
+          { $set: { statusEdit: false }, $addToSet: { members: member } },
+          { new: true, timestamps: false }
+        )
+
+        if (!referralInvitationAfter) {
+          return res
+            .status(501)
+            .json({ status: '501 Not Implemented', message: 'Referral after useCount update Failed' })
+        }
+      } else {
         const promoUpdated = await Promo.findOneAndUpdate(
           { _id: promo },
-          { $set: { statusEdit: false } },
+          { $set: { statusEdit: false }, $addToSet: { members: member } },
+          { new: true, timestamps: false }
+        )
+        if (!promoUpdated) {
+          return res.status(501).json({ status: '501 Not Implemented', message: 'Promo statusEdit update Failed' })
+        }
+      }
+    } else {
+      const findTransaction = await Transaction.findOne({ _id, updatedAt })
+
+      if (!findTransaction) {
+        return res.status(404).json({ status: '404 Not Found', message: 'Transaction not founded' })
+      }
+
+      if(findTransaction.promo) {
+        const promoUpdated = await Promo.findOneAndUpdate(
+          { _id: findTransaction.promo, members: member },
+          { $set: { statusEdit: false }, $pull: { members: member } },
           { new: true, timestamps: false }
         )
         if (!promoUpdated) {
@@ -110,7 +157,7 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
         if (findTransaction.referral?._id) {
           const referralInvitationBefore = await Referral.findOneAndUpdate(
             { _id: findTransaction?.referral?._id, status: 'active' },
-            { $inc: { useCount: -1 }, $set: { statusEdit: false } },
+            { $inc: { useCount: -1 }, $set: { statusEdit: false }, $pull: { memberUse: member } },
             { new: true, timestamps: false }
           )
           if (!referralInvitationBefore) {
@@ -122,7 +169,7 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
 
         const referralInvitationAfter = await Referral.findOneAndUpdate(
           { _id: referral, status: 'active' },
-          { $inc: { useCount: 1 }, $set: { statusEdit: false } },
+          { $inc: { useCount: 1 }, $set: { statusEdit: false }, $addToSet: { memberUse: member } },
           { new: true, timestamps: false }
         )
 
@@ -130,6 +177,19 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
           return res
             .status(501)
             .json({ status: '501 Not Implemented', message: 'Referral after useCount update Failed' })
+        }
+      } else {
+        const referralInvitationAfter = await Referral.findOne({ _id: referral, status: 'active', memberUse: member })
+        if (!referralInvitationAfter) {
+          await Referral.findByIdAndUpdate(
+            referral,
+            {
+              $inc: { useCount: 1 },
+              $set: { statusEdit: false },
+              $addToSet: { memberUse: member }
+            },
+            { new: true, timestamps: false }
+          )
         }
       }
     } else {
@@ -142,7 +202,7 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
       if (findTransaction.referral) {
         const referralInvitation = await Referral.findOneAndUpdate(
           { _id: findTransaction.referral._id, status: 'active' },
-          { $inc: { useCount: -1 }, $set: { statusEdit: false } },
+          { $inc: { useCount: -1 }, $set: { statusEdit: false }, $pull: { memberUse: member } },
           { new: true, timestamps: false }
         )
 
@@ -200,23 +260,20 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
 
   // Cek dan update Promo
   if (promo) {
-    const promoToUpdate = await Promo.findOne({ _id: promo, statusEdit: true })
-    if (promoToUpdate) {
-      const promoUpdated = await Promo.findOneAndUpdate(
-        { _id: promo },
-        { $set: { statusEdit: false } },
-        { new: true, timestamps: false }
-      )
-      if (!promoUpdated) {
-        return res.status(501).json({ status: '501 Not Implemented', message: 'Promo statusEdit update Failed' })
-      }
+    const promoUpdated = await Promo.findOneAndUpdate(
+      { _id: promo },
+      { $set: { statusEdit: false }, $addToSet: { members: member } },
+      { new: true, timestamps: false }
+    )
+    if (!promoUpdated) {
+      return res.status(501).json({ status: '501 Not Implemented', message: 'Promo statusEdit update Failed' })
     }
   }
 
   if (referral) {
     const referralInvitation = await Referral.findOneAndUpdate(
       { _id: referral, status: 'active' },
-      { $inc: { useCount: 1 }, $set: { statusEdit: false } },
+      { $inc: { useCount: 1 }, $set: { statusEdit: false }, $addToSet: { memberUse: member } },
       { new: true, timestamps: false }
     )
     if (!referralInvitation) {

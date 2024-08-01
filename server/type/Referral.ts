@@ -14,6 +14,7 @@ export interface IReferral {
   discounts: number | string
   useCount: number
   member: IReferralMember
+  memberUse: { _id: string; name: string }[]
   status: 'active' | 'inactive'
   statusEdit: boolean
   creator?: { _id: string; name: string }

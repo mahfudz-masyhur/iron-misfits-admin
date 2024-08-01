@@ -128,11 +128,11 @@ const FieldReferral = ({ field, meta, form, setCountPack, disabled }: countPack 
   const fetchSuggestions = async (value: string) => {
     try {
       type typeQuery = {
-        name: string
+        search: string
         limit: number
         status: 'active'
       }
-      const query: typeQuery = { name: value, limit: 50, status: 'active' }
+      const query: typeQuery = { search: value, limit: 50, status: 'active' }
       const res = await getReferral(undefined, getURLParams(query))
 
       return res.data

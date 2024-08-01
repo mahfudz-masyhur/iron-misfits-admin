@@ -16,10 +16,10 @@ const StudentField = ({ field, form, meta }: FieldProps) => {
   const fetchSuggestions = async (value: string) => {
     try {
       type typeQuery = {
-        name: string
+        search: string
         limit: number
       }
-      const query: typeQuery = { name: value, limit: 50 }
+      const query: typeQuery = { search: value, limit: 50 }
       const res = await getMembers(undefined, getURLParams(query))
 
       return res.data

@@ -9,6 +9,7 @@ import IconEditAnimated from 'src/components/ui/Icon/IconEditAnimated'
 import IconButton from 'src/components/ui/IconButton'
 import Select from 'src/components/ui/Select'
 import Option from 'src/components/ui/Select/Option'
+import Typography from 'src/components/ui/Typograph'
 import { toastError } from 'src/components/utility/formats'
 import { IResponsePromos, IupdatePromoIfStatusEditFalse } from 'src/type/promo'
 import { KeyedMutator } from 'swr'
@@ -79,6 +80,24 @@ function FormPromo(props: Props) {
                     </Select>
                   )}
                 </Field>
+              </div>
+              <div className='col-span-6'>
+                <Typography component='div' variant='caption' color='text-secondary' className='ml-3'>
+                  Members who use this promo
+                </Typography>
+                <div className='p-2 border rounded-lg'>
+                  {value?.members.map((v, i) => (
+                    <div key={v._id} className='border-b flex gap-1'>
+                      <div>{i + 1}.</div>
+                      <div>
+                        <Typography component='div' variant='subtitle2'>
+                          {v.name}
+                        </Typography>
+                        <Typography component='div' variant='body2'></Typography>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
               <div className='col-span-6 text-right mt-2'>
                 <Button type='button' variant='outlined' color='error' disabled={isSubmitting} onClick={handleClose}>

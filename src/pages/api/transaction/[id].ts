@@ -7,6 +7,7 @@ import Transaction from 'server/models/Transaction'
 import { ITransaction } from 'server/type/Transaction'
 import { PendingRecordInput } from 'src/type/transaction'
 import { Ireq } from '../me/login'
+import Promo from 'server/models/Promo'
 
 type Data = {
   status: string
@@ -19,14 +20,18 @@ async function GETID(req: Ireq, res: NextApiResponse<Data>) {
   const param = `${req.query.id}`
   const data = await Transaction.findById(param).populate('creator', '_id name ').populate('lastEditedBy', '_id name')
 
+  if (!data) {
+    return res.status(404).json({ status: '404 Not Found', message: 'Transaction Not Found' })
+  }
+
   return res.json({ status: 'ok', message: 'Get Success', data })
 }
 
 async function DELETE(req: Ireq, res: NextApiResponse<Data>) {
-  const { user, query } = req
+  const { body, query } = req
   const { pendingId, nextPendingId, id } = query
   let param = `${req.query.id}`
-  const { updatedAt, createdAt, referral } = req.body as ITransaction
+  const { updatedAt, createdAt, referral, promo, member } = body as ITransaction
 
   if (pendingId) {
     const transaction = await Transaction.findOne({ _id: id, updatedAt })
@@ -71,6 +76,21 @@ async function DELETE(req: Ireq, res: NextApiResponse<Data>) {
     })
   }
 
+  if (promo?._id) {
+    const findTransaction = await Transaction.findOne({ _id: param, updatedAt })
+
+    if (!findTransaction) {
+      return res.status(404).json({ status: '404 Not Found', message: 'Transaction not founded' })
+    }
+    if (findTransaction.promo) {
+      const promoInvitation = await Promo.findByIdAndUpdate(
+        findTransaction.promo._id,
+        { $pull: { members: member._id } },
+        { new: true, timestamps: false }
+      )
+    }
+  }
+
   if (referral?._id) {
     const findTransaction = await Transaction.findOne({ _id: param, updatedAt })
 
@@ -79,8 +99,8 @@ async function DELETE(req: Ireq, res: NextApiResponse<Data>) {
     }
     if (findTransaction.referral) {
       const referralInvitation = await Referral.findOneAndUpdate(
-        { _id: findTransaction.referral._id, status: 'active' },
-        { $inc: { useCount: -1 } },
+        { _id: findTransaction.referral._id },
+        { $inc: { useCount: -1 }, $pull: { memberUse: member._id } },
         { new: true, timestamps: false }
       )
 

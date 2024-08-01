@@ -13,11 +13,22 @@ const promoSchema = new mongoose.Schema(
     endDate: { type: Date, required: 'End Date required' },
     status: { type: String, enum: ['active', 'inactive'], required: 'Status required' },
     statusEdit: { type: Boolean, default: true },
+    members: { type: [ObjectId], ref: 'Member' },
     creator: { type: ObjectId, ref: 'User' },
     lastEditedBy: { type: ObjectId, ref: 'User' }
   },
   { timestamps: true }
 )
+
+promoSchema
+  .pre('findOne', function (next) {
+    this.populate('members', '_id name')
+    next()
+  })
+  .pre('find', function (next) {
+    this.populate('members', '_id name')
+    next()
+  })
 
 promoSchema.index({ _id: 1, statusEdit: 1 })
 

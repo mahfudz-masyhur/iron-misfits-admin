@@ -11,6 +11,7 @@ import IconEditAnimated from 'src/components/ui/Icon/IconEditAnimated'
 import IconButton from 'src/components/ui/IconButton'
 import Select from 'src/components/ui/Select'
 import Option from 'src/components/ui/Select/Option'
+import Typography from 'src/components/ui/Typograph'
 import { getURLParams, toastError } from 'src/components/utility/formats'
 import { IResponseReferrals, IUpdateReferralIfStatusEditFalse } from 'src/type/referral'
 import { KeyedMutator } from 'swr'
@@ -19,10 +20,10 @@ const StudentField = ({ field, form, meta }: FieldProps) => {
   const fetchSuggestions = async (value: string) => {
     try {
       type typeQuery = {
-        name: string
+        search: string
         limit: number
       }
-      const query: typeQuery = { name: value, limit: 50 }
+      const query: typeQuery = { search: value, limit: 50 }
       const res = await getMembers(undefined, getURLParams(query))
 
       return res.data
@@ -95,6 +96,7 @@ function FormReferral(props: Props) {
       setStopClose(false)
     }
   }
+  console.log({ value })
 
   return (
     <Formik initialValues={initialValues} validate={validate} onSubmit={onSubmit}>
@@ -124,6 +126,24 @@ function FormReferral(props: Props) {
             </div>
             <div className='col-span-6'>
               <Field name='member'>{StudentField}</Field>
+            </div>
+            <div className='col-span-6'>
+              <Typography component='div' variant='caption' color='text-secondary' className='ml-3'>
+                Members who use this referral code
+              </Typography>
+              <div className='p-2 border rounded-lg'>
+                {value?.memberUse.map((v, i) => (
+                  <div key={v._id} className='border-b flex gap-1'>
+                    <div>{i + 1}.</div>
+                    <div>
+                      <Typography component='div' variant='subtitle2'>
+                        {v.name}
+                      </Typography>
+                      <Typography component='div' variant='body2'></Typography>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
             <div className='col-span-6 text-right mt-2'>
               <Button type='button' variant='outlined' color='error' disabled={isSubmitting} onClick={handleClose}>

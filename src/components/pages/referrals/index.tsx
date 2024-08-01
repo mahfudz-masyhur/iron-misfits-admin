@@ -1,3 +1,4 @@
+import RefreshButton from 'src/components/ReuseableComponent/RefreshButton'
 import AddReferral from 'src/components/pages/referrals/AddReferral'
 import DeleteReferral from 'src/components/pages/referrals/DeleteReferral'
 import ReferralEditOnly from 'src/components/pages/referrals/ReferralEditOnly'
@@ -25,7 +26,7 @@ function ReferralPage({ data, mutate }: ReferralPageProps) {
           Table Referral
         </Typography>
         <div className='text-right'>
-          <AddReferral mutate={mutate} />
+          <AddReferral mutate={mutate} /> <RefreshButton mutate={mutate} />
         </div>
       </div>
       <Table>

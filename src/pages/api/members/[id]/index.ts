@@ -18,6 +18,10 @@ async function GETID(req: Ireq, res: NextApiResponse<Data>) {
 
   const data = await Member.findById(param).populate('creator', '_id name ').populate('lastEditedBy', '_id name')
 
+  if (!data) {
+    return res.status(404).json({ status: '404 Not Found', message: 'Member Not Found' })
+  }
+
   return res.json({ status: 'ok', message: 'Get Success', data })
 }
 
