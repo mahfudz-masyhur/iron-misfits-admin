@@ -72,7 +72,8 @@ function FormReferral(props: Props) {
     status: value?.status || 'active',
     statusEdit: value?.statusEdit ? true : false,
     updatedAt: value?.updatedAt,
-    useCount: value?.useCount || 0
+    useCount: value?.useCount || 0,
+    memberUse: []
   }
 
   const validate = (values: IReferral) => {
