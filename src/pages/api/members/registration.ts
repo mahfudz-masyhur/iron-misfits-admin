@@ -6,6 +6,9 @@ import { IMember } from 'server/type/Member'
 import { RegisterMemberValues } from 'src/components/pages/members/RegistrationPage'
 import { Ireq } from '../me/login'
 import Members from 'src/pages/members'
+import Promo from 'server/models/Promo'
+import Referral from 'server/models/Referal'
+import Package from 'server/models/Package'
 
 type Data = {
   status: string
@@ -24,8 +27,33 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
     priceAfterdiscount,
     package: pckge,
     promo,
-    referral,
+    referral
   } = req.body as RegisterMemberValues
+
+  if (pckge) {
+    const checkPckge = await Package.findById(pckge)
+
+    if (!checkPckge) throw new Error('Pckge tidak ditemukan')
+    if (checkPckge.status !== 'active') throw new Error('Pckge tidak aktif')
+  }
+
+  if (promo) {
+    const checkPromo = await Promo.findById(promo)
+
+    if (!checkPromo) throw new Error('Promo tidak ditemukan')
+    if (checkPromo.status !== 'active') throw new Error('Promo tidak aktif')
+    const currentDate = new Date()
+
+    if (checkPromo.startDate && checkPromo.startDate > currentDate) throw new Error('Promo belum dimulai')
+    if (checkPromo.endDate && checkPromo.endDate < currentDate) throw new Error('Promo sudah kedaluwarsa')
+  }
+
+  if (referral) {
+    const checkReferral = await Referral.findById(referral)
+
+    if (!checkReferral) throw new Error('Referral tidak ditemukan')
+    if (checkReferral.status !== 'active') throw new Error('Referral tidak aktif')
+  }
 
   const data = await Member.create({
     name,

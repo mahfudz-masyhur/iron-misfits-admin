@@ -12,14 +12,13 @@ export async function validateSignin<T>(req: Ireq, res: NextApiResponse<T | any>
   const { email, _id } = (await getToken(token, res)) as UserAccount
   const userFind = await User.findOne({ email, _id }, { password: 0 })
 
-  if (!userFind?._id) {
+  if (!userFind?._id || userFind?.isDeleted) {
     res.status(401).json({
       status: '401 Unauthorized',
       message: 'Email tidak terdaftar'
     })
     throw new Error('')
   }
-
   const user = JSON.parse(JSON.stringify(userFind))
 
   if (user?.email === process.env.MASTER_ADMIN) user.isMasterAdmin = true

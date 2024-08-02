@@ -1,8 +1,6 @@
 import { Field, FieldProps, Form, Formik, FormikErrors, FormikHelpers } from 'formik'
-import { useRouter } from 'next/router'
 import { addOrUpdateExtraTimeTransaction } from 'server/api'
 import Button from 'src/components/ui/Button'
-import Divider from 'src/components/ui/Divider'
 import Select from 'src/components/ui/Select'
 import Option from 'src/components/ui/Select/Option'
 import TextField from 'src/components/ui/TextField'
@@ -12,8 +10,7 @@ import { PendingRecordInput } from 'src/type/transaction'
 import { AddExtraTimeForTransactionMemberFormProps } from '.'
 
 function AddForm(props: AddExtraTimeForTransactionMemberFormProps) {
-  const { handleClose, setStopClose, transaction } = props
-  const router = useRouter()
+  const { handleClose, setStopClose, transaction, mutate } = props
 
   const initialValues: PendingRecordInput = {
     status: 'PENDING',
@@ -21,7 +18,7 @@ function AddForm(props: AddExtraTimeForTransactionMemberFormProps) {
     pending: {
       _id: '',
       type: 'PENDING',
-      howMuchDays: 0,
+      howMuchDays: '',
       expiredBefore: new Date(transaction.expired),
       expiredThen: new Date(transaction.expired),
       statusEdit: true,
@@ -42,7 +39,7 @@ function AddForm(props: AddExtraTimeForTransactionMemberFormProps) {
       setStopClose(true)
       await addOrUpdateExtraTimeTransaction(transaction._id, values)
       setStopClose(false)
-      await router.push(router.asPath)
+      await mutate()
       handleClose()
     } catch (error: any) {
       toastError(error)

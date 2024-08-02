@@ -27,7 +27,7 @@ const userLogin = async (req: Ireq, res: NextApiResponse<Data>) => {
 
   const userData = await User.findOne({ email })
 
-  if (!userData) {
+  if (!userData || userData.isDeleted) {
     return res.status(404).json({ status: '404 Not Found', message: 'Email Tidak Terdaftar' })
   }
 

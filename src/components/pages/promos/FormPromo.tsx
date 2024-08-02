@@ -84,7 +84,6 @@ function FormPromo(props: Props) {
 
     if (!values.name) errors.name = 'Required'
     if (!values.code) errors.code = 'Required'
-    if (!values.date[0] || !values.date[1]) errors.date = 'Required'
     if (!values.type) errors.type = 'Required'
     if (!values.discounts) errors.discounts = 'Required'
     if (!values.status) errors.status = 'Required'

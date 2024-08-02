@@ -74,7 +74,8 @@ const menu = [
   { link: '/members', label: 'members' },
   { link: '/packages', label: 'packages' },
   { link: '/promos', label: 'promos' },
-  { link: '/referrals', label: 'referrals' }
+  { link: '/referrals', label: 'referrals' },
+  { link: '/transactions', label: 'transactions' }
 ]
 
 function Content({ children }: { children: ReactNode }) {

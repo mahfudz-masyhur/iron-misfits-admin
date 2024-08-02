@@ -1,19 +1,17 @@
 import { Field, FieldProps, Form, Formik, FormikErrors, FormikHelpers } from 'formik'
 import { useRouter } from 'next/router'
+import { Dispatch, SetStateAction } from 'react'
 import { addOrUpdateExtraTimeTransaction } from 'server/api'
+import { IMember } from 'server/type/Member'
+import { IPendingRecord, ITransaction } from 'server/type/Transaction'
 import Button from 'src/components/ui/Button'
-import Divider from 'src/components/ui/Divider'
 import Select from 'src/components/ui/Select'
 import Option from 'src/components/ui/Select/Option'
 import TextField from 'src/components/ui/TextField'
 import { toastError } from 'src/components/utility/formats'
 import { TYPE } from 'src/constant'
-import { AddExtraTimeForTransactionMemberFormProps } from '.'
-import { Dispatch, SetStateAction } from 'react'
-import { IMember } from 'server/type/Member'
-import { IReferral } from 'server/type/Referral'
-import { IPendingRecord, ITransaction } from 'server/type/Transaction'
-import { PendingRecordInput } from 'src/type/transaction'
+import { IResponseTransactions, PendingRecordInput } from 'src/type/transaction'
+import { KeyedMutator } from 'swr'
 import DeleteExtraTime from './DeleteExtraTime'
 
 interface EditFormProps {
@@ -23,10 +21,11 @@ interface EditFormProps {
   value: IPendingRecord
   nextPending: IPendingRecord
   handleClose: () => void | null
+  mutate: KeyedMutator<IResponseTransactions>
 }
 
 function EditForm(props: EditFormProps) {
-  const { handleClose, member, value, nextPending, setStopClose, transaction } = props
+  const { handleClose, member, value, nextPending, setStopClose, transaction, mutate } = props
   const canEdit = value.statusEdit && value.type === 'PENDING'
   const router = useRouter()
 
@@ -39,7 +38,7 @@ function EditForm(props: EditFormProps) {
     statusEdit: value?.statusEdit || true,
     description: value?.description || '',
     createdAt: value?.createdAt,
-    updatedAt: value?.updatedAt,
+    updatedAt: value?.updatedAt
   }
 
   const validate = (values: IPendingRecord) => {
@@ -60,7 +59,7 @@ function EditForm(props: EditFormProps) {
       }
       await addOrUpdateExtraTimeTransaction(transaction._id, body, { pendingId: values._id })
       setStopClose(false)
-      await router.push(router.asPath)
+      await mutate()
       handleClose()
     } catch (error: any) {
       toastError(error)
@@ -165,7 +164,12 @@ function EditForm(props: EditFormProps) {
               </Field>
             </div>
             <div className='col-span-6 text-right'>
-              <DeleteExtraTime transaction={transaction} pendingId={values._id} nextPendingId={nextPending?._id} />{' '}
+              <DeleteExtraTime
+                mutate={mutate}
+                transaction={transaction}
+                pendingId={values._id}
+                nextPendingId={nextPending?._id}
+              />{' '}
               <Button
                 type='reset'
                 form='form-edit-extra-time-transaction'

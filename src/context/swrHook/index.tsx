@@ -1,6 +1,11 @@
 import { useRouter } from 'next/router'
 import { fetcherClient } from 'server/api'
-import { getURLParams, removeUndefinedProperties, toastError } from 'src/components/utility/formats'
+import {
+  getURLParams,
+  removeEmptyStringProperties,
+  removeUndefinedProperties,
+  toastError
+} from 'src/components/utility/formats'
 import { IResponseMember, IResponseMembers } from 'src/type/member'
 import { IResponsePackages } from 'src/type/package'
 import { IResponsePromos } from 'src/type/promo'
@@ -135,6 +140,24 @@ export const GetOneReferralSWR = () => {
 export const GetTransactionsSWR = (member?: string) => {
   const { query, asPath, push } = useRouter()
   const url = `/api/transaction?${getURLParams(removeUndefinedProperties({ ...query, id: undefined, member }))}`
+  const data = useSWR<IResponseTransactions>(url, fetcherClient)
+
+  if (data.error) {
+    let destination = '/_error'
+    if (data.error.response?.status === 401) {
+      destination = `/login?${getURLParams({ url: asPath })}`
+    } else {
+      toastError(data.error)
+    }
+    push(destination)
+  }
+
+  return data
+}
+
+export const GetListTransactionsSWR = () => {
+  const { query, asPath, push } = useRouter()
+  const url = `/api/transaction?${getURLParams(removeUndefinedProperties(removeEmptyStringProperties(query)))}`
   const data = useSWR<IResponseTransactions>(url, fetcherClient)
 
   if (data.error) {

@@ -1,22 +1,23 @@
-import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { deleteTransaction } from 'server/api'
-import { IPendingRecord, ITransaction } from 'server/type/Transaction'
+import { ITransaction } from 'server/type/Transaction'
 import DialogDelete from 'src/components/ReuseableComponent/DialogDelete'
 import Button from 'src/components/ui/Button'
+import { IResponseTransactions } from 'src/type/transaction'
+import { KeyedMutator } from 'swr'
 
 function DeleteExtraTime({
   transaction,
   pendingId,
-  nextPendingId
+  nextPendingId,
+  mutate
 }: {
   transaction: ITransaction
   pendingId: string
   nextPendingId?: string
+  mutate: KeyedMutator<IResponseTransactions>
 }) {
   const [open, setOpen] = useState(false)
-  const router = useRouter()
-  const mutate = () => router.push(router.asPath)
 
   return (
     <>

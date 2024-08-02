@@ -1,5 +1,4 @@
 import { Field, FieldProps, Form, Formik, FormikErrors, FormikHelpers } from 'formik'
-import { useRouter } from 'next/router'
 import { Dispatch, SetStateAction, useState } from 'react'
 import { updateStatusTransaction } from 'server/api'
 import { ITransaction } from 'server/type/Transaction'
@@ -11,6 +10,8 @@ import Select from 'src/components/ui/Select'
 import Option from 'src/components/ui/Select/Option'
 import { toastError } from 'src/components/utility/formats'
 import { STATUS } from 'src/constant'
+import { IResponseTransactions } from 'src/type/transaction'
+import { KeyedMutator } from 'swr'
 
 export interface updateStatusTransactionValue {
   _id: string
@@ -22,10 +23,10 @@ interface Props {
   setStopClose: Dispatch<SetStateAction<boolean>>
   value?: ITransaction
   handleClose: () => void | null
+  mutate: KeyedMutator<IResponseTransactions>
 }
 const FormFormik = (props: Props) => {
-  const { setStopClose, value, handleClose } = props
-  const router = useRouter()
+  const { setStopClose, value, handleClose, mutate } = props
   const initialValues: updateStatusTransactionValue = {
     _id: value?._id || '',
     status: value?.status || 'ACTIVE',
@@ -44,7 +45,7 @@ const FormFormik = (props: Props) => {
       setStopClose(true)
       await updateStatusTransaction(values as any)
       setStopClose(false)
-      await router.push(router.asPath)
+      await mutate()
       handleClose()
     } catch (error: any) {
       toastError(error)
@@ -95,7 +96,13 @@ const FormFormik = (props: Props) => {
   )
 }
 
-function EditStatusTransactionMember({ value }: { value: ITransaction }) {
+function EditStatusTransactionMember({
+  value,
+  mutate
+}: {
+  value: ITransaction
+  mutate: KeyedMutator<IResponseTransactions>
+}) {
   const [open, setOpen] = useState(false)
   const [stopClose, setStopClose] = useState(false)
 
@@ -109,7 +116,7 @@ function EditStatusTransactionMember({ value }: { value: ITransaction }) {
       </IconButton>
       <Dialog title='Transaction Member' open={open} onClose={handleClose} closeButtom fullWidth maxWidth='md'>
         <div className='px-4 pb-4'>
-          <FormFormik value={value} setStopClose={setStopClose} handleClose={handleClose} />
+          <FormFormik value={value} setStopClose={setStopClose} handleClose={handleClose} mutate={mutate} />
         </div>
       </Dialog>
     </>

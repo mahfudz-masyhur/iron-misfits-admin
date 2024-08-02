@@ -3,7 +3,7 @@ import { ISocialMedia } from './Member'
 export interface IPendingRecord {
   _id: string
   type: 'PENDING' | 'CANCLE-PENDING'
-  howMuchDays: number
+  howMuchDays: number | string
   expiredBefore: Date
   expiredThen: Date
   statusEdit: boolean

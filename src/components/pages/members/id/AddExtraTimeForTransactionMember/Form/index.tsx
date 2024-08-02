@@ -1,24 +1,25 @@
 import { Dispatch, SetStateAction } from 'react'
 import { IMember } from 'server/type/Member'
-import { IReferral } from 'server/type/Referral'
 import { ITransaction } from 'server/type/Transaction'
 import Accordion from 'src/components/ui/Accordion'
 import AccordionItem from 'src/components/ui/Accordion/AccordionItem'
 import Select from 'src/components/ui/Select'
 import Option from 'src/components/ui/Select/Option'
 import TextField from 'src/components/ui/TextField'
+import Typography from 'src/components/ui/Typograph'
+import { formatDate, isWithinOneDay } from 'src/components/utility/formats'
 import { TYPE } from 'src/constant'
-import { PendingRecordInput } from 'src/type/transaction'
+import { IResponseTransactions } from 'src/type/transaction'
+import { KeyedMutator } from 'swr'
 import AddForm from './AddForm'
 import EditForm from './EditForm'
-import { formatDate, isWithinOneDay } from 'src/components/utility/formats'
-import Typography from 'src/components/ui/Typograph'
 
 export interface AddExtraTimeForTransactionMemberFormProps {
   setStopClose: Dispatch<SetStateAction<boolean>>
   member: IMember
   transaction: ITransaction
   handleClose: () => void | null
+  mutate: KeyedMutator<IResponseTransactions>
 }
 
 function AddExtraTimeForTransactionMemberForm(props: AddExtraTimeForTransactionMemberFormProps) {
