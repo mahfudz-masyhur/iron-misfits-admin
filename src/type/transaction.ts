@@ -35,3 +35,14 @@ export interface TransactionInput {
   updatedAt?: Date
   discountBA?: string
 }
+
+export interface QueryListTransactionProps {
+  packageType?: string
+  referral?: string
+  promo?: string
+  status?: string
+  createdAtStartDate?: string
+  createdAtEndDate?: string
+  expiredStartDate?: string
+  expiredEndDate?: string
+}

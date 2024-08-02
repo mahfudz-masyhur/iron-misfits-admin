@@ -53,7 +53,7 @@ function MembersPage({ data, mutate }: Props) {
     <Paper className='p-4 m-4'>
       <div className='flex flex-col sm:flex-row justify-between mb-2'>
         <Typography variant='h5' fontWeight='semibold'>
-          Table Members
+          Table {isDeleted && 'Deleted'} Members
         </Typography>
         <div className='text-right'>
           <AddMember mutate={mutate} />

@@ -157,7 +157,7 @@ export const GetTransactionsSWR = (member?: string) => {
 
 export const GetListTransactionsSWR = () => {
   const { query, asPath, push } = useRouter()
-  const url = `/api/transaction?${getURLParams(removeUndefinedProperties(removeEmptyStringProperties(query)))}`
+  const url = `/api/transaction/list?${getURLParams(removeUndefinedProperties(removeEmptyStringProperties(query)))}`
   const data = useSWR<IResponseTransactions>(url, fetcherClient)
 
   if (data.error) {

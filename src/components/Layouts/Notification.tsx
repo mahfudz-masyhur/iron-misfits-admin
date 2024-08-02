@@ -27,7 +27,7 @@ function Notification({ closeMenu }: { closeMenu: () => void }) {
             button.onClick(e)
           }}
         >
-          <IconNotifcations />
+          <IconNotifcations fontSize={20} />
         </IconButton>
         {data && data.data.length > 0 && (
           <span className='absolute -bottom-[2px] -left-[2px] flex h-4 w-4'>
@@ -53,9 +53,7 @@ function Notification({ closeMenu }: { closeMenu: () => void }) {
             )
           })
         ) : (
-          <MenuItem>
-            No Data
-          </MenuItem>
+          <MenuItem>No Data</MenuItem>
         )}
       </Menu>
     </>

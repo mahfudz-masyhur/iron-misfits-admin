@@ -30,7 +30,7 @@ function UsersPage({ data, mutate }: Props) {
     <Paper className='p-4 m-4'>
       <div className='flex flex-col sm:flex-row justify-between mb-2'>
         <Typography variant='h5' fontWeight='semibold'>
-          Table Users
+          Table {isDeleted && 'Deleted'} Users
         </Typography>
         <div className='text-right'>
           <AddUser mutate={mutate} /> <RefreshButton mutate={mutate} /> <RecycleBinButton />

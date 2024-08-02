@@ -29,7 +29,7 @@ const ProfilMenu = ({ closeMenu }: { closeMenu: () => void }) => {
           button.onClick(e)
         }}
       >
-        <Avatar alt={user?.name || ''} />
+        <Avatar alt={user?.name || ''} width={36} height={36} />
       </button>
       <Menu {...menu} anchor='bottom-end'>
         <div className='py-1 mb-1 border-b flex gap-2'>
@@ -102,7 +102,7 @@ function Content({ children }: { children: ReactNode }) {
             <Notification closeMenu={() => setOpen(false)} />
             <ProfilMenu closeMenu={() => setOpen(false)} />
             <IconButton className='flex sm:hidden' onClick={() => setOpen(p => !p)}>
-              <IconMenu />
+              <IconMenu fontSize={20} />
             </IconButton>
           </div>
         </Paper>
