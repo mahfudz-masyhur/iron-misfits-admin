@@ -318,6 +318,7 @@ function FormMember(props: Props) {
                 isEditAble={false}
                 removeStatusField
                 removeExpiredField
+                setCountPack={setCountPack}
               />
               <div className='col-span-6'>
                 <Field name='package'>

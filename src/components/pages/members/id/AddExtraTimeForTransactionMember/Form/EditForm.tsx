@@ -52,6 +52,7 @@ function EditForm(props: EditFormProps) {
     try {
       setStopClose(true)
       const body: PendingRecordInput = {
+        paymentType: transaction.paymentType,
         status: transaction.status,
         updatedAt: transaction.updatedAt,
         expired: transaction.expired,

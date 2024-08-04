@@ -1,4 +1,5 @@
 import dynamic from 'next/dynamic'
+import Head from 'next/head'
 import { LoadingPage } from 'src/components/Layouts/main'
 import { GetListTransactionsSWR } from 'src/context/swrHook'
 
@@ -11,7 +12,14 @@ function Transactions() {
   const { data } = GetListTransactionsSWR()
   if (!data) return <LoadingPage />
 
-  return <TransactionsPage data={data} />
+  return (
+    <>
+      <Head>
+        <title>Iron Misfits | Transactions</title>
+      </Head>
+      <TransactionsPage data={data} />
+    </>
+  )
 }
 
 export default Transactions

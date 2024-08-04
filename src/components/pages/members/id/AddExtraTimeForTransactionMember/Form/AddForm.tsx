@@ -13,6 +13,7 @@ function AddForm(props: AddExtraTimeForTransactionMemberFormProps) {
   const { handleClose, setStopClose, transaction, mutate } = props
 
   const initialValues: PendingRecordInput = {
+    paymentType: transaction?.paymentType,
     status: 'PENDING',
     expired: new Date(transaction.expired),
     pending: {

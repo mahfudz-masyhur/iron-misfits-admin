@@ -11,20 +11,20 @@ const Content = ({ id }: { id: string }) => {
   const { data, mutate } = GetMembersIdSWR(id)
   if (!data) return <LoadingPage />
 
-  return <MemberIdPage id={id} member={data} mutateMember={mutate} />
+  return (
+    <>
+      <Head>
+        <title>Iron Misfits | Member {data.data.name}</title>
+      </Head>
+      <MemberIdPage id={id} member={data} mutateMember={mutate} />
+    </>
+  )
 }
 
 function MemberId({ params }: Repo) {
   if (!params?.id) return <LoadingPage />
 
-  return (
-    <>
-      <Head>
-        <title>Iron Misfits | Member</title>
-      </Head>
-      <Content id={params.id.toString()} />
-    </>
-  )
+  return <Content id={params.id.toString()} />
 }
 
 export default MemberId
