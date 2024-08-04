@@ -10,7 +10,10 @@ export const DAYS_OF_WEEK = [
   { value: 'saturday', label: 'Sabtu' }
 ]
 
-export const STATUS = ['ACTIVE', 'INACTIVE', 'PENDING', 'NOT-YEY-PAID']
+export const PAYMENT_TYPE = ['registration-payment', 'package-payment']
+export const STATUS = ['ACTIVE', 'INACTIVE', 'PENDING', 'PAID', 'NOT-YEY-PAID']
+export const STATUS_TRANSACTION = ['ACTIVE', 'INACTIVE', 'PENDING', 'NOT-YEY-PAID']
+export const STATUS_REGISRATION = ['PAID', 'NOT-YEY-PAID']
 export const TYPE = ['PENDING', 'CANCLE-PENDING']
 
 export const SOCIAL_MEDIA = [

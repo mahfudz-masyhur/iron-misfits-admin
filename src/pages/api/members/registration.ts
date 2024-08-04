@@ -66,10 +66,25 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
     return res.status(501).json({ status: '501 Not Implemented', message: 'Create Failed' })
   }
 
-  const transaction = await Transaction.create({
+  const registrationPayment = await Transaction.create({
+    price: 50000,
+    priceAfterdiscount: 50000,
+    member: data._id,
+    paymentType: 'registration-payment',
+    status: 'NOT-YEY-PAID',
+    creator: data._id
+  })
+
+  if (!registrationPayment) {
+    await Member.findByIdAndDelete(data._id)
+    return res.status(501).json({ status: '501 Not Implemented', message: 'Create Failed' })
+  }
+
+  const packagePayment = await Transaction.create({
     price,
     member: data._id,
     package: pckge,
+    paymentType: 'package-payment',
     priceAfterdiscount,
     promo,
     referral,
@@ -77,7 +92,7 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
     creator: data._id
   })
 
-  if (!transaction) {
+  if (!packagePayment) {
     await Member.findByIdAndDelete(data._id)
     return res.status(501).json({ status: '501 Not Implemented', message: 'Create Failed' })
   }

@@ -9,7 +9,8 @@ import {
   isValidElement,
   useRef,
   useState,
-  useLayoutEffect
+  useLayoutEffect,
+  useEffect
 } from 'react'
 import { twMerge } from 'tailwind-merge'
 import IconClose from '../Icon/IconClose'
@@ -152,7 +153,11 @@ const Select = forwardRef<HTMLSelectElement, TextFieldProps>((props: TextFieldPr
     noFocusAnimation
   })
 
-  function handleSelect(e:any, value:string, text:string) {
+  useEffect(() => {
+    setNameValue(setvalue)
+  }, [setvalue])
+
+  function handleSelect(e: any, value: string, text: string) {
     const { name, onChange } = rest
     if (!multiple) {
       setMenuOpen(false)
@@ -274,7 +279,7 @@ const Select = forwardRef<HTMLSelectElement, TextFieldProps>((props: TextFieldPr
             if (isValidElement(child)) {
               // Menambahkan event listener onClick ke setiap elemen <option>
               return cloneElement(child as any, {
-                onClick: (e: any)=>handleSelect(e, child.props.value, child.props.children),
+                onClick: (e: any) => handleSelect(e, child.props.value, child.props.children),
                 className: !multiple
                   ? child.props.value === intialValue
                     ? "before:content-['✓'] before:block before:mr-3 -pl-3"

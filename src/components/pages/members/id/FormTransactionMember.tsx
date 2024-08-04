@@ -12,10 +12,11 @@ import IconInfo from 'src/components/ui/Icon/IconInfo'
 import Select from 'src/components/ui/Select'
 import Option from 'src/components/ui/Select/Option'
 import Skeleton from 'src/components/ui/Skeleton'
+import Switch from 'src/components/ui/Switch'
 import TextField from 'src/components/ui/TextField'
 import Tooltip from 'src/components/ui/Tolltip'
 import { getURLParams, sortPackages, toastError } from 'src/components/utility/formats'
-import { STATUS } from 'src/constant'
+import { PAYMENT_TYPE, STATUS, STATUS_REGISRATION, STATUS_TRANSACTION } from 'src/constant'
 import { GetOneReferralSWR } from 'src/context/swrHook'
 import { IResponsePackages } from 'src/type/package'
 import { IResponsePromos } from 'src/type/promo'
@@ -52,6 +53,9 @@ export interface CountPack {
     type: 'percentage' | 'nominal'
     discounts: string | number
   }
+  registrationPayment?: {
+    price: number
+  }
 }
 export interface countPack extends FieldProps {
   setCountPack: Dispatch<SetStateAction<CountPack>>
@@ -69,6 +73,7 @@ const FieldPackage = ({ field, meta, form, setCountPack }: countPack) => {
       field={field.value}
       label='Package'
       margin='normal'
+      disabled={form.values.paymentType === 'registration-payment'}
       setFieldValue={setFieldValue}
       options={sortPackages(data.data)}
       getOption={(option: IPackage) => ({
@@ -189,9 +194,12 @@ interface IFieldPrice {
   countPack: CountPack
   removeStatusField?: boolean
   removeExpiredField?: boolean
+  setCountPack: Dispatch<SetStateAction<CountPack>>
 }
 export const FieldPrice = (props: IFieldPrice) => {
-  const { setFieldValue, countPack, isEditAble, referralBA, removeStatusField, removeExpiredField } = props
+  const { setFieldValue, countPack, isEditAble, referralBA, removeStatusField, removeExpiredField, setCountPack } =
+    props
+  const [checked, setChecked] = useState(false)
   const addDays = (date: Date, days: number) => {
     const result = new Date(date)
     result.setDate(result.getDate() + days)
@@ -222,7 +230,7 @@ export const FieldPrice = (props: IFieldPrice) => {
   }
 
   useEffect(() => {
-    let price = countPack.package?.price || 0
+    let price = countPack.package?.price || countPack.registrationPayment?.price || 0
 
     if (countPack.referral) {
       const referralDiscount =
@@ -240,18 +248,20 @@ export const FieldPrice = (props: IFieldPrice) => {
       price = promoDiscount
     }
 
-    if (referralBA) {
-      const promoDiscount =
-        referralBA.type === 'percentage'
-          ? diskonPersentase(price, Number(referralBA.discounts) * Number(referralBA.useCount))
-          : diskonPotongan(price, Number(referralBA.discounts) * Number(referralBA.useCount))
-      price = promoDiscount
+    if (checked) {
+      if (referralBA) {
+        const promoDiscount =
+          referralBA.type === 'percentage'
+            ? diskonPersentase(price, Number(referralBA.discounts) * Number(referralBA.memberUse.length))
+            : diskonPotongan(price, Number(referralBA.discounts) * Number(referralBA.memberUse.length))
+        price = promoDiscount
+      }
     }
 
     price = price === 0 ? 0 : price < 0 ? 0 : price
 
-    setFieldValue('priceAfterdiscount', countPack.package?.price ? price : '')
-    setFieldValue('price', countPack.package?.price || '')
+    setFieldValue('priceAfterdiscount', countPack.package?.price || countPack.registrationPayment?.price ? price : '')
+    setFieldValue('price', countPack.package?.price || countPack.registrationPayment?.price || '')
 
     const now = new Date()
     let expiredDate
@@ -277,12 +287,13 @@ export const FieldPrice = (props: IFieldPrice) => {
     }
 
     setFieldValue('expired', expiredDate)
-  }, [referralBA, countPack, setFieldValue])
+  }, [referralBA, countPack, checked, setFieldValue])
 
   return (
     <>
       {referralBA && (
-        <div className='col-span-6 flex justify-end'>
+        <div className='col-span-6 flex justify-between mb-2'>
+          <Switch checked={checked} onChange={e => setChecked(e.target.checked)} label='Use discount for BA only' sizes='small' />
           <div className='inline-block'>
             <Tooltip
               anchor='bottom-end'
@@ -311,7 +322,9 @@ export const FieldPrice = (props: IFieldPrice) => {
                     <tr>
                       <td>Has been used</td>
                       <td>:</td>
-                      <td>{referralBA?.useCount} People</td>
+                      <td>
+                        {referralBA?.memberUse.length} People / {referralBA.useCount} times
+                      </td>
                     </tr>
                   </table>
                 </div>
@@ -327,11 +340,16 @@ export const FieldPrice = (props: IFieldPrice) => {
           {({ field, form, meta }: FieldProps) => (
             <TextField
               margin='normal'
-              readOnly
+              readOnly={form.values.paymentType !== 'registration-payment'}
               label='Price'
               type='number'
               fullWidth
               {...field}
+              onChange={(e: any) => {
+                setCountPack(p => ({ ...p, member: p.member, registrationPayment: { price: e.target.value } }))
+                form.setFieldValue('priceAfterdiscount', e.target.value)
+                field.onChange(e)
+              }}
               error={Boolean(meta.error && meta.touched)}
               helperText={meta.error && meta.touched && String(meta.error)}
             />
@@ -372,27 +390,65 @@ export const FieldPrice = (props: IFieldPrice) => {
         </div>
       )}
       {!removeStatusField && (
-        <div className='col-span-6'>
-          <Field name='status'>
-            {({ field, form, meta }: FieldProps) => (
-              <Select
-                margin='normal'
-                readOnly={!isEditAble}
-                label='Status'
-                fullWidth
-                {...field}
-                error={Boolean(meta.error && meta.touched)}
-                helperText={meta.error && meta.touched && String(meta.error)}
-              >
-                {STATUS.map(v => (
-                  <Option value={v} key={v} className='capitalize'>
-                    {v}
-                  </Option>
-                ))}
-              </Select>
-            )}
-          </Field>
-        </div>
+        <>
+          <div className='col-span-6'>
+            <Field name='status'>
+              {({ field, form, meta }: FieldProps) => (
+                <Select
+                  margin='normal'
+                  label='Status'
+                  fullWidth
+                  {...field}
+                  error={Boolean(meta.error && meta.touched)}
+                  helperText={meta.error && meta.touched && String(meta.error)}
+                >
+                  {form.values.paymentType === 'registration-payment'
+                    ? STATUS_REGISRATION.map(v => (
+                        <Option value={v} key={v} className='capitalize'>
+                          {v}
+                        </Option>
+                      ))
+                    : STATUS_TRANSACTION.map(v => (
+                        <Option value={v} key={v} className='capitalize'>
+                          {v}
+                        </Option>
+                      ))}
+                </Select>
+              )}
+            </Field>
+          </div>
+          <div className='col-span-6'>
+            <Field name='paymentType'>
+              {({ field, form, meta }: FieldProps) => (
+                <Select
+                  margin='normal'
+                  label='PaymentType'
+                  fullWidth
+                  {...field}
+                  onChange={(e: any) => {
+                    setCountPack(p => ({ member: p.member, registrationPayment: { price: 50000 } }))
+                    form.setFieldValue('package', undefined)
+                    form.setFieldValue('referral', undefined)
+                    form.setFieldValue('promo', undefined)
+                    form.setFieldValue('status', 'NOT-YEY-PAID')
+                    form.setFieldValue('expired', '')
+                    form.setFieldValue('price', 50000)
+                    form.setFieldValue('priceAfterdiscount', 50000)
+                    field.onChange(e)
+                  }}
+                  error={Boolean(meta.error && meta.touched)}
+                  helperText={meta.error && meta.touched && String(meta.error)}
+                >
+                  {PAYMENT_TYPE.map(v => (
+                    <Option value={v} key={v} className='capitalize'>
+                      {v}
+                    </Option>
+                  ))}
+                </Select>
+              )}
+            </Field>
+          </div>
+        </>
       )}
     </>
   )
@@ -409,6 +465,7 @@ interface initialValuesTransactionInput {
   pending?: ITransaction['pending']
   promo?: ITransaction['promo']
   referral?: ITransaction['referral']
+  paymentType: ITransaction['paymentType']
   status: ITransaction['status']
   createdAt?: Date
   updatedAt?: Date
@@ -428,7 +485,8 @@ const Content = (props: Props & { referralBA: IReferral }) => {
     package: value?.package,
     pending: value?.pending,
     promo: value?.promo,
-    referral: value?.referral
+    referral: value?.referral,
+    registrationPayment: value?.paymentType === 'registration-payment' ? { price: value?.price } : undefined
   })
 
   const initialValues: initialValuesTransactionInput = {
@@ -442,6 +500,7 @@ const Content = (props: Props & { referralBA: IReferral }) => {
     promo: value?.promo || undefined,
     referral: value?.referral || undefined,
     status: value?.status || 'ACTIVE',
+    paymentType: value?.paymentType || 'package-payment',
     description: value?.description || '',
     createdAt: value?.createdAt,
     updatedAt: value?.updatedAt
@@ -450,10 +509,14 @@ const Content = (props: Props & { referralBA: IReferral }) => {
   const validate = (values: initialValuesTransactionInput) => {
     const errors: FormikErrors<initialValuesTransactionInput> = {}
     if (!values.status) errors.status = 'Diperlukan!'
-    if (!values.price) errors.price = 'Diperlukan!'
-    if (!values.priceAfterdiscount) errors.priceAfterdiscount = 'Diperlukan!'
-    if (!values.package?._id) errors.package = 'Diperlukan!'
-    if (!values.expired) errors.expired = 'Diperlukan!'
+    if (values.price === undefined || values.price === null) errors.price = 'Diperlukan!'
+    if (values.priceAfterdiscount === undefined || values.priceAfterdiscount === null)
+      errors.priceAfterdiscount = 'Diperlukan!'
+
+    if (values.paymentType !== 'registration-payment') {
+      if (!values.package?._id) errors.package = 'Diperlukan!'
+      if (!values.expired) errors.expired = 'Diperlukan!'
+    }
 
     return errors
   }
@@ -465,8 +528,8 @@ const Content = (props: Props & { referralBA: IReferral }) => {
       if (referralBA) {
         discountBA =
           referralBA.type === 'percentage'
-            ? `Discount ${referralBA.discounts}% dan sudah digunakan oleh ${referralBA.useCount} orang`
-            : `Discount Rp. -${referralBA.discounts} dan sudah digunakan oleh ${referralBA.useCount} orang`
+            ? `Discount ${referralBA.discounts}% dan sudah digunakan oleh ${referralBA.memberUse.length} orang`
+            : `Discount Rp. -${referralBA.discounts} dan sudah digunakan oleh ${referralBA.memberUse.length} orang`
       }
       const body: TransactionInput = {
         _id: values._id,
@@ -474,14 +537,15 @@ const Content = (props: Props & { referralBA: IReferral }) => {
         expired: values.expired,
         status: values.status,
         createdAt: values.createdAt,
-        package: values.package?._id || '',
+        package: values.package?._id || null,
         promo: values.promo?._id || null,
         referral: values.referral?._id || null,
         price: values.price || '',
         priceAfterdiscount: values.priceAfterdiscount || '',
         updatedAt: values.updatedAt,
         discountBA,
-        description: values.description || ''
+        description: values.description || '',
+        paymentType: values.paymentType
       }
       await addOrUpdateTransaction(body)
       setStopClose(false)
@@ -495,12 +559,14 @@ const Content = (props: Props & { referralBA: IReferral }) => {
 
   return (
     <Formik initialValues={initialValues} validate={validate} onSubmit={onSubmit}>
-      {({ dirty, isSubmitting, values, setFieldValue }) => {
+      {({ dirty, isSubmitting, errors, setFieldValue }) => {
+        console.log({ errors })
         return (
           <Form className='grid flex-grow grid-cols-6 px-4 pb-4 gap-x-4'>
             <FieldPrice
               setFieldValue={setFieldValue}
               countPack={countPack}
+              setCountPack={setCountPack}
               referralBA={referralBA}
               isEditAble={Boolean(value)}
             />

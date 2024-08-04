@@ -13,6 +13,7 @@ export interface IResponseTransaction {
 }
 
 export interface PendingRecordInput {
+  paymentType: ITransaction['paymentType']
   status: ITransaction['status']
   expired: Date
   pending: IPendingRecord
@@ -24,12 +25,13 @@ export interface TransactionInput {
   _id: string
   referral: string | null
   promo: string | null
-  package: string
+  package: string | null
   priceAfterdiscount: number | ''
   price: number | ''
   description: string
   member: string
   expired: Date
+  paymentType: ITransaction['paymentType']
   status: ITransaction['status']
   createdAt?: Date
   updatedAt?: Date
@@ -37,6 +39,7 @@ export interface TransactionInput {
 }
 
 export interface QueryListTransactionProps {
+  paymentType?: string
   packageType?: string
   referral?: string
   promo?: string

@@ -47,7 +47,8 @@ export interface ITransaction {
     discounts: number | string
   }
   expired: Date
-  status: 'PENDING' | 'ACTIVE' | 'INACTIVE' | 'NOT-YEY-PAID'
+  paymentType: 'registration-payment' | 'package-payment'
+  status: 'PENDING' | 'ACTIVE' | 'INACTIVE' | 'NOT-YEY-PAID' | 'PAID'
   pending: IPendingRecord[]
   creator?: { _id: string; name: string }
   lastEditedBy?: { _id: string; name: string }

@@ -101,7 +101,6 @@ function FormMember(props: Props) {
     name: value?.name || '',
     avatar: value?.avatar || '',
     handphone: value?.handphone ? `${formatPhoneNumber(value?.handphone)}` : '',
-    registrationFee: value?.registrationFee ? formatNumber(value?.registrationFee) : '',
     socialmedia: value?.socialmedia || [{ key: 'ig', value: '' }],
     updatedAt: value?.updatedAt
   }
@@ -110,7 +109,6 @@ function FormMember(props: Props) {
     const errors: any = {}
 
     if (!values.name) errors.name = 'Required'
-    if (!values.registrationFee) errors.registrationFee = 'Required'
     if (!values.handphone) errors.handphone = 'Required'
 
     if (values.socialmedia) {
@@ -205,42 +203,6 @@ function FormMember(props: Props) {
                     fullWidth
                   />
                 )}
-              </Field>
-            </div>
-            <div className='col-span-6'>
-              <Field name='registrationFee'>
-                {({ field, meta }: FieldProps) => {
-                  function handleNumber(
-                    e: ChangeEvent<HTMLInputElement>,
-                    onChange: {
-                      (e: ChangeEvent<any>): void
-                      <T = string | ChangeEvent<any>>(field: T): T extends ChangeEvent<any>
-                        ? void
-                        : (e: string | ChangeEvent<any>) => void
-                    }
-                  ) {
-                    e.target.value = formatNumber(e.target.value)
-
-                    return onChange(e)
-                  }
-
-                  return (
-                    <TextField
-                      margin='normal'
-                      label='Regisration Fee'
-                      placeholder='50.000'
-                      fullWidth
-                      startAdornment={<>Rp.</>}
-                      {...{
-                        ...field,
-                        value: field.value || '',
-                        onChange: (e: ChangeEvent<HTMLInputElement>) => handleNumber(e, field.onChange)
-                      }}
-                      error={Boolean(meta.error && meta.touched)}
-                      helperText={meta.error && meta.touched && String(meta.error)}
-                    />
-                  )
-                }}
               </Field>
             </div>
             <div className='col-span-6'>

@@ -93,11 +93,12 @@ const TableTransaction = ({
       return (
         <TableRow hover evenOdd key={v._id}>
           <TableCell>{i + 1}.</TableCell>
+          <TableCell>{v.paymentType}</TableCell>
           <TableCell>{v.price}</TableCell>
           <TableCell>{v.priceAfterdiscount}</TableCell>
           <TableCell>{formatDate(v.expired)}</TableCell>
           <TableCell>{v.status}</TableCell>
-          <TableCell>{v.package.name}</TableCell>
+          <TableCell>{v.package?.name}</TableCell>
           <TableCell>{v.promo?.name}</TableCell>
           <TableCell>{v.referral?.name}</TableCell>
           <TableCell className='whitespace-nowrap'>
@@ -121,6 +122,7 @@ const TableTransaction = ({
       <TableHead>
         <TableRow>
           <TableCell head>No.</TableCell>
+          <TableCell head>paymentType</TableCell>
           <TableCell head>price</TableCell>
           <TableCell head>priceAfterdiscount</TableCell>
           <TableCell head>expired</TableCell>

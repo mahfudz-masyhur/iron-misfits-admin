@@ -36,6 +36,9 @@ function TransactionsPage({ data }: TransactionsPageProps) {
               No.
             </TableCell>
             <TableCell head component='th' className='py-2 text-left'>
+              Payment Type
+            </TableCell>
+            <TableCell head component='th' className='py-2 text-left'>
               Member
             </TableCell>
             <TableCell head component='th' className='py-2'>
@@ -68,6 +71,7 @@ function TransactionsPage({ data }: TransactionsPageProps) {
           {transactions.map((v, i) => (
             <TableRow key={v._id}>
               <TableCell className='py-2 text-left w-10'>{i + 1}</TableCell>
+              <TableCell className='py-2 text-left'>{v.paymentType}</TableCell>
               <TableCell className='py-2 text-left'>{v.member.name}</TableCell>
               <TableCell className='py-2'>{v.price}</TableCell>
               <TableCell className='py-2'>{v.priceAfterdiscount}</TableCell>

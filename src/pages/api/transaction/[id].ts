@@ -77,17 +77,9 @@ async function DELETE(req: Ireq, res: NextApiResponse<Data>) {
   }
 
   if (promo?._id) {
-    const findTransaction = await Transaction.findOne({ _id: param, updatedAt })
-
-    if (!findTransaction) {
-      return res.status(404).json({ status: '404 Not Found', message: 'Transaction not founded' })
-    }
-    if (findTransaction.promo) {
-      const promoInvitation = await Promo.findByIdAndUpdate(
-        findTransaction.promo._id,
-        { $pull: { members: member._id } },
-        { new: true, timestamps: false }
-      )
+    const findPromoInTransaction = await Transaction.find({ member: member._id, promo: promo?._id }).limit(2)
+    if (findPromoInTransaction.length === 1) {
+      await Promo.findByIdAndUpdate(promo?._id, { $pull: { members: member._id } }, { new: true, timestamps: false })
     }
   }
 
@@ -98,16 +90,22 @@ async function DELETE(req: Ireq, res: NextApiResponse<Data>) {
       return res.status(404).json({ status: '404 Not Found', message: 'Transaction not founded' })
     }
     if (findTransaction.referral) {
-      const referralInvitation = await Referral.findOneAndUpdate(
-        { _id: findTransaction.referral._id },
-        { $inc: { useCount: -1 }, $pull: { memberUse: member._id } },
+      await Referral.findByIdAndUpdate(
+        findTransaction.referral._id,
+        { $inc: { useCount: -1 } },
         { new: true, timestamps: false }
       )
 
-      if (!referralInvitation) {
-        return res
-          .status(501)
-          .json({ status: '501 Not Implemented', message: 'Referral remove useCount update Failed' })
+      const findReferralInTransaction = await Transaction.find({ member: member._id, referral: referral?._id }).limit(2)
+      if (findReferralInTransaction.length === 1) {
+        const pullMember = await Referral.findByIdAndUpdate(
+          referral?._id,
+          { $pull: { memberUse: member._id } },
+          { new: true, timestamps: false }
+        )
+        if (!pullMember) {
+          return res.status(501).json({ status: '501 Not Implemented', message: 'Delete Member in Referral Failed' })
+        }
       }
     }
   }

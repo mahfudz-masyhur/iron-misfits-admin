@@ -8,6 +8,7 @@ import Referral from 'server/models/Referal'
 import Transaction from 'server/models/Transaction'
 import { ITransaction } from 'server/type/Transaction'
 import { Ireq } from '../me/login'
+import { TransactionInput } from 'src/type/transaction'
 
 type Data = {
   status: string
@@ -51,8 +52,9 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
     discountBA,
     description,
     createdAt,
-    updatedAt
-  } = req.body
+    updatedAt,
+    paymentType
+  } = req.body as TransactionInput
 
   if (_id) {
     if (!createdAt) {
@@ -91,17 +93,29 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
         return res.status(404).json({ status: '404 Not Found', message: 'Transaction not founded' })
       }
 
-      if (`${promo}` !== `${findTransaction.promo?._id}`){
+      if (`${promo}` !== `${findTransaction.promo?._id}`) {
         if (findTransaction.promo?._id) {
           const promoBefore = await Promo.findOneAndUpdate(
             { _id: findTransaction?.promo?._id },
-            { $set: { statusEdit: false }, $pull: { members: member } },
+            { $set: { statusEdit: false } },
             { new: true, timestamps: false }
           )
           if (!promoBefore) {
             return res
               .status(501)
               .json({ status: '501 Not Implemented', message: 'Promo before useCount update Failed' })
+          }
+
+          const findPromoInTransaction = await Transaction.find({ member, promo: findTransaction?.promo?._id }).limit(2)
+          if (findPromoInTransaction.length === 1) {
+            const pullMember = await Promo.findOneAndUpdate(
+              { _id: findTransaction?.promo?._id },
+              { $pull: { members: member } },
+              { new: true, timestamps: false }
+            )
+            if (!pullMember) {
+              return res.status(501).json({ status: '501 Not Implemented', message: 'Delete Member in Promo Failed' })
+            }
           }
         }
 
@@ -133,16 +147,28 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
         return res.status(404).json({ status: '404 Not Found', message: 'Transaction not founded' })
       }
 
-      if(findTransaction.promo) {
+      if (findTransaction.promo) {
         const promoUpdated = await Promo.findOneAndUpdate(
           { _id: findTransaction.promo, members: member },
-          { $set: { statusEdit: false }, $pull: { members: member } },
+          { $set: { statusEdit: false } },
           { new: true, timestamps: false }
         )
         if (!promoUpdated) {
           return res.status(501).json({ status: '501 Not Implemented', message: 'Promo statusEdit update Failed' })
         }
+        const findPromoInTransaction = await Transaction.find({ member, promo: findTransaction.promo._id }).limit(2)
+        if (findPromoInTransaction.length === 1) {
+          const pullMember = await Promo.findOneAndUpdate(
+            { _id: findTransaction?.promo?._id },
+            { $pull: { members: member } },
+            { new: true, timestamps: false }
+          )
+          if (!pullMember) {
+            return res.status(501).json({ status: '501 Not Implemented', message: 'Delete Member in Promo Failed' })
+          }
+        }
       }
+
     }
 
     // Jika referral tidak ada, kurangi referralInvitation pada Member
@@ -157,13 +183,27 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
         if (findTransaction.referral?._id) {
           const referralInvitationBefore = await Referral.findOneAndUpdate(
             { _id: findTransaction?.referral?._id, status: 'active' },
-            { $inc: { useCount: -1 }, $set: { statusEdit: false }, $pull: { memberUse: member } },
+            { $inc: { useCount: -1 }, $set: { statusEdit: false } },
             { new: true, timestamps: false }
           )
           if (!referralInvitationBefore) {
             return res
               .status(501)
               .json({ status: '501 Not Implemented', message: 'Referral before useCount update Failed' })
+          }
+
+          const findReferralInTransaction = await Transaction.find({ member, referral: findTransaction?.referral?._id }).limit(2)
+          if (findReferralInTransaction.length === 1) {
+            const pullMember = await Referral.findOneAndUpdate(
+              { _id: findTransaction?.referral?._id, status: 'active' },
+              { $pull: { memberUse: member } },
+              { new: true, timestamps: false }
+            )
+            if (!pullMember) {
+              return res
+                .status(501)
+                .json({ status: '501 Not Implemented', message: 'Delete Member in Referral Failed' })
+            }
           }
         }
 
@@ -202,7 +242,7 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
       if (findTransaction.referral) {
         const referralInvitation = await Referral.findOneAndUpdate(
           { _id: findTransaction.referral._id, status: 'active' },
-          { $inc: { useCount: -1 }, $set: { statusEdit: false }, $pull: { memberUse: member } },
+          { $inc: { useCount: -1 }, $set: { statusEdit: false } },
           { new: true, timestamps: false }
         )
 
@@ -210,6 +250,18 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
           return res
             .status(501)
             .json({ status: '501 Not Implemented', message: 'Referral remove useCount update Failed' })
+        }
+
+        const findReferralInTransaction = await Transaction.find({ member, referral: findTransaction?.referral?._id }).limit(2)
+        if (findReferralInTransaction.length === 1) {
+          const pullMember = await Referral.findOneAndUpdate(
+            { _id: findTransaction?.referral?._id, status: 'active' },
+            { $pull: { memberUse: member } },
+            { new: true, timestamps: false }
+          )
+          if (!pullMember) {
+            return res.status(501).json({ status: '501 Not Implemented', message: 'Delete Member in Referral Failed' })
+          }
         }
       }
     }
@@ -226,7 +278,8 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
         referral,
         description,
         status,
-        lastEditedBy: user
+        paymentType,
+        lastEditedBy: user._id
       }
     )
 
@@ -237,7 +290,7 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
     return res.json({ status: 'ok', message: 'Update Success', data })
   }
 
-  const findActiveTransaction = await Transaction.find({ member, status: { $in: ['ACTIVE', 'PENDING'] } })
+  const findActiveTransaction = await Transaction.find({ member, status: { $in: ['ACTIVE', 'PENDING'] } }).limit(2)
   if (findActiveTransaction.length > 0) {
     return res.status(405).json({
       status: '405 Method Not Allowed',
@@ -291,8 +344,9 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
     referral,
     discountBA,
     description,
-    status: 'ACTIVE',
-    creator: user
+    status,
+    paymentType,
+    creator: user._id
   })
 
   return res.json({ status: 'ok', message: 'Create Success', data })
