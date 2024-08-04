@@ -53,7 +53,11 @@ const FieldPackage = ({ field, meta, form }: FieldProps) => {
       })}
       fullWidth
       isClearable
-      renderOption={(option: IPackage, props) => <li {...props}>{option?.name}</li>}
+      renderOption={(option: IPackage, props) => (
+        <li {...props} key={props.key}>
+          {option?.name}
+        </li>
+      )}
       error={Boolean(meta.error && meta.touched)}
       helperText={meta.error && meta.touched && String(meta.error)}
     />
@@ -87,7 +91,11 @@ const FieldPromo = ({ field, meta, form }: FieldProps) => {
       })}
       fullWidth
       isClearable
-      renderOption={(option: IPromo, props) => <li {...props}>{option?.name}</li>}
+      renderOption={(option: IPromo, props) => (
+        <li {...props} key={props.key}>
+          {option?.name}
+        </li>
+      )}
       error={Boolean(meta.error && meta.touched)}
       helperText={meta.error && meta.touched && String(meta.error)}
     />
@@ -119,7 +127,11 @@ const FieldReferral = ({ field, meta, form }: FieldProps) => {
       })}
       fullWidth
       isClearable
-      renderOption={(option: IReferral, props) => <li {...props}>{option?.name}</li>}
+      renderOption={(option: IReferral, props) => (
+        <li {...props} key={props.key}>
+          {option?.name}
+        </li>
+      )}
       error={Boolean(meta.error && meta.touched)}
       helperText={meta.error && meta.touched && String(meta.error)}
     />
@@ -138,7 +150,6 @@ const FieldDate = (props: FieldProps & { label: string }) => {
       selected={field.value}
       onChange={onChange}
       onBlur={field.onBlur}
-      locale='id-ID'
       customInput={
         <TextField
           label={label || 'Date'}

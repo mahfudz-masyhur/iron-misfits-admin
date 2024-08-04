@@ -67,7 +67,7 @@ export const GetPromosSWR = () => {
 
 export const GetPackageSWR = () => {
   const { query, asPath, push } = useRouter()
-  const data = useSWR<IResponsePackages>(`/api/package${getURLParams(query)}`, fetcherClient)
+  const data = useSWR<IResponsePackages>(`/api/package?${getURLParams(query)}`, fetcherClient)
 
   if (data.error) {
     let destination = '/_error'
@@ -102,6 +102,7 @@ export const GetMembersSWR = () => {
 export const GetMembersIdSWR = (id: string) => {
   const { query, asPath, push } = useRouter()
   const url = `/api/members/${id}?${getURLParams(removeUndefinedProperties({ ...query, id: undefined }))}`
+  console.log({ url })
   const data = useSWR<IResponseMember>(url, fetcherClient)
 
   if (data.error) {

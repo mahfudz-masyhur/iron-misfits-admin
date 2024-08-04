@@ -85,7 +85,11 @@ const FieldPackage = ({ field, meta, form, setCountPack }: countPack) => {
       })}
       fullWidth
       isClearable
-      renderOption={(option: IPackage, props) => <li {...props}>{option?.name}</li>}
+      renderOption={(option: IPackage, props) => (
+        <li {...props} key={props.key}>
+          {option?.name}
+        </li>
+      )}
       error={Boolean(meta.error && meta.touched)}
       helperText={meta.error && meta.touched && String(meta.error)}
     />
@@ -120,7 +124,11 @@ const FieldPromo = ({ field, meta, form, setCountPack }: countPack) => {
       })}
       fullWidth
       isClearable
-      renderOption={(option: IPromo, props) => <li {...props}>{option?.name}</li>}
+      renderOption={(option: IPromo, props) => (
+        <li {...props} key={props.key}>
+          {option?.name}
+        </li>
+      )}
       error={Boolean(meta.error && meta.touched)}
       helperText={meta.error && meta.touched && String(meta.error)}
     />
@@ -170,7 +178,11 @@ const FieldReferral = ({ field, meta, form, setCountPack, disabled }: countPack 
       setFieldValue={setFieldValue}
       fetch={fetchSuggestions}
       isClearable
-      renderOption={(option: IReferral, props) => <li {...props}>{option?.name}</li>}
+      renderOption={(option: IReferral, props) => (
+        <li {...props} key={props.key}>
+          {option?.name}
+        </li>
+      )}
       customInput={e => (
         <TextField
           {...e}
@@ -184,7 +196,6 @@ const FieldReferral = ({ field, meta, form, setCountPack, disabled }: countPack 
 }
 
 interface IFieldPrice {
-  isEditAble: boolean
   referralBA: IReferral | null
   setFieldValue: (
     field: string,
@@ -195,11 +206,20 @@ interface IFieldPrice {
   removeStatusField?: boolean
   removeExpiredField?: boolean
   setCountPack: Dispatch<SetStateAction<CountPack>>
+  checked?: boolean
+  setChecked?: Dispatch<SetStateAction<boolean>>
 }
 export const FieldPrice = (props: IFieldPrice) => {
-  const { setFieldValue, countPack, isEditAble, referralBA, removeStatusField, removeExpiredField, setCountPack } =
-    props
-  const [checked, setChecked] = useState(false)
+  const {
+    setFieldValue,
+    countPack,
+    checked,
+    setChecked,
+    referralBA,
+    removeStatusField,
+    removeExpiredField,
+    setCountPack
+  } = props
   const addDays = (date: Date, days: number) => {
     const result = new Date(date)
     result.setDate(result.getDate() + days)
@@ -287,13 +307,19 @@ export const FieldPrice = (props: IFieldPrice) => {
     }
 
     setFieldValue('expired', expiredDate)
-  }, [referralBA, countPack, checked, setFieldValue])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [referralBA, countPack, checked])
 
   return (
     <>
       {referralBA && (
         <div className='col-span-6 flex justify-between mb-2'>
-          <Switch checked={checked} onChange={e => setChecked(e.target.checked)} label='Use discount for BA only' sizes='small' />
+          <Switch
+            checked={checked}
+            onChange={e => setChecked?.(e.target.checked)}
+            label='Use discount for BA only'
+            sizes='small'
+          />
           <div className='inline-block'>
             <Tooltip
               anchor='bottom-end'
@@ -480,6 +506,7 @@ interface Props {
 }
 const Content = (props: Props & { referralBA: IReferral }) => {
   const { setStopClose, member, value, handleClose, referralBA, mutate } = props
+  const [checked, setChecked] = useState(value?.discountBA ? true : false)
   const [countPack, setCountPack] = useState<CountPack>({
     member: value?.member,
     package: value?.package,
@@ -524,12 +551,14 @@ const Content = (props: Props & { referralBA: IReferral }) => {
   const onSubmit = async (values: initialValuesTransactionInput, formikHelpers: FormikHelpers<any>) => {
     try {
       setStopClose(true)
-      let discountBA: string | undefined = undefined
-      if (referralBA) {
-        discountBA =
-          referralBA.type === 'percentage'
-            ? `Discount ${referralBA.discounts}% dan sudah digunakan oleh ${referralBA.memberUse.length} orang`
-            : `Discount Rp. -${referralBA.discounts} dan sudah digunakan oleh ${referralBA.memberUse.length} orang`
+      let discountBA: string | null = null
+      if (checked) {
+        if (referralBA) {
+          discountBA =
+            referralBA.type === 'percentage'
+              ? `Discount ${referralBA.discounts}% dan sudah digunakan oleh ${referralBA.memberUse.length} orang`
+              : `Discount Rp. -${referralBA.discounts} dan sudah digunakan oleh ${referralBA.memberUse.length} orang`
+        }
       }
       const body: TransactionInput = {
         _id: values._id,
@@ -560,7 +589,6 @@ const Content = (props: Props & { referralBA: IReferral }) => {
   return (
     <Formik initialValues={initialValues} validate={validate} onSubmit={onSubmit}>
       {({ dirty, isSubmitting, errors, setFieldValue }) => {
-        console.log({ errors })
         return (
           <Form className='grid flex-grow grid-cols-6 px-4 pb-4 gap-x-4'>
             <FieldPrice
@@ -568,7 +596,8 @@ const Content = (props: Props & { referralBA: IReferral }) => {
               countPack={countPack}
               setCountPack={setCountPack}
               referralBA={referralBA}
-              isEditAble={Boolean(value)}
+              checked={checked}
+              setChecked={setChecked}
             />
             <div className='col-span-6'>
               <Field name='package'>

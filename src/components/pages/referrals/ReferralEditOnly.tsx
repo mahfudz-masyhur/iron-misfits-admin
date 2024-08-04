@@ -48,7 +48,7 @@ const StudentField = ({ field, form, meta }: FieldProps) => {
       error={Boolean(meta.error && meta.touched)}
       helperText={meta.error && meta.touched && String(meta.error)}
       renderOption={(option: IMember, props) => (
-        <li {...props}>
+        <li {...props} key={props.key}>
           <span>{option?.name}</span>
         </li>
       )}

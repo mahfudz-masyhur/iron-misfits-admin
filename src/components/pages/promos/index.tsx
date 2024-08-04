@@ -39,6 +39,9 @@ function PromosPage({ data, mutate }: Props) {
               Name
             </TableCell>
             <TableCell head component='th' className='py-2'>
+              code
+            </TableCell>
+            <TableCell head component='th' className='py-2'>
               Discounts
             </TableCell>
             <TableCell head component='th' className='py-2'>
@@ -54,6 +57,7 @@ function PromosPage({ data, mutate }: Props) {
             <TableRow hover key={v._id}>
               <TableCell>{i + 1}.</TableCell>
               <TableCell>{v.name}</TableCell>
+              <TableCell>{v.code}</TableCell>
               <TableCell>{v.type === 'percentage' ? `${v.discounts}%` : v.discounts}</TableCell>
               <TableCell>{v.status}</TableCell>
               <TableCell className='text-right whitespace-nowrap'>

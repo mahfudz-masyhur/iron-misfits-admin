@@ -60,7 +60,11 @@ const FieldPackage = ({ field, meta, form, setCountPack }: countPack) => {
       })}
       fullWidth
       isClearable
-      renderOption={(option: IPackage, props) => <li {...props}>{option?.name}</li>}
+      renderOption={(option: IPackage, props) => (
+        <li {...props} key={props.key}>
+          {option?.name}
+        </li>
+      )}
       error={Boolean(meta.error && meta.touched)}
       helperText={meta.error && meta.touched && String(meta.error)}
     />
@@ -107,7 +111,11 @@ const FieldPromo = ({ field, meta, form, setCountPack, disabled }: countPack & {
       setFieldValue={setFieldValue}
       fetch={fetchSuggestions}
       isClearable
-      renderOption={(option: IPromo, props) => <li {...props}>{option?.name}</li>}
+      renderOption={(option: IPromo, props) => (
+        <li {...props} key={props.key}>
+          {option?.name}
+        </li>
+      )}
       customInput={e => (
         <TextField
           {...e}
@@ -160,7 +168,11 @@ const FieldReferral = ({ field, meta, form, setCountPack, disabled }: countPack 
       setFieldValue={setFieldValue}
       fetch={fetchSuggestions}
       isClearable
-      renderOption={(option: IReferral, props) => <li {...props}>{option?.name}</li>}
+      renderOption={(option: IReferral, props) => (
+        <li {...props} key={props.key}>
+          {option?.name}
+        </li>
+      )}
       customInput={e => (
         <TextField
           {...e}
@@ -315,7 +327,6 @@ function FormMember(props: Props) {
                 setFieldValue={setFieldValue}
                 countPack={countPack}
                 referralBA={null}
-                isEditAble={false}
                 removeStatusField
                 removeExpiredField
                 setCountPack={setCountPack}

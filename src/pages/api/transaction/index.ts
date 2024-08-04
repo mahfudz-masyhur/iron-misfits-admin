@@ -9,6 +9,7 @@ import Transaction from 'server/models/Transaction'
 import { ITransaction } from 'server/type/Transaction'
 import { Ireq } from '../me/login'
 import { TransactionInput } from 'src/type/transaction'
+import { AnyObject, AnyKeys } from 'mongoose'
 
 type Data = {
   status: string
@@ -17,6 +18,28 @@ type Data = {
   error?: any
 }
 
+function detectNullFieldsForUnset(data: AnyKeys<ITransaction> & AnyObject): AnyKeys<ITransaction> & AnyObject {
+  const unsetFields: AnyKeys<ITransaction> & AnyObject = {}
+
+  for (const [key, value] of Object.entries(data)) {
+    if (value === null) {
+      unsetFields[key] = '' // Set value to an empty string or any placeholder
+    }
+  }
+
+  return unsetFields
+}
+function removeNullFields(data: Record<string, any>): Record<string, any> {
+  const filteredData: Record<string, any> = {}
+
+  for (const [key, value] of Object.entries(data)) {
+    if (value !== null) {
+      filteredData[key] = value
+    }
+  }
+
+  return filteredData
+}
 async function GET(req: Ireq, res: NextApiResponse<Data>) {
   let { search, packageType, status, member, expired } = req.query
   const filter: FilterQuery<ITransaction> = {}
@@ -168,7 +191,6 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
           }
         }
       }
-
     }
 
     // Jika referral tidak ada, kurangi referralInvitation pada Member
@@ -192,7 +214,10 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
               .json({ status: '501 Not Implemented', message: 'Referral before useCount update Failed' })
           }
 
-          const findReferralInTransaction = await Transaction.find({ member, referral: findTransaction?.referral?._id }).limit(2)
+          const findReferralInTransaction = await Transaction.find({
+            member,
+            referral: findTransaction?.referral?._id
+          }).limit(2)
           if (findReferralInTransaction.length === 1) {
             const pullMember = await Referral.findOneAndUpdate(
               { _id: findTransaction?.referral?._id, status: 'active' },
@@ -252,7 +277,10 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
             .json({ status: '501 Not Implemented', message: 'Referral remove useCount update Failed' })
         }
 
-        const findReferralInTransaction = await Transaction.find({ member, referral: findTransaction?.referral?._id }).limit(2)
+        const findReferralInTransaction = await Transaction.find({
+          member,
+          referral: findTransaction?.referral?._id
+        }).limit(2)
         if (findReferralInTransaction.length === 1) {
           const pullMember = await Referral.findOneAndUpdate(
             { _id: findTransaction?.referral?._id, status: 'active' },
@@ -266,21 +294,27 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
       }
     }
 
+    const dataToUpdate = {
+      price,
+      expired,
+      member,
+      package: pckge,
+      priceAfterdiscount,
+      promo,
+      referral,
+      description,
+      status,
+      discountBA,
+      paymentType,
+      lastEditedBy: user._id
+    }
     const data = await Transaction.findOneAndUpdate(
       { _id, updatedAt },
       {
-        price,
-        expired,
-        member,
-        package: pckge,
-        priceAfterdiscount,
-        promo,
-        referral,
-        description,
-        status,
-        paymentType,
-        lastEditedBy: user._id
-      }
+        $set: removeNullFields(dataToUpdate),
+        $unset: detectNullFieldsForUnset(dataToUpdate)
+      },
+      { new: true, timestamps: false }
     )
 
     if (!data) {
@@ -334,20 +368,22 @@ async function POST(req: Ireq, res: NextApiResponse<Data>) {
     }
   }
 
-  const data = await Transaction.create({
-    price,
-    expired,
-    member,
-    package: pckge,
-    priceAfterdiscount,
-    promo,
-    referral,
-    discountBA,
-    description,
-    status,
-    paymentType,
-    creator: user._id
-  })
+  const data = await Transaction.create(
+    removeNullFields({
+      price,
+      expired,
+      member,
+      package: pckge,
+      priceAfterdiscount,
+      promo,
+      referral,
+      discountBA: discountBA ? discountBA : undefined,
+      description,
+      status,
+      paymentType,
+      creator: user._id
+    })
+  )
 
   return res.json({ status: 'ok', message: 'Create Success', data })
 }

@@ -33,7 +33,10 @@ interface Props {
   setFieldValue: (q: any) => void
   options?: any
   fetch?: (q: string) => Promise<any>
-  renderOption: (option: any, props: { key: number; className: string; onClick: () => void }) => JSX.Element
+  renderOption: (
+    option: any,
+    props: { index: number; key: string; className: string; onClick: () => void }
+  ) => JSX.Element
   renderFieldArray?: (item: any, props: { key: number; tabIndex: number; onDelete: () => void }) => JSX.Element
   lableSort?: (firstIndex: boolean, item: any, prevItem: any, lastIndex: boolean) => JSX.Element
   sortingFieldArray?: (item: any[]) => any[]
@@ -251,7 +254,8 @@ function Autocomplete(props: Props) {
             if (!multiple) selected = (selectedSuggestion?._id || field?.[keyNames[0]]) === item?._id
             else selected = field.some((v: any) => v._id === item?._id)
             return renderOption(item, {
-              key: i,
+              index: i,
+              key: item?._id + '-' + i,
               className: twMerge(
                 'rounded-lg p-2 pl-8 hover:bg-gray-400/10 cursor-pointer flex',
                 selected && "before:content-['✓'] before:block before:mr-3 -pl-3"

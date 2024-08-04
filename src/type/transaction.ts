@@ -35,7 +35,7 @@ export interface TransactionInput {
   status: ITransaction['status']
   createdAt?: Date
   updatedAt?: Date
-  discountBA?: string
+  discountBA?: string | null
 }
 
 export interface QueryListTransactionProps {

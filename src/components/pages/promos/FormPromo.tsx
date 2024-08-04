@@ -41,7 +41,6 @@ const FieldScheduledUntil = (props: FieldProps) => {
       endDate={endDate}
       onBlur={field.onBlur}
       selectsRange
-      locale='id-ID'
       monthsShown={sm ? 1 : 2}
       customInput={
         <TextField

@@ -155,7 +155,8 @@ const Select = forwardRef<HTMLSelectElement, TextFieldProps>((props: TextFieldPr
 
   useEffect(() => {
     setNameValue(setvalue)
-  }, [setvalue])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [intialValue])
 
   function handleSelect(e: any, value: string, text: string) {
     const { name, onChange } = rest

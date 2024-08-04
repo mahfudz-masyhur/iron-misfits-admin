@@ -102,14 +102,28 @@ const TableTransaction = ({
           <TableCell>{v.promo?.name}</TableCell>
           <TableCell>{v.referral?.name}</TableCell>
           <TableCell className='whitespace-nowrap'>
-            <AddExtraTimeForTransactionMember data={member} transaction={v} key={v._id} mutate={mutateTransactions} />
+            <AddExtraTimeForTransactionMember
+              data={member}
+              transaction={v}
+              key={'AddExtraTimeForTransactionMember-' + v._id}
+              mutate={mutateTransactions}
+            />
             {cantEdit ? (
               <>
-                <EditTransactionMember data={member} value={v} key={v._id} mutate={mutateTransactions} />
-                <DeleteTransaction data={v} key={v._id} mutate={mutateTransactions} />
+                <EditTransactionMember
+                  data={member}
+                  value={v}
+                  key={'EditTransactionMember-' + v._id}
+                  mutate={mutateTransactions}
+                />
+                <DeleteTransaction data={v} key={'DeleteTransaction-' + v._id} mutate={mutateTransactions} />
               </>
             ) : (
-              <EditStatusTransactionMember value={v} key={v._id} mutate={mutateTransactions} />
+              <EditStatusTransactionMember
+                value={v}
+                key={'EditStatusTransactionMember-' + v._id}
+                mutate={mutateTransactions}
+              />
             )}
           </TableCell>
         </TableRow>
